@@ -21,6 +21,24 @@ from urllib.parse import parse_qs, urlparse
 os.environ.setdefault("HOME", "/tmp")
 os.environ.setdefault("XDG_CACHE_HOME", "/tmp/.cache")
 
+import socket  # noqa: E402
+
+# On Vercel, a failed DNS lookup can raise a plain OSError instead of socket.gaierror.
+# The engine only catches gaierror, so convert it here.
+_orig_getaddrinfo = socket.getaddrinfo
+
+
+def _safe_getaddrinfo(*args, **kwargs):
+    try:
+        return _orig_getaddrinfo(*args, **kwargs)
+    except socket.gaierror:
+        raise
+    except OSError as e:
+        raise socket.gaierror(str(e)) from e
+
+
+socket.getaddrinfo = _safe_getaddrinfo
+
 from bs4 import BeautifulSoup, Comment, NavigableString, Tag  # noqa: E402
 
 from geo_optimizer.cli.formatters import format_audit_json  # noqa: E402
@@ -434,10 +452,10 @@ class handler(BaseHTTPRequestHandler):
         p = urlparse(url)
         if not p.hostname or "." not in p.hostname:
             return self._send(400, {"error": "This does not look like a valid public URL."})
-        print(f"scan request host={p.hostname}", flush=True)
         ok, err = validate_public_url(url)
-        print(f"validate host={p.hostname} ok={ok} err={err}", flush=True)
         if not ok:
+            if err and "DNS" in err:
+                return self._send(400, {"error": "This domain could not be found. Check the spelling."})
             return self._send(400, {"error": f"URL not allowed: {err}"})
 
         key = url.rstrip("/").lower()
