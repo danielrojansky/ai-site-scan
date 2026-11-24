@@ -282,5 +282,135 @@ class Findings(unittest.TestCase):
         self.assertIsNone(C.check_https("https://a.test/"))
 
 
+def audit(**over):
+    """A healthy audit; tests break one thing at a time."""
+    a = {"checks": {
+        "meta_tags": {"details": {"has_title": True, "has_description": True, "has_canonical": True, "has_og_title": True, "has_og_description": True, "x_robots_noindex": False, "has_noai": False}},
+        "schema_jsonld": {"details": {"found_types": ["Organization", "WebSite"], "has_website": True, "has_faq": False, "has_visible_faq": False}},
+        "content": {"details": {"has_h1": True, "has_heading_hierarchy": True, "has_numbers": True, "has_front_loading": True, "word_count": 900}},
+        "signals": {"details": {"has_lang": True, "has_rss": True}},
+        "brand_entity": {"details": {"brand_name_consistent": True, "names_found": ["A"], "kg_pillar_count": 3, "has_contact_info": True, "has_about_link": True}},
+        "robots_txt": {"details": {"bots_blocked": [], "sitemaps": ["https://a.test/s.xml"], "crawl_delay": None}},
+        "llms_txt": {"details": {"found": True}},
+        "ai_discovery": {"details": {"has_well_known_ai": True, "has_summary": True}},
+    }, "google_ai": {"checks": [{"id": "G-BYLINE", "status": "pass"}, {"id": "G-DATES", "status": "pass"}, {"id": "G-LINKS", "status": "pass"}, {"id": "G-SNIPPET", "status": "pass"}]},
+        "multimodal": {"total_images": 10, "images_with_alt": 10, "alt_coverage": 1.0}, "recommendations": []}
+    for k, v in over.items():
+        a["checks"][k] = {"details": v} if k in a["checks"] else v
+    return a
+
+
+PAGE_OK = {"ok": True, "browser_status": 200, "word_count": 900, "js_risk": "low", "thin": False, "html_bytes": 100_000, "final_url": "https://a.test/", "jsonld_types": ["Organization"], "markdown": "# Hi"}
+GOOD_SITEMAP = {"files": {"declared": ["https://a.test/s.xml"], "sitemap": {"ok": True, "urls": 5, "children": 0, "status": 200, "kind": "urlset", "url": "https://a.test/s.xml"}}}
+
+
+def ids(m):
+    return {i["id"] for i in m["items"]}
+
+
+class Missed(unittest.TestCase):
+    def build(self, ai=None, aud=None, rows=None, files=None, score=80, actions=()):
+        return C.build_missed({**PAGE_OK, **(ai or {})}, aud or audit(), rows or {}, files if files is not None else GOOD_SITEMAP["files"], score, list(actions))
+
+    def test_healthy_page_misses_nothing(self):
+        m = self.build()
+        self.assertEqual((m["count"], m["items"], m["usable"]), (0, [], True))
+        self.assertTrue(all(s["status"] == "ok" for s in m["stages"]))
+
+    def test_unusable_pages_miss_one_thing(self):
+        for ai, want in (({"browser_status": 404}, "not_found"), ({"browser_status": 503}, "server_error"), ({"browser_status": 403}, "site_blocked"),
+                         ({"browser_status": 202, "browser_challenge": True}, "site_blocked"), ({"ok": False, "browser_status": 0, "error": "Timeout"}, "no_answer")):
+            m = self.build(ai=ai)
+            self.assertEqual([i["id"] for i in m["items"]], [want])
+            self.assertFalse(m["usable"])
+            self.assertEqual(m["stages"][0]["status"], "fail")
+            self.assertEqual(m["stages"][1]["status"], "skipped")
+
+    def test_refused_bots(self):
+        base = probe()
+        rows = {b["name"]: C.judge_bot(probe(), base, b) for b in C.BOTS}
+        self.assertEqual(self.build(rows=rows)["count"], 0)
+        rows["GPTBot"] = C.judge_bot(probe(403, 50), base, C.BOTS_BY_NAME["GPTBot"])
+        rows["Googlebot"] = C.judge_bot(probe(403, 50), base, C.BOTS_BY_NAME["Googlebot"])
+        m = self.build(rows=rows)
+        item = [i for i in m["items"] if i["id"] == "bots_refused"][0]
+        self.assertEqual(item["impact"], "high")
+        self.assertEqual(item["title"], "An AI crawler was turned away")
+        self.assertIn("1 of 8 AI crawlers was refused (GPTBot). It got HTTP 403", item["detail"])
+        self.assertNotIn("Googlebot", item["detail"])  # an imitation refused by IP check is not a miss
+        self.assertEqual(m["stages"][0]["status"], "fail")
+
+    def test_javascript_only_and_thin(self):
+        self.assertIn("js_only", ids(self.build(ai={"js_risk": "high", "word_count": 3})))
+        m = self.build(ai={"thin": True, "word_count": 20})
+        self.assertIn("thin", ids(m))
+        self.assertNotIn("js_only", ids(m))
+
+    def test_understand_gaps(self):
+        aud = audit(meta_tags={"has_title": True, "has_description": False, "has_canonical": False, "has_og_title": False, "has_og_description": False},
+                    content={"has_h1": False, "has_numbers": False, "has_front_loading": False, "has_heading_hierarchy": False},
+                    signals={"has_lang": False, "has_rss": False})
+        got = ids(self.build(aud=aud))
+        self.assertTrue({"no_description", "no_canonical", "no_h1", "no_lang", "no_og"} <= got)
+
+    def test_structured_data(self):
+        none = audit(schema_jsonld={"found_types": [], "has_website": False})
+        self.assertIn("no_schema", ids(self.build(ai={"jsonld_types": []}, aud=none)))
+        aud = audit(schema_jsonld={"found_types": ["WebPage"], "has_website": False})
+        aud["recommendations"] = ["Add Organization JSON-LD schema with name, url, and logo", "Incomplete Product schema: add required fields name, description (see schema.org/Product for the full spec)"]
+        got = ids(self.build(aud=aud))
+        self.assertTrue({"no_org", "no_website", "schema_fields"} <= got)
+        self.assertIn("broken_schema", ids(self.build(ai={"jsonld_invalid": 2})))
+
+    def test_trust_gaps(self):
+        aud = audit(brand_entity={"brand_name_consistent": False, "names_found": ["A", "B"], "kg_pillar_count": 0, "has_contact_info": False, "has_about_link": False})
+        aud["google_ai"]["checks"] = [{"id": "G-BYLINE", "status": "warn"}, {"id": "G-DATES", "status": "warn", "evidence": "Date only in structured data: show it on the page too"}]
+        m = self.build(aud=aud, ai={"final_url": "http://a.test/", "jsonld_types": ["Article"]})
+        self.assertTrue({"no_author", "no_date", "no_profiles", "no_contact", "no_about", "no_https", "brand"} <= ids(m))
+        self.assertIn("only in the code", [i for i in m["items"] if i["id"] == "no_date"][0]["detail"])
+        home = self.build(aud=aud)  # a company homepage needs no byline, and a missing date matters less
+        self.assertNotIn("no_author", ids(home))
+        self.assertEqual([i["impact"] for i in home["items"] if i["id"] == "no_date"], ["low"])
+
+    def test_sitemap_and_links(self):
+        self.assertIn("no_sitemap", ids(self.build(files={"declared": [], "sitemap": {"ok": False, "status": 404, "error": "HTTP 404", "url": "u"}}, aud=audit(robots_txt={"sitemaps": [], "bots_blocked": []}))))
+        self.assertIn("sitemap", ids(self.build(files={"declared": ["u"], "sitemap": {"ok": False, "status": 404, "error": "HTTP 404", "url": "u"}})))
+        refused = self.build(files={"declared": [], "sitemap": {"ok": False, "status": 403, "error": "HTTP 403", "url": "u"}}, aud=audit(robots_txt={"sitemaps": [], "bots_blocked": []}))
+        self.assertNotIn("no_sitemap", ids(refused))  # we may just be refused
+        aud = audit(); aud["google_ai"]["checks"].append({"id": "G-LINKS", "status": "fail"})
+        aud["google_ai"]["checks"] = [c for c in aud["google_ai"]["checks"] if not (c["id"] == "G-LINKS" and c["status"] == "pass")]
+        self.assertIn("links", ids(self.build(aud=aud)))
+
+    def test_optional_items_are_apart(self):
+        aud = audit(llms_txt={"found": False}, signals={"has_lang": True, "has_rss": False}, ai_discovery={"has_well_known_ai": False, "has_summary": False})
+        m = self.build(aud=aud)
+        self.assertEqual(m["count"], 0)
+        self.assertEqual({i["id"] for i in m["optional"]}, {"llms", "feed", "ai_files"})
+
+    def test_images_and_potential(self):
+        aud = audit(); aud["multimodal"] = {"total_images": 20, "images_with_alt": 4, "alt_coverage": 0.2}
+        m = self.build(aud=aud, score=60, actions=[{"source": "engine", "gain": 8}, {"source": "engine", "gain": 20}, {"source": "extra", "gain": None}])
+        item = [i for i in m["items"] if i["id"] == "images"][0]
+        self.assertEqual((item["impact"], item["title"]), ("medium", "Could not see 16 of 20 images"))
+        self.assertEqual(m["potential"], 88)
+
+    def test_items_are_grouped_by_stage_then_impact(self):
+        aud = audit(meta_tags={"has_title": True, "has_description": False, "has_canonical": True, "has_og_title": True, "has_og_description": True})
+        m = self.build(ai={"js_risk": "high", "word_count": 2}, aud=aud)
+        order = [(i["stage"], i["impact"]) for i in m["items"]]
+        self.assertEqual(order, sorted(order, key=lambda t: ([k for k, _ in C.STAGES].index(t[0]), {"critical": 0, "high": 1, "medium": 2, "low": 3}[t[1]])))
+
+    def test_no_long_dashes_in_copy(self):
+        base = probe()
+        rows = {b["name"]: C.judge_bot(probe(403, 50), base, b) for b in C.BOTS}
+        aud = audit(meta_tags={"has_title": False, "has_description": False, "has_canonical": False, "has_og_title": False, "has_og_description": False},
+                    content={"has_h1": False, "has_numbers": False, "has_front_loading": False}, signals={"has_lang": False, "has_rss": False},
+                    brand_entity={"brand_name_consistent": False, "names_found": ["A", "B"], "kg_pillar_count": 0, "has_contact_info": False, "has_about_link": False},
+                    schema_jsonld={"found_types": [], "has_website": False}, llms_txt={"found": False})
+        m = self.build(ai={"js_risk": "high", "word_count": 0, "jsonld_invalid": 1, "response_ms": 7000, "html_bytes": 9_000_000, "jsonld_types": []}, aud=aud, rows=rows)
+        for i in m["items"] + m["optional"]:
+            self.assertNotIn("\u2014", i["title"] + i["detail"])
+
+
 if __name__ == "__main__":
     unittest.main()

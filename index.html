@@ -95,10 +95,7 @@ button.small{min-height:32px;padding:4px 10px;font-size:14px}
 .nav button{border:0;background:transparent;min-height:34px;padding:4px 12px;font-size:15px;color:var(--muted);border-radius:8px;position:relative;z-index:1;box-shadow:none}
 .nav button[aria-selected=true]{color:var(--ink);font-weight:600}
 .count{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;margin-left:4px}
-#newScanBtn{white-space:nowrap}
-#newScanBtn .plus{display:inline-block;transition:transform .3s var(--spring)}
-#newScanBtn:hover .plus{transform:rotate(90deg)}
-@media(max-width:560px){.brand span.t{display:none}#newScanBtn .lbl{display:none}}
+@media(max-width:560px){.brand span.t{display:none}}
 
 /* ---------- mascot ---------- */
 .bot{--ex:0px;--ey:0px;width:84px;height:84px;display:block;position:relative}
@@ -210,6 +207,7 @@ section[id]{scroll-margin-top:122px}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:720px){.btnrow{justify-content:center}}
 .delta{display:inline-block;font-size:13px;font-weight:700;border-radius:99px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+a.delta{text-decoration:none}a.delta:hover{filter:brightness(.96)}
 .delta.up{background:var(--ok-soft);color:var(--ok)}.delta.down{background:var(--crit-soft);color:var(--crit)}.delta.same{background:var(--low-soft);color:var(--low)}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
 @media(max-width:720px){.chips{justify-content:center}}
@@ -232,7 +230,7 @@ section[id]{scroll-margin-top:122px}
 .stat{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#fbfcfe}
 .stat .ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--accent-soft);flex:none}
 .stat.good .ico{background:var(--ok-soft)}.stat.warn .ico{background:var(--high-soft)}.stat.bad .ico{background:var(--crit-soft)}
-.stat b{display:block;font-size:22px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat b{display:block;font-size:22px;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
 .stat span{font-size:14px;color:var(--muted)}
 
 /* ---------- section nav ---------- */
@@ -405,6 +403,64 @@ section[id]{scroll-margin-top:122px}
 footer{color:var(--muted);font-size:14px;padding:36px 0 44px;text-align:center}
 footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99px;background:var(--low-soft);font-weight:600;font-size:12px}
 
+
+/* ---------- one smart scan button + hint ---------- */
+form.scan button.primary .gi{display:grid;place-items:center}
+form.scan button.primary .gi svg{width:18px;height:18px;display:block;transition:transform .5s var(--ease)}
+form.scan button.primary:hover .gi svg{transform:rotate(180deg)}
+form.scan button.primary:disabled .gi{display:none}
+form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(59,91,219,.55)}60%{box-shadow:0 0 0 12px rgba(59,91,219,0)}}
+.barhint{margin:10px 4px 0;font-size:14px;color:var(--muted);text-align:left;display:flex;gap:8px;align-items:flex-start}
+.barhint::before{content:"💡";flex:none}
+.donebanner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--ok-soft);color:#1d5a2b;border:1px solid #cdecd6;border-radius:12px;padding:12px 14px;margin-bottom:12px;animation:slidein .4s var(--ease)}
+
+/* ---------- what the AI agent missed ---------- */
+.miss{border-color:#f1d3d3;background:linear-gradient(180deg,#fff8f8,#fff 220px)}
+.miss.clear{border-color:#cdecd6;background:linear-gradient(180deg,#f4fcf6,#fff 220px)}
+.mhead{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+.mhead h2{margin:0 0 2px}
+.mhead .meta{margin:0}
+.mhead .bot{width:70px;height:70px}
+.mcount{text-align:center;background:var(--crit-soft);color:var(--crit);border-radius:16px;padding:8px 20px;min-width:104px}
+.mcount b{display:block;font-size:36px;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.mcount span{font-size:13px;font-weight:700}
+.miss.clear .mcount{background:var(--ok-soft);color:var(--ok)}
+@media(max-width:620px){.mhead{grid-template-columns:auto 1fr}.mcount{grid-column:1/-1;display:flex;gap:8px;align-items:baseline;justify-content:center;padding:6px 16px}.mcount b{font-size:26px}}
+.journey{list-style:none;margin:18px 0 4px;padding:0;display:flex}
+.journey li{flex:1;position:relative;text-align:center;padding:0 2px;min-width:0}
+.journey li::before{content:"";position:absolute;top:18px;left:-50%;right:50%;height:4px;border-radius:2px;background:#d6dce6;z-index:0}
+.journey li:first-child::before{display:none}
+.journey .dot{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;font-weight:800;font-size:18px;background:#fff;border:3px solid var(--line);color:var(--muted);transform:scale(.5);opacity:0;transition:transform .5s var(--spring) calc(var(--i,0)*120ms + .15s),opacity .3s calc(var(--i,0)*120ms + .15s)}
+.reveal.in .journey .dot{transform:none;opacity:1}
+.journey li.ok .dot{border-color:var(--ok);background:var(--ok);color:#fff}
+.journey li.warn .dot{border-color:#e0a800;background:#fff9db;color:#946c00}
+.journey li.fail .dot{border-color:var(--crit);background:var(--crit);color:#fff}
+.journey li.skipped .dot{opacity:.45}
+.reveal.in .journey li.fail .dot{animation:pillpulse 2.6s ease-out 1s infinite}
+.journey .lbl{font-size:14px;font-weight:700;line-height:1.2}
+.journey .jsub{font-size:13px;color:var(--muted)}
+.mgroup{margin-top:20px}
+.mgroup h3{font-size:15px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.mgroup h3 .n{font-size:12px;font-weight:700;background:var(--crit-soft);color:var(--crit);border-radius:99px;padding:1px 9px}
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:820px){.mgrid{grid-template-columns:1fr}}
+.mi{border:1px dashed #e6bdbd;border-left:5px solid var(--crit);border-radius:12px;background:#fff;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.mi.p-high{border-left-color:var(--high)}.mi.p-medium{border-left-color:#e0a800}.mi.p-low{border-left-color:#aab2bf}
+.mi .x{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--crit-soft);color:var(--crit);font-weight:800;font-size:14px;margin-top:1px}
+.mi.p-high .x{background:var(--high-soft);color:var(--high)}.mi.p-medium .x{background:var(--med-soft);color:var(--med)}.mi.p-low .x{background:var(--low-soft);color:var(--low)}
+.mi .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.mi b{font-size:16px;line-height:1.3}
+.mi p{margin:3px 0 0;font-size:15px;color:var(--muted)}
+.mopt{margin:18px 0 0;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ochip{border:1px dashed #c3cad6;border-radius:99px;padding:1px 10px;font-size:13px;color:var(--muted);cursor:help}
+.mcta{margin-top:20px;border-radius:14px;background:linear-gradient(135deg,#eef2ff,#f3e8ff);border:1px solid #dbe0fb;padding:16px 18px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.mcta .ct{font-size:18px;display:block}
+.mcta p{margin:4px 0 0;color:#3d4570;max-width:560px}
+.mcta .pot{margin-top:6px;font-weight:600;color:#2f3f8f}
+.mcta .btns{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:520px){.miss{padding:16px}.journey .lbl{font-size:11.5px;letter-spacing:-.01em}.journey .jsub{font-size:11px}.journey .dot{width:34px;height:34px;font-size:15px}.journey li::before{top:15px}.mcta .btns{width:100%}.mcta .btns button{flex:1}.stat{padding:10px}.stat .ico{width:34px;height:34px;font-size:17px}.stat b{font-size:20px}}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important}
@@ -421,7 +477,6 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
       <button role="tab" id="tabScan" aria-selected="true">Scan</button>
       <button role="tab" id="tabHistory" aria-selected="false">History<span class="count hide" id="hcount">0</span></button>
     </nav>
-    <button class="primary" id="newScanBtn" type="button" title="Start a new scan" aria-label="New scan"><span class="plus">＋</span><span class="lbl"> New scan</span></button>
   </div>
 </header>
 
@@ -438,8 +493,9 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
           <input id="u" type="text" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="yoursite.com" aria-label="Website address" required>
           <button type="button" id="clearInput" class="hide" aria-label="Clear address">×</button>
         </div>
-        <button class="primary" id="go" type="submit"><span class="sp"></span><span id="goLbl">Scan</span></button>
+        <button class="primary" id="go" type="submit" data-mode="scan"><span class="sp"></span><span class="gi" aria-hidden="true"></span><span id="goLbl">Scan</span></button>
       </form>
+      <p class="barhint hide" id="barHint" aria-live="polite"></p>
       <div class="examples">Try:
         <button class="chip" type="button" data-ex="anthropic.com">anthropic.com</button>
         <button class="chip" type="button" data-ex="react.dev">react.dev</button>
@@ -480,8 +536,6 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
             <p class="verdict-sub" id="verdictSub"></p>
             <div class="potential" id="potential"></div>
             <div class="btnrow">
-              <button class="primary" id="exportBtn" type="button">⬇ Fix guide (.md)</button>
-              <button id="rescanBtn" type="button">↻ Rescan</button>
               <button id="shareBtn" type="button">🔗 Share link</button>
               <button id="copyMd" type="button">Copy summary</button>
               <button id="dlJson" type="button" class="ghost small">JSON</button>
@@ -495,8 +549,33 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
       </section>
 
       <nav class="secnav" id="secnav" aria-label="Sections">
-        <a href="#secTop">Top fixes</a><a href="#secWins" id="navWins">Working</a><a href="#secView">AI view</a><a href="#secBots">Bots</a><a href="#secPlat" id="navPlat">Platforms</a><a href="#secFixes">All fixes</a><a href="#secFacts">Key facts</a><a href="#secScores">Scores</a>
+        <a href="#secMissed" id="navMissed">AI missed</a><a href="#secTop">Top fixes</a><a href="#secWins" id="navWins">Working</a><a href="#secView">AI view</a><a href="#secBots">Bots</a><a href="#secPlat" id="navPlat">Platforms</a><a href="#secFixes">All fixes</a><a href="#secFacts">Key facts</a><a href="#secScores">Scores</a>
       </nav>
+
+      <section class="card miss reveal" id="secMissed">
+        <div class="mhead">
+          <div data-bot data-mood="sad" id="missBot" aria-hidden="true"></div>
+          <div>
+            <h2 id="missTitle">What the AI agent missed</h2>
+            <p class="meta" id="missSub"></p>
+          </div>
+          <div class="mcount" id="missCount"><b data-count="0">0</b><span>missed</span></div>
+        </div>
+        <ol class="journey" id="journey" aria-label="The AI agent's reading journey"></ol>
+        <div id="missList"></div>
+        <p class="mopt hide" id="missOpt"></p>
+        <div class="mcta" id="missCta">
+          <div>
+            <b class="ct">Get the full report and fix guide</b>
+            <p id="missCtaText"></p>
+            <div class="pot hide" id="missPot"></div>
+          </div>
+          <div class="btns">
+            <button class="primary" id="exportBtn" type="button">⬇ Get the fix guide</button>
+            <button id="seeFull" type="button">See the full report ↓</button>
+          </div>
+        </div>
+      </section>
 
       <section class="card reveal" id="secTop">
         <h2><span class="hi">🚀</span>Start here</h2>
@@ -554,6 +633,7 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
           <p class="meta" style="margin:0">Tap a fix to see why it matters. Tick it when done. "+N pts" is how much the score can still grow in that area.</p></div>
           <div class="fprog" id="fprog"><span id="fprogTxt"></span><span class="tr"><i id="fprogBar"></i></span></div>
         </div>
+        <div class="donebanner hide" id="doneBanner"><span>🎉 <b>All fixes ticked.</b> Rescan to see your new score.</span><button class="primary" id="doneRescan" type="button">↻ Rescan now</button></div>
         <div class="filters" id="filters"></div>
         <div class="actions" id="actions"></div>
       </section>
@@ -591,14 +671,14 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
     <div class="hlist" id="hlist"></div>
   </div>
 
-  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.<span class="ver" id="appv">v2.0.0</span></footer>
+  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.<span class="ver" id="appv">v2.1.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
-const APP_VERSION = "2.0.0"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "2.1.0"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -766,7 +846,7 @@ $("#hlist").addEventListener("click", e => {
   const h = loadHistory().find(x => x.id === item.dataset.id); if(!h) return;
   const act = e.target.closest("[data-act]")?.dataset.act;
   if(act === "del"){ saveHistory(loadHistory().filter(x => x.id !== h.id)); updateCount(); renderHistory(); toast("Scan deleted", "🗑"); return; }
-  if(act === "rescan"){ showView("scan"); $("#u").value = h.url; toggleClear(); run(h.url); return; }
+  if(act === "rescan"){ showView("scan"); $("#u").value = h.url; toggleClear(); run(h.url, {fresh: true}); return; }
   openSaved(h);
 });
 $("#hlist").addEventListener("keydown", e => { if(e.key === "Enter" && e.target.classList.contains("hitem")) e.target.click(); });
@@ -800,18 +880,40 @@ function showView(v){
 }
 function setCompact(on){ $("#hero").classList.toggle("compact", on); }
 function setUrlParam(url){ const u = new URL(location); if(url) u.searchParams.set("url", url); else u.searchParams.delete("url"); history.replaceState(null, "", u); }
-function setGo(busy){ $("#go").disabled = busy; $("#goLbl").textContent = busy ? "Scanning…" : (DATA ? "Rescan" : "Scan"); }
+const ICON_SCAN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+const ICON_REFRESH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>';
+const normUrl = u => String(u || "").trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/#.*$/, "").replace(/\/+$/, "");
+const sameTarget = (a, b) => !!normUrl(a) && normUrl(a) === normUrl(b);
+/* One button starts every scan. Same address as the report on screen: Rescan (always fresh). Any other address: Scan. */
+function updateGo(){
+  if(running) return;
+  const btn = $("#go"), v = $("#u").value, same = !!DATA && sameTarget(v, DATA.url);
+  btn.dataset.mode = same ? "rescan" : "scan"; btn.disabled = false;
+  $("#goLbl").textContent = same ? "Rescan" : "Scan";
+  btn.querySelector(".gi").innerHTML = same ? ICON_REFRESH : ICON_SCAN;
+  const hint = $("#barHint"), compactNow = $("#hero").classList.contains("compact");
+  hint.classList.toggle("hide", !(DATA && compactNow));
+  if(DATA) hint.textContent = same ? "Fixed something? Press Rescan to see your new score. To check another site, type its address." : v.trim() ? "Press Scan to check " + hostOf(v) + ". This report stays in your History." : "Type the address of the site you want to scan.";
+  if(!same) btn.classList.remove("nudge");
+}
+function setBusy(b){
+  const btn = $("#go"); btn.disabled = b; btn.classList.remove("nudge");
+  if(b){ $("#goLbl").textContent = "Scanning…"; $("#barHint").classList.add("hide"); } else updateGo();
+}
+function focusBar(){
+  window.scrollTo({top: 0, behavior: REDUCED ? "auto" : "smooth"});
+  const i = $("#u"); i.focus(); i.select();
+}
 function newScan(){
   if(running) return;
   showView("scan"); DATA = null; ENTRY = null;
   $("#out").classList.add("hide"); $("#err").classList.add("hide"); $("#progress").classList.add("hide");
-  setCompact(false); setGo(false); $("#u").value = ""; toggleClear(); setUrlParam(null);
+  setCompact(false); $("#u").value = ""; toggleClear(); updateGo(); setUrlParam(null);
   mood($("#heroBot"), "idle");
   setTimeout(() => $("#u").focus(), 60);
 }
-$("#tabScan").onclick = () => showView("scan");
+$("#tabScan").onclick = () => { if($("#viewScan").classList.contains("hide")) showView("scan"); else focusBar(); };
 $("#tabHistory").onclick = () => showView("history");
-$("#newScanBtn").onclick = newScan;
 let brandClicks = 0, brandT = 0;
 $("#brand").onclick = () => {
   brandClicks++; clearTimeout(brandT); brandT = setTimeout(() => brandClicks = 0, 1800);
@@ -820,11 +922,14 @@ $("#brand").onclick = () => {
 };
 $("#brand").onkeydown = e => { if(e.key === "Enter") newScan(); };
 function toggleClear(){ $("#clearInput").classList.toggle("hide", !$("#u").value); }
-$("#u").addEventListener("input", toggleClear);
-$("#clearInput").onclick = () => { $("#u").value = ""; toggleClear(); $("#u").focus(); };
+$("#u").addEventListener("input", () => { toggleClear(); updateGo(); });
+$("#clearInput").onclick = () => { $("#u").value = ""; toggleClear(); updateGo(); $("#u").focus(); };
+let barJustFocused = false;  /* clicking the address selects it all, so typing replaces it */
+$("#u").addEventListener("focus", e => { barJustFocused = true; e.target.select(); });
+$("#u").addEventListener("mouseup", e => { if(barJustFocused){ e.preventDefault(); barJustFocused = false; } });
 $$(".chip[data-ex]").forEach(b => b.onclick = () => { $("#u").value = b.dataset.ex; toggleClear(); run(b.dataset.ex); });
 document.addEventListener("keydown", e => {
-  if(e.key === "/" && !/^(input|textarea|select)$/i.test(document.activeElement?.tagName || "")){ e.preventDefault(); showView("scan"); $("#u").focus(); }
+  if(e.key === "/" && !/^(input|textarea|select)$/i.test(document.activeElement?.tagName || "")){ e.preventDefault(); showView("scan"); focusBar(); }
 });
 const toTop = $("#toTop");
 addEventListener("scroll", () => toTop.classList.toggle("show", scrollY > 700), {passive: true});
@@ -840,11 +945,12 @@ function showErr(msg){
   err.classList.remove("hide"); mountBots();
   $("#errRetry").onclick = () => run($("#u").value);
 }
-async function run(raw){
+async function run(raw, opts = {}){
   const url = String(raw || "").trim(); if(!url || running) return;
+  const fresh = !!opts.fresh || (!!DATA && sameTarget(url, DATA.url));  /* a rescan must never show an old answer */
   running = true; DATA = null; ENTRY = null;
   $("#err").classList.add("hide"); $("#out").classList.add("hide");
-  setCompact(true); setGo(true); mood($("#heroBot"), "read");
+  setCompact(true); setBusy(true); mood($("#heroBot"), "read");
   $("#progTitle").textContent = "Scanning " + hostOf(url) + "…";
   $("#steps").innerHTML = STEPS.map(s => `<li><span class="ic"></span>${esc(s)}</li>`).join("");
   $("#progress").classList.remove("hide"); mood($("#progress .bot"), "read");
@@ -853,7 +959,7 @@ async function run(raw){
   const t1 = setInterval(() => { if(i < lis.length - 1){ lis[i].classList.replace("active", "done"); i++; lis[i].classList.add("active"); setProg(i); } }, 600);
   const t2 = setInterval(() => { q = (q + 1) % QUIPS.length; quip.textContent = QUIPS[q]; }, 1600);
   try{
-    const r = await fetch("/api/scan?url=" + encodeURIComponent(url));
+    const r = await fetch("/api/scan?url=" + encodeURIComponent(url) + (fresh ? "&fresh=1" : ""));
     let d; try { d = await r.json(); } catch { throw new Error(r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners. Please try again." : "Something went wrong on our side (error " + r.status + "). Please try again."); }
     if(!r.ok) throw new Error(d.error || ("Error " + r.status));
     clearInterval(t1);
@@ -863,13 +969,13 @@ async function run(raw){
     quip.textContent = "Done!"; await sleep(REDUCED ? 0 : 260);
     DATA = d; ENTRY = addToHistory(d);
     render(d, {entry: ENTRY});
-    setUrlParam(url);
+    setUrlParam(d.url);
   }catch(e){
     mood($("#heroBot"), "sad");
     showErr(e.message || "The scan failed. Please try again.");
   }finally{
     clearInterval(t1); clearInterval(t2); running = false;
-    $("#progress").classList.add("hide"); setGo(false);
+    $("#progress").classList.add("hide"); setBusy(false);
   }
 }
 $("#f").addEventListener("submit", e => { e.preventDefault(); $("#u").blur(); run($("#u").value); });
@@ -931,7 +1037,6 @@ function render(d, opts){
   const host = hostOf(d.url), ts = entry.ts;
   $$("#out .reveal").forEach(el => { el.classList.remove("in"); delete el.dataset.done; });
   $("#out").classList.remove("hide");
-  setGo(false);
 
   /* summary */
   const ring = $("#ring"), num = $("#score"), band = $("#band");
@@ -945,13 +1050,17 @@ function render(d, opts){
   if(d.band == null) band.classList.add("in");
 
   const prev = olderEntry(entry), dl = prev && prev.score != null && d.score != null ? d.score - prev.score : null;
-  $("#siteLine").innerHTML = `<b>${esc(host)}</b> · <span class="nowrap">${fmtTime(ts)}</span>${d.cached ? " (cached)" : ""}${dl == null ? "" : ` <span class="delta ${dl>0?"up":dl<0?"down":"same"}">${dl>0?"+":dl===0?"±":""}${dl} since last scan</span>`}`;
+  $("#siteLine").innerHTML = `<b>${esc(host)}</b> · <span class="nowrap">${fmtTime(ts)}</span>${d.cached ? ` <span class="muted">(cached${d.cached_age_s != null ? ", " + (d.cached_age_s < 60 ? "just now" : Math.round(d.cached_age_s / 60) + " min ago") : ""})</span>` : ""}${dl == null ? "" : ` <span class="delta ${dl>0?"up":dl<0?"down":"same"}">${dl>0?"+":dl===0?"±":""}${dl} since last scan</span>`}`;
   const chips = [];
   if(prev && prev.data?.actions){
     const before = new Map(prev.data.actions.map(a => [akey(a), a.label])), now = new Map(acts.map(a => [akey(a), a.label]));
     const fixed = [...before].filter(([k]) => !now.has(k)).map(([, l]) => l), fresh = [...now].filter(([k]) => !before.has(k)).map(([, l]) => l);
     if(fixed.length) chips.push(`<span class="delta up" title="${esc(fixed.join(", "))}">🎉 ${fixed.length} fixed since last scan</span>`);
     if(fresh.length) chips.push(`<span class="delta same" title="${esc(fresh.join(", "))}">${fresh.length} new</span>`);
+  }
+  if(d.missed){
+    const m = d.missed;
+    chips.unshift(`<a class="delta ${m.usable && !m.count ? "up" : "down"}" href="#secMissed">${!m.usable ? "⚠ The AI could not read this page" : m.count ? `⚠ ${m.count} ${m.count === 1 ? "thing" : "things"} the AI missed` : "✨ Nothing missed"}</a>`);
   }
   $("#chips").innerHTML = chips.join(""); $("#chips").classList.toggle("hide", !chips.length);
   const [v, vs] = verdictFor(d);
@@ -962,9 +1071,9 @@ function render(d, opts){
   requestAnimationFrame(() => requestAnimationFrame(() => $$("#potential i").forEach(i => i.style.width = i.dataset.w + "%")));
   const tr = trendFor(host, ts); $("#spark").innerHTML = tr.length > 1 ? `<span>Trend</span>${sparkSvg(tr)}<span>${tr[0]} → ${tr[tr.length - 1]}</span>` : "";
   if(opts.saved){
-    $("#oldNotice").innerHTML = `This is a saved report from ${fmtTime(ts)}. <a href="#" id="rescanLink">Scan again</a> to see the site as it is now.`;
+    $("#oldNotice").innerHTML = `This is a saved report from ${fmtTime(ts)}. <a href="#" id="rescanLink">Rescan</a> to see the site as it is now.`;
     $("#oldNotice").classList.remove("hide");
-    $("#rescanLink").onclick = e => { e.preventDefault(); run(d.url); };
+    $("#rescanLink").onclick = e => { e.preventDefault(); run(d.url, {fresh: true}); };
   } else $("#oldNotice").classList.add("hide");
 
   /* stats */
@@ -1006,8 +1115,40 @@ function render(d, opts){
   renderFacts(d, ai);
   renderScores(d);
   $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${((d.duration_ms||0)/1000).toFixed(1)} s.${d.app_version ? ` Extra checks by AI Site Scan v${esc(d.app_version)} do not change the score.` : ""}`;
+  renderMissed(d);
+  updateGo();
   requestAnimationFrame(() => requestAnimationFrame(watch));
   window.scrollTo({top: 0, behavior: REDUCED ? "auto" : "smooth"});
+}
+
+/* what the AI agent missed */
+const STAGE_ICON = {reach: "🚪", read: "👀", understand: "🧠", trust: "🤝", discover: "🧭"};
+const STAGE_MARK = {ok: "✓", warn: "!", fail: "✕", skipped: "–"};
+function renderMissed(d){
+  const m = d.missed, sec = $("#secMissed"), nav = $("#navMissed");
+  sec.classList.toggle("hide", !m); nav.classList.toggle("hide", !m);
+  if(!m) return;
+  const host = hostOf(d.url), clear = m.usable && m.count === 0;
+  sec.classList.toggle("clear", clear);
+  mood($("#missBot"), clear ? "happy" : "sad");
+  $("#missTitle").textContent = !m.usable ? "The AI agent could not read " + host : clear ? "The AI agent found everything it looks for" : "What the AI agent missed on " + host;
+  $("#missSub").textContent = !m.usable ? "It never got past the front door, so nothing else could be checked." : clear ? "No blind spots found on this page. Keep it that way." : "We read your page the way an AI agent does. These are the things it could not find, read, understand or trust.";
+  const cnt = $("#missCount"), num = cnt.querySelector("b");
+  num.dataset.count = m.count; delete num.dataset.done; num.textContent = "0";
+  cnt.querySelector("span").textContent = m.count === 1 ? "thing missed" : "things missed";
+  $("#journey").innerHTML = m.stages.map((st, i) => `<li class="${st.status}" style="--i:${i}"><span class="dot">${STAGE_MARK[st.status]}</span><div class="lbl">${esc(st.label)}</div><div class="jsub">${st.status === "skipped" ? "not reached" : st.count ? st.count + " missed" : "all good"}</div></li>`).join("");
+  const by = {}; m.items.forEach(it => (by[it.stage] = by[it.stage] || []).push(it));
+  $("#missList").innerHTML = m.stages.filter(st => by[st.key]).map(st => `<div class="mgroup"><h3><span>${STAGE_ICON[st.key]}</span>${esc(st.label)}<span class="n">${by[st.key].length}</span></h3><div class="mgrid">${by[st.key].map((it, k) => `<div class="mi p-${it.impact} spot lift reveal" style="--i:${k % 6}"><span class="x">✕</span><div><div class="top"><b>${esc(it.title)}</b><span class="pill p-${it.impact}">${cap(it.impact)}</span></div><p>${esc(it.detail)}</p></div></div>`).join("")}</div></div>`).join("");
+  const opt = $("#missOpt"); opt.classList.toggle("hide", !(m.optional || []).length);
+  opt.innerHTML = (m.optional || []).length ? `<span>Optional extras the AI did not find:</span>${m.optional.map(o => `<span class="ochip" title="${esc(o.detail)}">${esc(o.title)}</span>`).join("")}` : "";
+  $("#missCta").classList.toggle("hide", clear);
+  $("#missCtaText").textContent = !m.usable ? `Step-by-step help to let AI crawlers in, written for ${host}.` : `Step-by-step fixes with ready-to-paste code for ${m.count === 1 ? "the item" : "every item"} above, written for ${host}.`;
+  const pot = $("#missPot"), show = m.usable && m.potential != null && d.score != null && m.potential > d.score + 1;
+  pot.classList.toggle("hide", !show); pot.innerHTML = show ? `Fix them all and your score could reach up to <b>${m.potential}</b>.` : "";
+}
+function showDone(on){
+  $("#doneBanner").classList.toggle("hide", !on);
+  const go = $("#go"); go.classList.toggle("nudge", on && go.dataset.mode === "rescan");
 }
 
 /* bots */
@@ -1098,6 +1239,7 @@ function updateProg(){
   $("#fprog").classList.toggle("hide", !all.length);
   $("#fprogTxt").textContent = `${n} of ${all.length} done`;
   $("#fprogBar").style.width = (all.length ? 100 * n / all.length : 0) + "%";
+  showDone(all.length > 0 && n === all.length);
 }
 $("#filters").addEventListener("click", e => { const b = e.target.closest("button[data-f]"); if(!b) return; FILTER = b.dataset.f; drawActions(); });
 $("#actions").addEventListener("click", e => {
@@ -1106,7 +1248,7 @@ $("#actions").addEventListener("click", e => {
   if(e.target.closest(".chk")){
     const was = DONE.has(k); was ? DONE.delete(k) : DONE.add(k); saveDone(host, DONE);
     row.classList.toggle("done", !was); row.querySelector(".chk").setAttribute("aria-checked", !was); updateProg();
-    if(!was && (DATA.actions || []).every(a => DONE.has(akey(a)))){ burstAt($("#fprogBar"), 70); toast("All fixes done! Rescan to see your new score.", "🎉"); $("#rescanBtn").classList.add("primary"); }
+    if(!was && (DATA.actions || []).every(a => DONE.has(akey(a)))){ burstAt($("#fprogBar"), 70); toast("All fixes done! Rescan to see your new score.", "🎉"); }
     return;
   }
   if(e.target.closest(".a-toggle")){
@@ -1149,7 +1291,8 @@ function loadShot(url){
 }
 
 /* ---------- buttons ---------- */
-$("#rescanBtn").onclick = () => DATA && run(DATA.url);
+$("#doneRescan").onclick = () => DATA && run(DATA.url, {fresh: true});
+$("#seeFull").onclick = () => $("#secFixes").scrollIntoView({behavior: REDUCED ? "auto" : "smooth"});
 $("#shareBtn").onclick = async () => {
   const link = location.origin + "/?url=" + encodeURIComponent(DATA.url);
   if(navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
@@ -1364,7 +1507,7 @@ function internalLinks(md, origin){
 const spy = new IntersectionObserver(es => es.forEach(e => {
   if(e.isIntersecting) $$("#secnav a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
 }), {rootMargin: "-30% 0px -60% 0px"});
-["secTop", "secWins", "secView", "secBots", "secPlat", "secFixes", "secFacts", "secScores"].forEach(id => spy.observe($("#" + id)));
+["secMissed", "secTop", "secWins", "secView", "secBots", "secPlat", "secFixes", "secFacts", "secScores"].forEach(id => spy.observe($("#" + id)));
 $("#appv").textContent = "v" + APP_VERSION;
 mountBots(); updateCount(); watch();
 document.fonts?.ready.then(moveInd); moveInd();

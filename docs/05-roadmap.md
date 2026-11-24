@@ -26,6 +26,7 @@
 | Check that links in llms.txt and the sitemap really answer 200 | Finds broken pages AI would be sent to | Low to medium |
 | Show which bots the site blocks in robots.txt next to what the server does, as one picture | Clearer story for non-technical owners | Low |
 | Optional "deep scan": check internal links for broken ones (engine supports it) | More issues found, more requests to the site | Low |
+| Paid full report and fix guide: keep "What the AI agent missed" free, put the detailed fixes and the Markdown guide behind checkout | The business model the new section is built for. Needs a payment provider, an account or receipt link, and a decision on what stays free | Medium to high |
 | PDF export of the report | Share with clients | Low |
 | Own domain (for example aisitescan.com) | Branding, trust | Low |
 | Fix the Duet121 site (SSR or prerender) using its fix guide | Duet121 scored 45, 0 words visible to AI | Depends on its stack |

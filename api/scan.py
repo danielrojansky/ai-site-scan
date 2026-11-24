@@ -58,7 +58,7 @@ from geo_optimizer.models.results import CdnAiCrawlerResult  # noqa: E402
 from geo_optimizer.utils.http_async import fetch_url_async  # noqa: E402
 from geo_optimizer.utils.validators import normalize_url_scheme, validate_public_url  # noqa: E402
 
-APP_VERSION = "2.0.0"  # keep in step with the footer in index.html
+APP_VERSION = "2.1.0"  # keep in step with the footer in index.html
 ENGINE = "geo-optimizer-skill"
 try:
     from importlib.metadata import version as _v
@@ -377,8 +377,10 @@ async def scan_async(url: str) -> dict:
         if jsr.get("js_dependent") and ai.get("js_risk") != "high" and not ai.get("thin") and has_js:
             ai["js_risk"] = "high"
     rows = (site_data or {}).get("rows") or {}
-    sitemap = ((site_data or {}).get("files") or {}).get("sitemap")
+    files = (site_data or {}).get("files") or {}
+    sitemap = files.get("sitemap")
     blocked_scan = (ai.get("browser_status") or 0) >= 400 or bool(ai.get("browser_challenge"))
+    actions = build_actions(audit, ai, site_data)
     return {
         "app_version": APP_VERSION,
         "url": url,
@@ -394,7 +396,8 @@ async def scan_async(url: str) -> dict:
             for k, v in (audit.get("score_max") or {}).items()
         ],
         "penalty": (audit.get("score_breakdown") or {}).get("negative_penalty"),
-        "actions": build_actions(audit, ai, site_data),
+        "actions": actions,
+        "missed": C.build_missed(ai, audit, rows, files, audit.get("score"), actions),
         "wins": [] if blocked_scan or not ai.get("ok") else C.build_wins(ai, audit, rows, sitemap, (site_data or {}).get("ms") or []),
         "platforms": [] if blocked_scan else C.platforms_summary(audit.get("platform_citation")),
         "trust": None if blocked_scan else C.trust_summary(audit.get("trust_stack")),
@@ -487,11 +490,13 @@ class handler(BaseHTTPRequestHandler):
             return self._send(400, {"error": f"URL not allowed: {err}"})
 
         key = url.rstrip("/").lower()
+        fresh = (qs.get("fresh") or [""])[0] in ("1", "true")  # a rescan must not return an old answer
         with _lock:
             hit = _cache.get(key)
-        if hit and time.time() - hit[0] < CACHE_TTL_S:
+        if hit and not fresh and time.time() - hit[0] < CACHE_TTL_S:
             data = dict(hit[1])
             data["cached"] = True
+            data["cached_age_s"] = int(time.time() - hit[0])
             return self._send(200, data)
 
         ip = (self.headers.get("x-forwarded-for") or self.client_address[0] or "?").split(",")[0].strip()

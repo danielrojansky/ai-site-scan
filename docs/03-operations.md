@@ -30,7 +30,7 @@ Notes for local tests:
 - The engine refuses private addresses, so local test pages on 127.0.0.1 need the IP check patched in a test script only. Never ship that patch.
 - For the screenshot function outside Vercel, set `CHROME_PATH` to a local Chrome.
 - A browser test with Playwright can mock `/api/scan` and `/api/shot` and run the whole UI flow (scan, export, history, reopen, new scan).
-- Offline tests for the checks: `python -m unittest discover -s tests` (48 tests, under a second, no network).
+- Offline tests for the checks: `python -m unittest discover -s tests` (60 tests, under a second, no network).
 - A small dev server (a `ThreadingHTTPServer` that serves `index.html` and routes `/api/scan` to `api/scan.handler`) is the quickest way to test the real scan and the page together, without `vercel dev`. Set `RATE_MAX=1000` for it.
 - To compare engine speed or scores, call `scan.scan(url)` in a Python shell. `scan.scan` runs the parallel path.
 
