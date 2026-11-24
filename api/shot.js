@@ -103,7 +103,7 @@ module.exports = async function handler(req, res) {
     res.end(Buffer.from(img));
   } catch (e) {
     console.error("shot failed", e && e.message);
-    return fail(res, 502, "Could not take a screenshot");
+    return fail(res, 502, "Could not take a screenshot: " + String((e && e.message) || e).slice(0, 300));
   } finally {
     if (browser) await browser.close().catch(() => {});
   }
