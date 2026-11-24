@@ -30,3 +30,8 @@ npx vercel dev
 - It scans one page (the URL you enter), plus site files like robots.txt, llms.txt and sitemap.
 - The AI view does not run JavaScript. Google and some agents do run it, so their view can be richer.
 - The rate limit is in memory. For heavy public use, add a Vercel Firewall rate limit rule or a KV store.
+
+## Deploy
+
+The Vercel project `ai-site-scan` is connected to this repo. Each push to `main` deploys to https://ai-site-scan.vercel.app.
+Do not use "Import" in Vercel again: it creates a second project.
