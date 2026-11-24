@@ -317,7 +317,8 @@ CATEGORY_LABELS = {
 def _clean_rec(text: str, base_url: str) -> str:
     text = re.sub(r"^\[G-[A-Z-]+\]\s*", "", text)
     text = re.sub(r":\s*geo llms --base-url \S+\.?", ". You can generate one with a free llms.txt generator.", text)
-    return _clean(text.replace("/chi-siamo", ""))
+    text = text.replace("/about or /chi-siamo link", "/about link").replace(" or /chi-siamo", "")
+    return _clean(text)
 
 
 def build_actions(audit: dict, ai: dict) -> list[dict]:
@@ -328,23 +329,33 @@ def build_actions(audit: dict, ai: dict) -> list[dict]:
 
     # Our own checks from the AI view come first when they matter most.
     if ai.get("ok"):
+        browser_blocked = (ai.get("browser_status") or 0) >= 400
         blocked = [n for n, v in (ai.get("bot_access") or {}).items() if v.get("status") and v["status"] >= 400]
-        if blocked:
+        if browser_blocked:
+            actions.append({
+                "category": "access", "label": "The site blocked the scan", "priority": "critical", "gain": None,
+                "items": [f"The server answered HTTP {ai['browser_status']} to every request, even one that looks like a normal browser. Bot protection (for example Cloudflare, Akamai or a WAF) often blocks traffic from cloud servers. AI crawlers also run from cloud servers, so they likely get the same block. If you own this site, allow known AI crawlers in your bot protection settings."],
+            })
+        elif blocked:
             actions.append({
                 "category": "access", "label": "Server access for AI bots", "priority": "critical", "gain": None,
-                "items": [f"Your server returns an error to {', '.join(blocked)} (for example HTTP {ai['bot_access'][blocked[0]]['status']}), even if robots.txt allows them. Check your firewall, CDN bot protection (for example Cloudflare 'Block AI bots') or WAF rules."],
+                "items": [f"Your server returns an error to {', '.join(blocked)} (for example HTTP {ai['bot_access'][blocked[0]]['status']}), but not to a normal browser. robots.txt may allow them, but your firewall, CDN bot protection (for example Cloudflare 'Block AI bots') or WAF rules block them."],
             })
-        if ai.get("js_risk") == "high":
+        wc = ai.get("word_count", 0)
+        words = f"{wc} word{'s' if wc != 1 else ''}"
+        if browser_blocked:
+            pass
+        elif ai.get("js_risk") == "high":
             actions.append({
                 "category": "rendering", "label": "Content needs JavaScript", "priority": "critical", "gain": None,
-                "items": [f"Only {ai.get('word_count', 0)} words are in the HTML before JavaScript runs. Most AI fetchers do not run JavaScript, so they see an almost empty page. Use server-side rendering or static generation (for example Next.js SSR/SSG, Astro, or prerendering)."],
+                "items": [f"Only {words} {'is' if wc == 1 else 'are'} in the HTML before JavaScript runs. Most AI fetchers do not run JavaScript, so they see an almost empty page. Use server-side rendering or static generation (for example Next.js SSR/SSG, Astro, or prerendering)."],
             })
         elif ai.get("js_risk") == "medium":
             actions.append({
                 "category": "rendering", "label": "Little text without JavaScript", "priority": "high", "gain": None,
-                "items": [f"The HTML has {ai.get('word_count', 0)} words before JavaScript runs. Make sure your key content (what you do, prices, FAQ) is in the server HTML."],
+                "items": [f"The HTML has {words} before JavaScript runs. Make sure your key content (what you do, prices, FAQ) is in the server HTML."],
             })
-        if not ai.get("has_main"):
+        if not ai.get("has_main") and not browser_blocked:
             actions.append({
                 "category": "structure", "label": "Mark the main content", "priority": "low", "gain": None,
                 "items": ["Wrap the main page content in a <main> element. This helps AI tools separate it from menus and footers."],
@@ -357,6 +368,10 @@ def build_actions(audit: dict, ai: dict) -> list[dict]:
         sc = breakdown.get(cat)
         gain = (mx - sc) if isinstance(mx, int) and isinstance(sc, int) else None
         items = [_clean_rec(r, audit.get("url", "")) for r in recs]
+        if any(a["category"] == "access" for a in actions):
+            items = [i for i in items if not re.match(r"Site returned HTTP \d+", i)]
+        if not items:
+            continue
         prio = "high" if (gain or 0) >= 8 else "medium" if (gain or 0) >= 3 else "low"
         if cat == "blockers":
             prio = "high"
