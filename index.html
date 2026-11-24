@@ -3,242 +3,564 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Site Scan: is your site readable by AI?</title>
-<meta name="description" content="Scan any website and see how AI assistants and crawlers read it. Get an AI readiness score, a text view of what AI sees, and a ranked list of fixes.">
+<title>AI Site Scan: can AI read your website?</title>
+<meta name="description" content="Free scan: see how ChatGPT, Claude and Perplexity read your website. Get an AI readiness score, a side-by-side AI view, and a fix guide you can hand to your developer.">
 <link rel="canonical" href="https://ai-site-scan.vercel.app/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Site Scan","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Scan a website for AI readiness and see how AI reads it.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<meta property="og:title" content="AI Site Scan: can AI read your website?">
+<meta property="og:description" content="See your site the way AI tools see it, and get a step-by-step fix guide.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#3b5bdb">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%233b5bdb'/><circle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='3'/></svg>">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Site Scan","url":"https://ai-site-scan.vercel.app/","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Scan a website for AI readiness and see how AI reads it.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <style>
 :root{
-  --bg:#f6f7f9;--card:#fff;--ink:#14171c;--muted:#5d6673;--line:#e3e6eb;
-  --accent:#3b5bdb;--accent-soft:#edf1ff;
+  --bg:#f5f6f8;--card:#fff;--ink:#14171c;--muted:#5d6673;--line:#e3e6eb;
+  --accent:#3b5bdb;--accent-ink:#fff;--accent-soft:#edf1ff;
   --crit:#c92a2a;--crit-soft:#fff0f0;--high:#d9480f;--high-soft:#fff4e6;
-  --med:#9c7a00;--med-soft:#fff9db;--low:#5d6673;--low-soft:#f1f3f5;
+  --med:#946c00;--med-soft:#fff9db;--low:#5d6673;--low-soft:#f1f3f5;
   --ok:#2b8a3e;--ok-soft:#ebfbee;
   --term:#0f1720;--term-ink:#d6e2f0;--term-dim:#7d8ea3;
-  --r:14px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:16px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+body{font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent}
 a{color:var(--accent)}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-header.top{padding:40px 0 8px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
-.brand .dot{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--accent),#7048e8)}
-h1{font-size:clamp(28px,4vw,42px);line-height:1.15;letter-spacing:-.02em;margin:22px 0 8px}
-.lede{color:var(--muted);max-width:640px;margin:0 0 22px}
-form.scan{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-form.scan input{flex:1;border:0;outline:0;font:inherit;font-size:17px;padding:10px 12px;background:transparent;min-width:0}
-button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);padding:8px 14px}
-button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;padding:10px 22px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;min-height:40px}
+button:hover{border-color:#c9ced6}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #a5b4fc;outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
 button.primary:disabled{opacity:.6;cursor:wait}
-.hint{color:var(--muted);font-size:13px;margin:8px 4px 0}
-.err{background:var(--crit-soft);color:var(--crit);border-radius:10px;padding:12px 14px;margin-top:16px}
-.loading{margin-top:28px;display:flex;align-items:center;gap:12px;color:var(--muted)}
-.spin{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite}
-@keyframes s{to{transform:rotate(360deg)}}
-section{margin-top:28px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
-.grid{display:grid;gap:16px}
-.summary{grid-template-columns:280px 1fr}
-@media(max-width:820px){.summary{grid-template-columns:1fr}}
-.scorebox{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
-.ring{--p:0;--c:var(--accent);width:150px;height:150px;border-radius:50%;display:grid;place-items:center;
-  background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0)}
-.ring>div{width:122px;height:122px;border-radius:50%;background:var(--card);display:grid;place-items:center}
-.ring b{font-size:44px;line-height:1;letter-spacing:-.03em}
-.ring small{color:var(--muted);font-size:13px}
-.band{font-weight:600;text-transform:capitalize}
+button.ghost{background:transparent;border-color:transparent}
+button.small{min-height:32px;padding:4px 10px;font-size:14px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+.hide{display:none!important}
+.muted{color:var(--muted)}
 .meta{color:var(--muted);font-size:13px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;background:rgba(245,246,248,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:10px;height:60px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.01em;cursor:pointer;margin-right:auto;white-space:nowrap}
+.brand .dot{width:24px;height:24px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#7048e8);display:grid;place-items:center}
+.brand .dot::after{content:"";width:9px;height:9px;border:2.5px solid #fff;border-radius:50%}
+.nav{display:flex;gap:4px;background:#e9ecf1;padding:3px;border-radius:11px}
+.nav button{border:0;background:transparent;min-height:34px;padding:4px 12px;font-size:15px;color:var(--muted);border-radius:8px}
+.nav button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+.count{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;margin-left:4px}
+#newScanBtn{white-space:nowrap}
+@media(max-width:560px){.brand span.t{display:none}#newScanBtn .lbl{display:none}}
+
+/* hero + form */
+.hero{padding:44px 0 6px;text-align:center}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.025em;margin:0 0 10px}
+.hero p.lede{color:var(--muted);max-width:620px;margin:0 auto 24px;font-size:17px}
+.hero.compact{padding:20px 0 0;text-align:left}
+.hero.compact h1,.hero.compact .lede,.hero.compact .how,.hero.compact .examples{display:none}
+form.scan{display:flex;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:7px;box-shadow:var(--shadow);max-width:720px;margin:0 auto}
+.hero.compact form.scan{max-width:none}
+.inputwrap{flex:1;display:flex;align-items:center;min-width:0;position:relative}
+.inputwrap svg{position:absolute;left:12px;color:var(--muted)}
+form.scan input{flex:1;width:100%;border:0;outline:0;font:inherit;font-size:17px;padding:10px 36px 10px 40px;background:transparent;min-width:0}
+#clearInput{position:absolute;right:4px;min-height:30px;padding:0 8px;border:0;color:var(--muted);background:transparent;font-size:20px;line-height:1}
+form.scan button.primary{padding:10px 22px;min-height:46px}
+.examples{margin:14px 0 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.chip{border-radius:99px;padding:4px 12px;min-height:32px;font-size:14px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:880px;margin:34px auto 0;text-align:left}
+@media(max-width:720px){.how{grid-template-columns:1fr}}
+.how div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.how b{display:block;margin-bottom:2px}
+.how .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+
+.err{background:var(--crit-soft);color:var(--crit);border-radius:12px;padding:12px 14px;margin:16px auto 0;max-width:720px}
+.hero.compact .err{max-width:none}
+.notice{background:var(--med-soft);color:#6b4f00;border-radius:12px;padding:12px 14px;margin-top:16px}
+
+/* progress */
+.progress{max-width:520px;margin:28px auto 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+.progress h3{margin:0 0 10px;font-size:16px}
+.progress ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.progress li{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:15px}
+.progress li .ic{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none}
+.progress li.active{color:var(--ink)}
+.progress li.active .ic{border-color:var(--line);border-top-color:var(--accent);animation:s 1s linear infinite}
+.progress li.done .ic{border-color:var(--ok);background:var(--ok);position:relative}
+.progress li.done .ic::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+@keyframes s{to{transform:rotate(360deg)}}
+
+/* results */
+section{margin-top:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:16px}
+h2{font-size:20px;letter-spacing:-.01em;margin:0 0 4px}
+h2+.meta{margin:0 0 14px}
+.summary{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+@media(max-width:720px){.summary{grid-template-columns:1fr;text-align:center;justify-items:center}}
+.ring{--p:0;--c:var(--accent);width:148px;height:148px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0)}
+.ring>div{width:120px;height:120px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
+.ring b{font-size:44px;line-height:1;letter-spacing:-.03em}
+.ring small{display:block;color:var(--muted);font-size:13px}
+.site{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.nowrap{white-space:nowrap}
+.verdict{font-size:22px;font-weight:700;letter-spacing:-.015em;margin:4px 0 6px;line-height:1.25}
+.verdict-sub{color:var(--muted);margin:0 0 14px;max-width:640px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:720px){.btnrow{justify-content:center}}
+.delta{display:inline-block;font-size:13px;font-weight:700;border-radius:99px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.delta.up{background:var(--ok-soft);color:var(--ok)}.delta.down{background:var(--crit-soft);color:var(--crit)}.delta.same{background:var(--low-soft);color:var(--low)}
+
+.secnav{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;margin-top:16px;scrollbar-width:none}
+.secnav a{flex:none;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:99px;font-size:14px}
+
+.top3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.top3{grid-template-columns:1fr}}
+.top3 .t{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.top3 .t b{font-size:16px}
+.top3 .t p{margin:0;font-size:14px;color:var(--muted)}
+.okbox{background:var(--ok-soft);color:var(--ok);border-radius:14px;padding:14px;font-weight:600}
+
 .tiles{grid-template-columns:repeat(4,1fr)}
 @media(max-width:820px){.tiles{grid-template-columns:repeat(2,1fr)}}
 .tile{border:1px solid var(--line);border-radius:12px;padding:14px}
 .tile .k{color:var(--muted);font-size:13px}
 .tile .v{font-size:22px;font-weight:700;margin-top:2px}
 .tile .s{font-size:13px;color:var(--muted)}
-.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:capitalize}
 .p-critical{background:var(--crit-soft);color:var(--crit)}.p-high{background:var(--high-soft);color:var(--high)}
 .p-medium{background:var(--med-soft);color:var(--med)}.p-low{background:var(--low-soft);color:var(--low)}
 .p-ok{background:var(--ok-soft);color:var(--ok)}
-h2{font-size:20px;letter-spacing:-.01em;margin:0 0 14px}
+table.bots{width:100%;border-collapse:collapse;font-size:14px;margin-top:16px}
+table.bots td,table.bots th{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line)}
+table.bots th{font-weight:600;color:var(--muted);font-size:13px}
+
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{border-radius:99px;min-height:32px;padding:3px 12px;font-size:14px}
+.filters button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.actions{display:grid;gap:10px}
+details.action{border:1px solid var(--line);border-radius:12px;background:var(--card)}
+details.action summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;flex-wrap:wrap}
+details.action summary::-webkit-details-marker{display:none}
+details.action summary h3{font-size:16px;margin:0;flex:1;min-width:160px}
+details.action summary .chev{transition:transform .2s;color:var(--muted);font-size:20px;line-height:1}
+details.action[open] summary .chev{transform:rotate(90deg)}
+.gain{font-size:13px;color:var(--ok);font-weight:700}
+.action .body{padding:0 16px 14px}
+.why{background:var(--accent-soft);color:#2f3f8f;border-radius:10px;padding:10px 12px;font-size:14px;margin:0 0 8px}
+.action ul{margin:6px 0 0;padding-left:20px}
+.action li{margin:5px 0;font-size:15px}
+.action li a{word-break:break-all}
+
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{border-radius:99px;min-height:34px;padding:4px 14px;font-size:14px}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.views.one{grid-template-columns:1fr}
+@media(max-width:900px){.views{grid-template-columns:1fr}}
+.pane{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:200px}
+.pane .bar2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);background:#fafbfc}
+.human img{width:100%;display:block;background:#eef0f3}
+.shotmsg{padding:22px;color:var(--muted);font-size:14px;display:flex;gap:10px;align-items:center}
+.spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite;flex:none}
+.term{background:var(--term);color:var(--term-ink);font:13px/1.6 var(--mono);padding:14px 16px;overflow:auto;max-height:720px;white-space:pre-wrap;word-break:break-word;flex:1}
+.term .h{color:#fff;font-weight:700}.term .l{color:#8fb4ff}.term .d{color:var(--term-dim)}.term .w{color:#ffd8a8}
+.pane.ai{border-color:#233042}
+.pane.ai .bar2{background:#161f2b;color:var(--term-dim);border-color:#233042}
+.pane.ai .bar2 button{background:#233042;color:var(--term-ink);border-color:#2f3f55;min-height:28px;padding:2px 10px;font-size:12px}
+.facts{font:12.5px/1.6 var(--mono);color:var(--term-dim);padding:12px 16px;background:#121b26;border-bottom:1px solid #233042;word-break:break-word}
+.facts b{color:var(--term-ink);font-weight:500}
+
 .bars{display:grid;gap:10px}
 .bar{display:grid;grid-template-columns:240px 1fr 64px;gap:12px;align-items:center;font-size:14px}
 @media(max-width:620px){.bar{grid-template-columns:1fr 54px}.bar .track{grid-column:1/-1;order:3}}
 .track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
 .track i{display:block;height:100%;border-radius:99px}
 .bar .n{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
-.actions{display:grid;gap:12px}
-.action{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.action header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.action h3{font-size:16px;margin:0;flex:1}
-.gain{font-size:13px;color:var(--ok);font-weight:600}
-.action ul{margin:10px 0 0;padding-left:20px}
-.action li{margin:4px 0;font-size:15px}
-.action li a{word-break:break-all}
-.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
-.views{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.views.one{grid-template-columns:1fr}
-@media(max-width:900px){.views{grid-template-columns:1fr}}
-.pane{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:420px}
-.pane .bar2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);background:#fafbfc}
-.human img{width:100%;display:block;background:#eef0f3;min-height:380px;object-fit:cover;object-position:top}
-.term{background:var(--term);color:var(--term-ink);font:13px/1.6 var(--mono);padding:14px 16px;overflow:auto;max-height:720px;white-space:pre-wrap;word-break:break-word;flex:1}
-.term .h{color:#fff;font-weight:700}.term .l{color:#8fb4ff}.term .d{color:var(--term-dim)}.term .w{color:#ffd8a8}
-.pane.ai .bar2{background:#161f2b;color:var(--term-dim);border-color:#233042}
-.pane.ai .bar2 button{background:#233042;color:var(--term-ink);border-color:#2f3f55;padding:4px 10px;font-size:12px}
-.facts{font:12.5px/1.6 var(--mono);color:var(--term-dim);padding:12px 16px;background:#121b26;border-bottom:1px solid #233042}
-.facts b{color:var(--term-ink);font-weight:500}
-table.bots{width:100%;border-collapse:collapse;font-size:14px}
-table.bots td,table.bots th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-footer{color:var(--muted);font-size:13px;padding:40px 0}
-.hide{display:none!important}
+
+.export{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,#eef2ff,#f3e8ff);border:1px solid #dbe0fb}
+.export p{margin:4px 0 0;color:#3d4570;max-width:620px}
+
+/* history */
+.hhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 14px;flex-wrap:wrap}
+.hhead h1{font-size:26px;margin:0;letter-spacing:-.02em}
+.hlist{display:grid;gap:10px}
+.hitem{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer}
+.hitem:hover{border-color:#c9ced6}
+.hscore{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:19px;color:#fff}
+.hitem .host{font-weight:700;overflow-wrap:anywhere}
+.hitem .sub{font-size:13px;color:var(--muted);word-break:break-word}
+.hitem .acts{display:flex;gap:4px}
+.empty{text-align:center;padding:48px 16px;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:var(--r)}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:50;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{color:var(--muted);font-size:13px;padding:36px 0 44px;text-align:center}
 </style>
 </head>
 <body>
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand" id="brand" role="link" tabindex="0" aria-label="AI Site Scan home"><span class="dot"></span><span class="t">AI Site Scan</span></div>
+    <nav class="nav" role="tablist" aria-label="Views">
+      <button role="tab" id="tabScan" aria-selected="true">Scan</button>
+      <button role="tab" id="tabHistory" aria-selected="false">History<span class="count hide" id="hcount">0</span></button>
+    </nav>
+    <button class="primary" id="newScanBtn" type="button" title="Start a new scan" aria-label="New scan">＋<span class="lbl"> New scan</span></button>
+  </div>
+</header>
+
 <div class="wrap">
-  <header class="top">
-    <div class="brand"><span class="dot"></span> AI Site Scan</div>
-    <h1>Can AI read your website?</h1>
-    <p class="lede">Enter a URL. You get an AI readiness score, the page as AI tools see it (no JavaScript), and a ranked list of fixes.</p>
-    <form class="scan" id="f">
-      <input id="u" type="text" inputmode="url" autocomplete="url" placeholder="https://yoursite.com" aria-label="Website URL" required>
-      <button class="primary" id="go" type="submit">Scan</button>
-    </form>
-    <div class="hint">Scans the page you enter (usually your homepage) plus robots.txt, llms.txt and sitemap. Takes 5 to 30 seconds.</div>
-    <div id="err" class="err hide"></div>
-    <div id="loading" class="loading hide"><div class="spin"></div><span id="step">Starting scan…</span></div>
-  </header>
-
-  <main id="out" class="hide">
-    <section class="grid summary">
-      <div class="card scorebox">
-        <div class="ring" id="ring"><div><span><b id="score">0</b><br><small>of 100</small></span></div></div>
-        <div class="band" id="band"></div>
-        <div class="meta" id="when"></div>
-        <div class="row" style="justify-content:center;margin-top:6px">
-          <button id="copyMd" type="button">Copy report</button>
-          <button id="dlJson" type="button">Download JSON</button>
+  <div id="viewScan">
+    <div class="hero" id="hero">
+      <h1>Can AI read your website?</h1>
+      <p class="lede">See your site the way ChatGPT, Claude and Perplexity see it. Get a score, a side-by-side view, and a fix guide you can hand to your developer.</p>
+      <form class="scan" id="f" autocomplete="off">
+        <div class="inputwrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          <input id="u" type="text" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="yoursite.com" aria-label="Website address" required>
+          <button type="button" id="clearInput" class="hide" aria-label="Clear address">×</button>
         </div>
+        <button class="primary" id="go" type="submit">Scan</button>
+      </form>
+      <div class="examples">Try:
+        <button class="chip" type="button" data-ex="anthropic.com">anthropic.com</button>
+        <button class="chip" type="button" data-ex="react.dev">react.dev</button>
+        <button class="chip" type="button" data-ex="excalidraw.com">excalidraw.com</button>
       </div>
-      <div class="card">
-        <h2 id="siteTitle">Summary</h2>
+      <div class="how">
+        <div><span class="n">1</span><b>Enter your address</b><span class="muted">Usually your homepage. Free, no login.</span></div>
+        <div><span class="n">2</span><b>See what AI sees</b><span class="muted">Your page with no JavaScript, next to what a visitor sees.</span></div>
+        <div><span class="n">3</span><b>Get a fix guide</b><span class="muted">Download step-by-step fixes with code you can paste.</span></div>
+      </div>
+      <div id="err" class="err hide" role="alert"></div>
+    </div>
+
+    <div id="progress" class="progress hide" aria-live="polite">
+      <h3 id="progTitle">Scanning…</h3>
+      <ol id="steps"></ol>
+    </div>
+
+    <main id="out" class="hide">
+      <section class="card">
+        <div class="summary">
+          <div class="ring" id="ring"><div><span><b id="score">0</b><small>of 100</small></span></div></div>
+          <div>
+            <div class="site" id="siteLine"></div>
+            <div class="verdict" id="verdict"></div>
+            <p class="verdict-sub" id="verdictSub"></p>
+            <div class="btnrow">
+              <button class="primary" id="exportBtn" type="button">⬇ Fix guide (.md)</button>
+              <button id="rescanBtn" type="button">↻ Rescan</button>
+              <button id="shareBtn" type="button">🔗 Share link</button>
+              <button id="copyMd" type="button">Copy summary</button>
+              <button id="dlJson" type="button" class="ghost small">JSON</button>
+            </div>
+          </div>
+        </div>
+        <div id="oldNotice" class="notice hide"></div>
+      </section>
+
+      <nav class="secnav" aria-label="Sections">
+        <a href="#secTop">Top fixes</a><a href="#secView">AI view</a><a href="#secFixes">All fixes</a><a href="#secFacts">Key facts</a><a href="#secScores">Scores</a>
+      </nav>
+
+      <section class="card" id="secTop">
+        <h2>Start here</h2>
+        <p class="meta">The fixes with the biggest effect.</p>
+        <div id="top3" class="top3"></div>
+      </section>
+
+      <section class="card" id="secView">
+        <h2>How AI sees your site</h2>
+        <p class="meta">Visitor view: a real browser. AI view: what most AI tools get (no JavaScript). Text that is only in the visitor view is invisible to AI.</p>
+        <div class="tabs" role="tablist">
+          <button role="tab" data-v="both" aria-selected="true">Compare</button>
+          <button role="tab" data-v="human" aria-selected="false">Visitor view</button>
+          <button role="tab" data-v="ai" aria-selected="false">AI view</button>
+        </div>
+        <div class="views" id="views">
+          <div class="pane human" id="paneHuman">
+            <div class="bar2"><span>👤 What a visitor sees</span><a id="openSite" target="_blank" rel="noopener">Open site ↗</a></div>
+            <img id="shot" class="hide" alt="Screenshot of the website">
+            <div id="shotMsg" class="shotmsg"></div>
+          </div>
+          <div class="pane ai" id="paneAi">
+            <div class="bar2"><span>🤖 What AI gets</span><button id="rawToggle" type="button">Show raw</button></div>
+            <div class="facts" id="facts"></div>
+            <div class="term" id="term"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="secFixes">
+        <h2>All fixes</h2>
+        <p class="meta">Tap a fix to see why it matters. "+N pts" is how much the score can still grow in that area.</p>
+        <div class="filters" id="filters"></div>
+        <div class="actions" id="actions"></div>
+      </section>
+
+      <section class="card export">
+        <div>
+          <b>Give this to your developer or AI coding tool</b>
+          <p>The fix guide is a Markdown file with each fix, why it matters, and ready-to-paste code (JSON-LD, llms.txt, robots.txt and more), filled in for this site.</p>
+        </div>
+        <button class="primary" id="exportBtn2" type="button">⬇ Download fix guide</button>
+      </section>
+
+      <section class="card" id="secFacts">
+        <h2>Key facts</h2>
+        <p class="meta" id="siteTitle"></p>
         <div class="grid tiles" id="tiles"></div>
-        <div style="margin-top:16px">
-          <table class="bots" id="bots"></table>
-        </div>
-      </div>
-    </section>
+        <table class="bots" id="bots"></table>
+      </section>
 
-    <section class="card">
-      <h2>Suggested actions</h2>
-      <p class="meta" style="margin-top:-6px">Ranked by impact. "+N pts" is how many score points the category can still gain.</p>
-      <div class="actions" id="actions"></div>
-    </section>
+      <section class="card" id="secScores">
+        <h2>Score by area</h2>
+        <p class="meta">Each area adds up to the total score.</p>
+        <div class="bars" id="bars"></div>
+        <p class="meta" id="engine" style="margin-top:14px"></p>
+      </section>
+    </main>
+  </div>
 
-    <section class="card">
-      <h2>How AI sees your site</h2>
-      <div class="tabs" role="tablist">
-        <button role="tab" data-v="both" aria-selected="true">Side by side</button>
-        <button role="tab" data-v="ai" aria-selected="false">AI view</button>
-        <button role="tab" data-v="human" aria-selected="false">Human view</button>
-      </div>
-      <div class="views" id="views">
-        <div class="pane human" id="paneHuman">
-          <div class="bar2"><span>What a visitor sees</span><a id="openSite" target="_blank" rel="noopener">Open site ↗</a></div>
-          <img id="shot" alt="Screenshot of the website">
-          <div id="shotErr" class="meta hide" style="padding:20px">The screenshot is not available. Use "Open site" to view the page.</div>
-        </div>
-        <div class="pane ai" id="paneAi">
-          <div class="bar2"><span>What AI gets: HTML before JavaScript, as text</span><button id="rawToggle" type="button">Show raw</button></div>
-          <div class="facts" id="facts"></div>
-          <div class="term" id="term"></div>
-        </div>
-      </div>
-      <p class="meta">The AI view is a simulation. It shows the server HTML with no JavaScript run, turned into text. This is what most AI crawlers and fetch tools (ChatGPT, Claude, Perplexity) get. Some tools, such as Google, can run JavaScript. The screenshot comes from a real browser that runs JavaScript, like a human visitor. Compare the two views: text that is in the screenshot but not in the AI view is invisible to most AI tools.</p>
-    </section>
+  <div id="viewHistory" class="hide">
+    <div class="hhead">
+      <h1>Scan history</h1>
+      <button id="clearHistory" type="button" class="small">Clear all</button>
+    </div>
+    <p class="meta" style="margin-top:-6px">Saved only in this browser. Tap a scan to open its full report.</p>
+    <div class="hlist" id="hlist"></div>
+  </div>
 
-    <section class="card">
-      <h2>Score by category</h2>
-      <div class="bars" id="bars"></div>
-      <p class="meta" id="engine" style="margin-top:14px"></p>
-    </section>
-  </main>
-
-  <footer>AI Site Scan. Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.</footer>
+  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.</footer>
 </div>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
+"use strict";
 const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const linkify = s => esc(s).replace(/(https?:\/\/[^\s<)]+[^\s<).,;])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-let DATA = null, RAW = false;
 const kb = b => (b||0) < 1024 ? (b||0) + " bytes" : Math.round(b/1024).toLocaleString("en-US") + " KB";
+const hostOf = u => { try { return new URL(/^https?:/i.test(u) ? u : "https://" + u).hostname.replace(/^www\./,""); } catch { return u; } };
+const fmtTime = ts => new Date(ts).toLocaleString("en-GB", {day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit", hour12:false});
+const colorFor = p => p>=80?"var(--ok)":p>=60?"var(--accent)":p>=40?"var(--med)":p>=20?"var(--high)":"var(--crit)";
+const solidColor = p => p>=80?"#2b8a3e":p>=60?"#3b5bdb":p>=40?"#b58500":p>=20?"#d9480f":"#c92a2a";
+let DATA = null, RAW = false, FILTER = "all";
 
-const STEPS = ["Fetching the page","Reading robots.txt","Looking for llms.txt and sitemap","Checking structured data","Checking content structure","Testing access as ClaudeBot, GPTBot and PerplexityBot","Building the AI view","Ranking fixes"];
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2400); }
 
-function colorFor(p){ return p>=80?"var(--ok)":p>=60?"var(--accent)":p>=40?"var(--med)":p>=20?"var(--high)":"var(--crit)"; }
-
-async function run(url){
-  $("#err").classList.add("hide"); $("#out").classList.add("hide");
-  $("#loading").classList.remove("hide"); $("#go").disabled = true;
-  let i = 0; $("#step").textContent = STEPS[0] + "…";
-  const t = setInterval(()=>{ i = Math.min(i+1, STEPS.length-1); $("#step").textContent = STEPS[i] + "…"; }, 2500);
-  try{
-    const r = await fetch("/api/scan?url=" + encodeURIComponent(url));
-    let d; try{ d = await r.json(); }catch{ throw new Error(r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners." : "The server returned an error (" + r.status + ")."); }
-    if(!r.ok) throw new Error(d.error || ("Error " + r.status));
-    DATA = d; render(d);
-    const u = new URL(location); u.searchParams.set("url", url); history.replaceState(null, "", u);
-  }catch(e){
-    $("#err").textContent = e.message; $("#err").classList.remove("hide");
-  }finally{
-    clearInterval(t); $("#loading").classList.add("hide"); $("#go").disabled = false;
+/* ---------- history (saved in this browser) ---------- */
+const HKEY = "aiSiteScan.history.v1", HMAX = 30;
+function loadHistory(){ try { return JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch { return []; } }
+function saveHistory(list){
+  for(let n = list.length; n >= 0; n--){
+    try { localStorage.setItem(HKEY, JSON.stringify(list.slice(0, n))); return true; } catch {}
   }
+  return false;
+}
+function compact(d){
+  const rb = d.audit?.checks?.robots_txt?.details || {};
+  return {...d, cached: false, audit: {checks: {robots_txt: {details: {bots_allowed: rb.bots_allowed || [], bots_blocked: rb.bots_blocked || [], sitemaps: rb.sitemaps || []}}}}};
+}
+function addToHistory(d){
+  const list = loadHistory();
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  list.unshift({id, ts: Date.now(), host: hostOf(d.url), url: d.url, score: d.score, title: d.ai_view?.title || "", data: compact(d)});
+  saveHistory(list.slice(0, HMAX));
+  updateCount();
+}
+function previousScore(host, beforeTs){
+  const p = loadHistory().find(h => h.host === host && h.ts < beforeTs);
+  return p ? p.score : null;
+}
+function updateCount(){ const n = loadHistory().length; $("#hcount").textContent = n; $("#hcount").classList.toggle("hide", n === 0); }
+
+function renderHistory(){
+  const list = loadHistory();
+  $("#clearHistory").classList.toggle("hide", !list.length);
+  if(!list.length){
+    $("#hlist").innerHTML = `<div class="empty"><b>No scans yet</b>Your scans show here, so you can open them again and track your progress.<br><br><button class="primary" type="button" id="emptyStart">Start a scan</button></div>`;
+    $("#emptyStart").onclick = newScan;
+    return;
+  }
+  $("#hlist").innerHTML = list.map((h, i) => {
+    const prev = list.slice(i+1).find(x => x.host === h.host);
+    const dl = prev && prev.score != null && h.score != null ? h.score - prev.score : null;
+    const dTag = dl == null ? "" : `<span class="delta ${dl>0?"up":dl<0?"down":"same"}">${dl>0?"+":dl===0?"±":""}${dl}</span>`;
+    return `<div class="hitem" data-id="${h.id}" tabindex="0" role="button" aria-label="Open scan of ${esc(h.host)}">
+      <div class="hscore" style="background:${solidColor(h.score||0)}">${h.score ?? "–"}</div>
+      <div><div class="host">${esc(h.host)}${dTag}</div><div class="sub">${esc(h.title || h.url)}</div><div class="sub">${fmtTime(h.ts)}</div></div>
+      <div class="acts"><button class="small" data-act="rescan" title="Scan again" aria-label="Scan again">↻</button><button class="small ghost" data-act="del" title="Delete" aria-label="Delete">🗑</button></div>
+    </div>`;
+  }).join("");
+}
+$("#hlist").addEventListener("click", e => {
+  const item = e.target.closest(".hitem"); if(!item) return;
+  const h = loadHistory().find(x => x.id === item.dataset.id); if(!h) return;
+  const act = e.target.closest("[data-act]")?.dataset.act;
+  if(act === "del"){ saveHistory(loadHistory().filter(x => x.id !== h.id)); updateCount(); renderHistory(); toast("Scan deleted"); return; }
+  if(act === "rescan"){ showView("scan"); $("#u").value = h.url; toggleClear(); run(h.url); return; }
+  openSaved(h);
+});
+$("#hlist").addEventListener("keydown", e => { if(e.key === "Enter" && e.target.classList.contains("hitem")) e.target.click(); });
+$("#clearHistory").addEventListener("click", () => {
+  const b = $("#clearHistory");
+  if(!b.dataset.armed){ b.dataset.armed = 1; b.textContent = "Tap again to clear"; setTimeout(()=>{ delete b.dataset.armed; b.textContent = "Clear all"; }, 3000); return; }
+  delete b.dataset.armed; b.textContent = "Clear all";
+  saveHistory([]); updateCount(); renderHistory(); toast("History cleared");
+});
+function openSaved(h){
+  showView("scan"); DATA = h.data;
+  $("#u").value = h.url; toggleClear(); setCompact(true); $("#err").classList.add("hide");
+  render(DATA, {savedTs: h.ts});
+  setUrlParam(null);
 }
 
-function render(d){
+/* ---------- views ---------- */
+function showView(v){
+  $("#viewScan").classList.toggle("hide", v !== "scan");
+  $("#viewHistory").classList.toggle("hide", v !== "history");
+  $("#tabScan").setAttribute("aria-selected", v === "scan");
+  $("#tabHistory").setAttribute("aria-selected", v === "history");
+  if(v === "history") renderHistory();
+  window.scrollTo({top: 0});
+}
+function setCompact(on){ $("#hero").classList.toggle("compact", on); }
+function setUrlParam(url){ const u = new URL(location); if(url) u.searchParams.set("url", url); else u.searchParams.delete("url"); history.replaceState(null, "", u); }
+function newScan(){
+  if(running) return;
+  showView("scan"); DATA = null;
+  $("#out").classList.add("hide"); $("#err").classList.add("hide"); $("#progress").classList.add("hide");
+  setCompact(false); $("#u").value = ""; toggleClear(); setUrlParam(null);
+  setTimeout(()=>$("#u").focus(), 60);
+}
+$("#tabScan").onclick = () => showView("scan");
+$("#tabHistory").onclick = () => showView("history");
+$("#newScanBtn").onclick = newScan;
+$("#brand").onclick = newScan;
+$("#brand").onkeydown = e => { if(e.key === "Enter") newScan(); };
+function toggleClear(){ $("#clearInput").classList.toggle("hide", !$("#u").value); }
+$("#u").addEventListener("input", toggleClear);
+$("#clearInput").onclick = () => { $("#u").value = ""; toggleClear(); $("#u").focus(); };
+$$(".chip[data-ex]").forEach(b => b.onclick = () => { $("#u").value = b.dataset.ex; toggleClear(); run(b.dataset.ex); });
+
+/* ---------- scan ---------- */
+const STEPS = ["Open the page","Read robots.txt and sitemap","Look for llms.txt","Check structured data","Check content and meta tags","Test access as ClaudeBot, GPTBot and PerplexityBot","Build the AI view","Rank the fixes"];
+let running = false;
+async function run(raw){
+  const url = String(raw || "").trim(); if(!url || running) return;
+  running = true; DATA = null;
+  $("#err").classList.add("hide"); $("#out").classList.add("hide");
+  setCompact(true); $("#go").disabled = true; $("#go").textContent = "Scanning…";
+  $("#progTitle").textContent = "Scanning " + hostOf(url) + "…";
+  $("#steps").innerHTML = STEPS.map(s => `<li><span class="ic"></span>${s}</li>`).join("");
+  $("#progress").classList.remove("hide");
+  const lis = $$("#steps li"); let i = 0; lis[0].classList.add("active");
+  const t = setInterval(() => { if(i < lis.length - 1){ lis[i].classList.replace("active","done"); i++; lis[i].classList.add("active"); } }, 1300);
+  try{
+    const r = await fetch("/api/scan?url=" + encodeURIComponent(url));
+    let d; try { d = await r.json(); } catch { throw new Error(r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners. Please try again." : "Something went wrong on our side (error " + r.status + "). Please try again."); }
+    if(!r.ok) throw new Error(d.error || ("Error " + r.status));
+    lis.forEach(li => { li.classList.remove("active"); li.classList.add("done"); });
+    await new Promise(res => setTimeout(res, 250));
+    DATA = d; addToHistory(d);
+    render(d, {});
+    setUrlParam(url);
+  }catch(e){
+    $("#err").textContent = e.message || "The scan failed. Please try again.";
+    $("#err").classList.remove("hide");
+  }finally{
+    clearInterval(t); running = false;
+    $("#progress").classList.add("hide"); $("#go").disabled = false; $("#go").textContent = "Scan";
+  }
+}
+$("#f").addEventListener("submit", e => { e.preventDefault(); $("#u").blur(); run($("#u").value); });
+
+/* ---------- plain-language verdict ---------- */
+function verdictFor(d){
+  const ai = d.ai_view || {}, s = d.score ?? 0, acts = d.actions || [];
+  if(acts.some(a => a.category === "access")) return ["AI tools are blocked from this site", "The server refuses requests from cloud servers, where AI crawlers run. Until that is fixed, AI tools cannot read or cite the site."];
+  if(ai.js_risk === "high") return ["AI tools see an almost empty page", "The content is built by JavaScript, and most AI tools do not run JavaScript. They only see the title and description."];
+  if(s >= 80) return ["AI tools can read this site well", "The basics are in place. The fixes below are fine-tuning."];
+  if(s >= 60) return ["AI tools can read this site, with some gaps", "The content is readable. Adding the missing signals below helps AI tools understand and trust it."];
+  if(s >= 40) return ["AI tools can read this site, but miss key signals", "The main gaps are listed below. Most are quick to fix."];
+  return ["AI tools struggle with this site", "Start with the top fixes below. They have the biggest effect."];
+}
+const WHY = {
+  access: "If AI bots get an error page, AI tools cannot read, quote or link to your site at all.",
+  rendering: "Most AI crawlers and fetch tools read the raw HTML and do not run JavaScript. Content that only appears after JavaScript runs is invisible to them.",
+  structure: "A <main> element tells tools where the real content is, so menus and footers do not get mixed in.",
+  schema: "Structured data (JSON-LD) gives AI exact facts, like your name, logo and what you offer, so it does not have to guess.",
+  brand_entity: "Consistent names and links to your official profiles help AI connect your site to your company, and not confuse it with others.",
+  content: "Clear headings, short sections and concrete facts make your content easy for AI to quote correctly.",
+  google_ai: "Google's AI Overviews use normal Google Search signals. These fixes help Google index and trust the page.",
+  llms: "llms.txt is a short Markdown map of your site for AI tools. It is cheap to add. Its real effect is not proven yet.",
+  signals: "Language, feeds and dates tell AI what language your content is in and how fresh it is.",
+  meta: "The title and description are often the first, and sometimes the only, thing an AI tool reads.",
+  ai_discovery: "Optional, new files for AI tools. Low priority: do the other fixes first.",
+  blockers: "Patterns that can make AI tools trust the page less.",
+  other: "Smaller improvements for images, video, forms and AI agents.",
+};
+
+/* ---------- render a report ---------- */
+function render(d, opts){
   const ai = d.ai_view || {};
   $("#out").classList.remove("hide");
-  if(d.error){ $("#err").textContent = "The engine could not fully scan this site: " + d.error; $("#err").classList.remove("hide"); }
   const s = d.score ?? 0;
   $("#score").textContent = s;
-  $("#ring").style.setProperty("--p", s); $("#ring").style.setProperty("--c", colorFor(s));
-  $("#band").textContent = (d.band || "").replace(/_/g," ");
-  $("#when").textContent = "Scanned " + d.scanned_at + (d.cached ? " (cached)" : "");
-  $("#siteTitle").textContent = ai.title || d.url;
+  const ring = $("#ring"); ring.style.setProperty("--c", colorFor(s)); ring.style.setProperty("--p", s);
 
+  const host = hostOf(d.url);
+  const ts = opts.savedTs || Date.now();
+  const prev = previousScore(host, ts - 1);
+  const dl = prev != null && d.score != null ? d.score - prev : null;
+  $("#siteLine").innerHTML = `<b>${esc(host)}</b> · <span class="nowrap">${fmtTime(ts)}</span>${d.cached ? " (cached)" : ""}${dl == null ? "" : ` <span class="delta ${dl>0?"up":dl<0?"down":"same"}">${dl>0?"+":""}${dl} since last scan</span>`}`;
+  const [v, vs] = verdictFor(d);
+  $("#verdict").textContent = v; $("#verdictSub").textContent = vs;
+  if(opts.savedTs){
+    $("#oldNotice").innerHTML = `This is a saved report from ${fmtTime(opts.savedTs)}. <a href="#" id="rescanLink">Scan again</a> to see the site as it is now.`;
+    $("#oldNotice").classList.remove("hide");
+    $("#rescanLink").onclick = e => { e.preventDefault(); run(d.url); };
+  } else $("#oldNotice").classList.add("hide");
+
+  const acts = d.actions || [];
+  const top = acts.filter(a => a.priority !== "low").slice(0, 3);
+  $("#top3").innerHTML = top.length ? top.map(a => `<div class="t"><div><span class="pill p-${a.priority}">${a.priority}</span> ${a.gain ? `<span class="gain">+${a.gain} pts</span>` : ""}</div><b>${esc(a.label)}</b><p>${esc(firstSentence(a.items[0]))}</p></div>`).join("")
+    : `<div class="okbox">No important fixes. This site is in good shape for AI tools.</div>`;
+
+  const counts = {all: acts.length}; acts.forEach(a => counts[a.priority] = (counts[a.priority]||0) + 1);
+  FILTER = "all";
+  $("#filters").innerHTML = ["all","critical","high","medium","low"].filter(k => counts[k]).map(k => `<button type="button" data-f="${k}" aria-pressed="${k==="all"}">${k[0].toUpperCase()+k.slice(1)} (${counts[k]})</button>`).join("");
+  drawActions();
+
+  $("#siteTitle").textContent = ai.title ? "Page title: " + ai.title : d.url;
   const risk = ai.js_risk || "unknown";
   const riskCls = {high:"p-critical",medium:"p-high",low:"p-ok"}[risk] || "p-low";
   const tiles = [
     ["Words AI can read", ai.ok ? (ai.word_count ?? 0).toLocaleString("en-US") : "n/a", ai.has_main ? "Has a &lt;main&gt; element" : "No &lt;main&gt; element"],
-    ["Needs JavaScript?", `<span class="pill ${riskCls}">${esc({high:"High risk",medium:"Some risk",low:"Low risk"}[risk] || "Unknown")}</span>`, ai.ok ? `${ai.script_count} script tags` : ""],
+    ["Needs JavaScript?", `<span class="pill ${riskCls}">${esc({high:"High risk",medium:"Some risk",low:"Low risk"}[risk] || "Unknown")}</span>`, ai.framework ? "Built with " + esc(ai.framework) : (ai.ok ? `${ai.script_count} script tags` : "")],
     ["Structured data", ai.jsonld_types?.length ? ai.jsonld_types.length + " type" + (ai.jsonld_types.length>1?"s":"") : "None", esc((ai.jsonld_types||[]).slice(0,3).join(", ") || "No JSON-LD found")],
     ["Page size", ai.ok ? kb(ai.html_bytes) : "n/a", ai.lang ? "Language: " + esc(ai.lang) : "No lang attribute"],
   ];
-  $("#tiles").innerHTML = tiles.map(([k,v,s])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+  $("#tiles").innerHTML = tiles.map(([k,v,s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
 
   const robots = d.audit?.checks?.robots_txt?.details || {};
   const allowedSet = new Set(robots.bots_allowed || []), blockedSet = new Set(robots.bots_blocked || []);
-  const botRows = Object.entries(ai.bot_access || {}).map(([name,v])=>{
-    const http = v.status ? (v.status < 400 ? `<span class="pill p-ok">HTTP ${v.status}</span>` : `<span class="pill p-critical">HTTP ${v.status}</span>`) : `<span class="pill p-critical">No response</span>`;
-    const rb = blockedSet.has(name) ? `<span class="pill p-critical">Blocked</span>` : allowedSet.has(name) ? `<span class="pill p-ok">Allowed</span>` : `<span class="pill p-low">Not listed (allowed)</span>`;
+  const botRows = Object.entries(ai.bot_access || {}).map(([name,v]) => {
+    const http = v.status ? (v.status < 400 ? `<span class="pill p-ok">OK (${v.status})</span>` : `<span class="pill p-critical">Error ${v.status}</span>`) : `<span class="pill p-critical">No answer</span>`;
+    const rb = blockedSet.has(name) ? `<span class="pill p-critical">Blocked</span>` : allowedSet.has(name) ? `<span class="pill p-ok">Allowed</span>` : `<span class="pill p-low">Not listed</span>`;
     return `<tr><td>${esc(name)}</td><td>${rb}</td><td>${http}</td></tr>`;
   }).join("");
-  $("#bots").innerHTML = botRows ? `<tr><th>AI bot</th><th>robots.txt</th><th>Server answer</th></tr>${botRows}` : "";
+  $("#bots").innerHTML = botRows ? `<tr><th>AI bot</th><th>robots.txt rule</th><th>Server answer</th></tr>${botRows}` : "";
 
-  $("#actions").innerHTML = (d.actions||[]).length ? d.actions.map(a=>`
-    <div class="action">
-      <header><span class="pill p-${a.priority}">${a.priority}</span><h3>${esc(a.label)}</h3>${a.gain ? `<span class="gain">+${a.gain} pts</span>` : ""}</header>
-      <ul>${a.items.map(i=>`<li>${linkify(i)}</li>`).join("")}</ul>
-    </div>`).join("") : `<p>No actions. Nice work.</p>`;
-
-  $("#bars").innerHTML = (d.categories||[]).map(c=>{
+  $("#bars").innerHTML = (d.categories||[]).map(c => {
     const p = c.max ? Math.round(100*(c.score||0)/c.max) : 0;
     return `<div class="bar"><span>${esc(c.label)}</span><div class="track"><i style="width:${p}%;background:${colorFor(p)}"></i></div><span class="n">${c.score ?? 0} / ${c.max}</span></div>`;
   }).join("") + (d.penalty ? `<div class="bar"><span>Penalties</span><div class="track"></div><span class="n">${d.penalty}</span></div>` : "");
-  $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${(d.duration_ms/1000).toFixed(1)} s.`;
+  $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${((d.duration_ms||0)/1000).toFixed(1)} s.`;
 
   const target = ai.final_url || d.url;
   $("#openSite").href = target;
@@ -246,71 +568,272 @@ function render(d){
 
   $("#facts").innerHTML = ai.ok ? [
     ["title", ai.title], ["description", ai.description], ["lang", ai.lang], ["canonical", ai.canonical],
-    ["json-ld", (ai.jsonld_types||[]).join(", ")], ["http", ai.status + " · " + kb(ai.html_bytes) + " · " + ai.markdown_chars.toLocaleString("en-US") + " chars of text"]
-  ].map(([k,v])=>`${k.padEnd(12," ")}<b>${esc(v || "(missing)")}</b>`).join("\n").replace(/\n/g,"<br>") : "";
+    ["json-ld", (ai.jsonld_types||[]).join(", ")], ["text", (ai.markdown_chars||0).toLocaleString("en-US") + " characters · HTTP " + ai.status + " · " + kb(ai.html_bytes)]
+  ].map(([k,v]) => `${k.padEnd(12," ")}<b>${esc(v || "(missing)")}</b>`).join("<br>") : "";
   RAW = false; $("#rawToggle").textContent = "Show raw"; drawTerm();
-  window.scrollTo({top: $("#out").offsetTop - 12, behavior: "smooth"});
+  setViewTab("both");
+  window.scrollTo({top: 0, behavior: "smooth"});
 }
+function firstSentence(t){ const m = String(t||"").split(/(?<=\.)\s/)[0]; return m.length > 180 ? m.slice(0,177) + "…" : m; }
+
+function drawActions(){
+  const acts = (DATA?.actions || []).filter(a => FILTER === "all" || a.priority === FILTER);
+  $("#actions").innerHTML = acts.length ? acts.map((a, i) => `
+    <details class="action"${i===0 && FILTER==="all" ? " open" : ""}>
+      <summary><span class="pill p-${a.priority}">${a.priority}</span><h3>${esc(a.label)}</h3>${a.gain ? `<span class="gain">+${a.gain} pts</span>` : ""}<span class="chev">›</span></summary>
+      <div class="body">${WHY[a.category] ? `<p class="why">${esc(WHY[a.category])}</p>` : ""}<ul>${a.items.map(x => `<li>${linkify(x)}</li>`).join("")}</ul></div>
+    </details>`).join("") : `<p class="muted">No fixes in this group.</p>`;
+  $$("#filters button").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === FILTER));
+}
+$("#filters").addEventListener("click", e => { const b = e.target.closest("button[data-f]"); if(!b) return; FILTER = b.dataset.f; drawActions(); });
 
 function drawTerm(){
   const ai = DATA?.ai_view || {};
   if(!ai.ok){ $("#term").innerHTML = `<span class="w">Could not build the AI view: ${esc(ai.error || "unknown error")}</span>`; return; }
-  let md = ai.markdown || "";
-  if(!md.trim()){ $("#term").innerHTML = `<span class="w">(empty) The HTML has no readable text before JavaScript runs. AI tools that do not run JavaScript see a blank page.</span>`; return; }
+  const md = ai.markdown || "";
+  if(!md.trim()){ $("#term").innerHTML = `<span class="w">(empty)\n\nThe HTML has no readable text before JavaScript runs.\nAI tools that do not run JavaScript see a blank page here.</span>`; return; }
   const tail = ai.markdown_truncated ? `\n\n<span class="d">… cut at 40,000 characters</span>` : "";
   if(RAW){ $("#term").innerHTML = esc(md) + tail; return; }
-  $("#term").innerHTML = esc(md).split("\n").map(line=>{
+  $("#term").innerHTML = esc(md).split("\n").map(line => {
     if(/^#{1,6} /.test(line)) return `<span class="h">${line}</span>`;
     return line
-      .replace(/\[image: ([^\]]*)\]/g, (m,a)=>`<span class="${a==='no alt text'?'w':'d'}">[image: ${a}]</span>`)
+      .replace(/\[image: ([^\]]*)\]/g, (m,a) => `<span class="${a==='no alt text'?'w':'d'}">[image: ${a}]</span>`)
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, `<span class="l">$1</span><span class="d"> → $2</span>`)
       .replace(/\*\*([^*]+)\*\*/g, `<span class="h">$1</span>`);
   }).join("\n") + tail;
 }
+$("#rawToggle").onclick = () => { RAW = !RAW; $("#rawToggle").textContent = RAW ? "Show formatted" : "Show raw"; drawTerm(); };
+
+function setViewTab(v){
+  $$(".tabs button").forEach(x => x.setAttribute("aria-selected", x.dataset.v === v));
+  $("#paneHuman").classList.toggle("hide", v === "ai"); $("#paneAi").classList.toggle("hide", v === "human");
+  $("#views").classList.toggle("one", v !== "both");
+}
+$$(".tabs button").forEach(b => b.onclick = () => setViewTab(b.dataset.v));
 
 function loadShot(url){
-  const img = $("#shot"), msg = $("#shotErr");
+  const img = $("#shot"), msg = $("#shotMsg");
   img.classList.add("hide"); msg.classList.remove("hide");
-  msg.textContent = "Taking a screenshot in a real browser… (5 to 20 seconds)";
+  msg.innerHTML = `<span class="spin"></span>Opening the page in a real browser… (5 to 20 seconds)`;
   img.onload = () => { msg.classList.add("hide"); img.classList.remove("hide"); };
-  img.onerror = () => { img.classList.add("hide"); msg.classList.remove("hide"); msg.textContent = 'The screenshot is not available for this site. Use "Open site" to view the page.'; };
+  img.onerror = () => { img.classList.add("hide"); msg.classList.remove("hide"); msg.textContent = 'A screenshot is not available for this site. Use "Open site" to view it.'; };
   img.src = "/api/shot?url=" + encodeURIComponent(url);
 }
 
-function reportMarkdown(d){
-  const ai = d.ai_view || {};
-  const L = [];
-  L.push(`# AI readiness report: ${d.url}`, "", `Score: **${d.score}/100** (${(d.band||"").replace(/_/g," ")})`, `Scanned: ${d.scanned_at}`, "");
-  if(ai.ok){
-    L.push("## Key facts", `- Words visible without JavaScript: ${ai.word_count}`, `- JavaScript risk: ${ai.js_risk}`, `- Structured data: ${(ai.jsonld_types||[]).join(", ") || "none"}`);
-    Object.entries(ai.bot_access||{}).forEach(([n,v])=>L.push(`- ${n}: HTTP ${v.status ?? "no response"}`));
-    L.push("");
+/* ---------- buttons ---------- */
+$("#rescanBtn").onclick = () => DATA && run(DATA.url);
+$("#shareBtn").onclick = async () => {
+  const link = location.origin + "/?url=" + encodeURIComponent(DATA.url);
+  if(navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
+    try { await navigator.share({title: "AI Site Scan: " + hostOf(DATA.url), url: link}); } catch {}
+    return;
   }
-  L.push("## Suggested actions");
-  (d.actions||[]).forEach((a,i)=>{ L.push("", `### ${i+1}. ${a.label} (${a.priority}${a.gain?`, +${a.gain} pts`:""})`); a.items.forEach(t=>L.push(`- ${t}`)); });
-  L.push("", "## Score by category");
-  (d.categories||[]).forEach(c=>L.push(`- ${c.label}: ${c.score}/${c.max}`));
-  L.push("", `Engine: ${d.engine?.name} v${d.engine?.version}`);
+  try { await navigator.clipboard.writeText(link); toast("Link copied. Opening it runs a fresh scan."); } catch { prompt("Copy this link:", link); }
+};
+$("#copyMd").onclick = async () => { try { await navigator.clipboard.writeText(summaryMarkdown(DATA)); toast("Summary copied"); } catch { toast("Copy failed"); } };
+$("#dlJson").onclick = () => download(JSON.stringify(DATA, null, 2), "ai-site-scan-" + hostOf(DATA.url) + ".json", "application/json");
+$("#exportBtn").onclick = $("#exportBtn2").onclick = () => {
+  download(buildFixGuide(DATA), "ai-fix-guide-" + hostOf(DATA.url) + ".md", "text/markdown");
+  toast("Fix guide downloaded");
+};
+function download(text, name, type){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type: type + ";charset=utf-8"}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function summaryMarkdown(d){
+  const ai = d.ai_view || {}, L = [];
+  L.push(`# AI readiness: ${hostOf(d.url)}`, "", `Score: **${d.score}/100**. ${verdictFor(d)[0]}.`, "", "Top fixes:");
+  (d.actions||[]).filter(a => a.priority !== "low").slice(0,5).forEach(a => L.push(`- ${a.label} (${a.priority}${a.gain?`, +${a.gain} pts`:""})`));
+  L.push("", `Words visible to AI without JavaScript: ${ai.word_count ?? "n/a"}`, "", `Full report: ${location.origin}/?url=${encodeURIComponent(d.url)}`);
   return L.join("\n");
 }
 
-$("#f").addEventListener("submit", e=>{ e.preventDefault(); const v = $("#u").value.trim(); if(v) run(v); });
-document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click", ()=>{
-  document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected", x===b));
-  const v = b.dataset.v;
-  $("#paneHuman").classList.toggle("hide", v==="ai"); $("#paneAi").classList.toggle("hide", v==="human");
-  $("#views").classList.toggle("one", v!=="both");
-}));
-$("#rawToggle").addEventListener("click", ()=>{ RAW = !RAW; $("#rawToggle").textContent = RAW ? "Show formatted" : "Show raw"; drawTerm(); });
-$("#copyMd").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText(reportMarkdown(DATA)); $("#copyMd").textContent = "Copied"; setTimeout(()=>$("#copyMd").textContent="Copy report",1500);}catch{ alertless(); } });
-function alertless(){ $("#copyMd").textContent = "Copy failed"; }
-$("#dlJson").addEventListener("click", ()=>{
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"}));
-  a.download = "ai-site-scan-" + (new URL(DATA.url).hostname) + ".json"; a.click();
-});
+/* ---------- fix guide (.md) ---------- */
+function buildFixGuide(d){
+  const ai = d.ai_view || {}, acts = d.actions || [];
+  const F = "```";
+  let origin; try { origin = new URL(ai.final_url || d.url).origin; } catch { origin = d.url; }
+  const host = hostOf(d.url);
+  const name = cleanName(ai.og_title || ai.title || host);
+  const desc = ai.description || ai.og_description || "";
+  const lang = ai.lang || "en";
+  const allText = acts.flatMap(a => a.items).join("\n").toLowerCase();
+  const has = re => re.test(allText);
+  const cats = new Set(acts.map(a => a.category));
+  const links = internalLinks(ai.markdown || "", origin).slice(0, 12);
+  const today = new Date().toISOString().slice(0,10);
+  const [vt, vs] = verdictFor(d);
+  const L = [], P = (...x) => L.push(...x);
+
+  P(`# AI readiness fix guide: ${host}`, "");
+  P(`Generated by AI Site Scan on ${fmtTime(Date.now())} for ${origin}.`, "");
+  P(`**Current score: ${d.score}/100.** ${vt}. ${vs}`, "");
+  P("## How to use this guide", "");
+  P("- **Developer:** work through the steps in order. Each step says what to change, why, and how to check it.");
+  P("- **AI coding tool (Claude Code, Cursor and others):** give it this whole file with the prompt below.");
+  P("- After you deploy, scan the site again and compare the score in the History tab.", "");
+  P("### Prompt for an AI coding tool", "", F + "text",
+    `You are working on the codebase of ${origin}. Apply the fixes in the attached file "AI readiness fix guide: ${host}", in order.`,
+    "Rules:",
+    "- First find where the site's <head>, homepage template and public/static folder are.",
+    "- Replace every value marked TODO with real information from the codebase, or ask me.",
+    "- Do not invent facts (addresses, phone numbers, social profiles). Leave them out if unknown.",
+    "- Keep the existing design. Only add or change what each step asks for.",
+    "- After each step, show me the diff and how to verify it.",
+    F, "");
+
+  P("## Summary of fixes", "", "| # | Fix | Priority | Possible gain |", "|---|---|---|---|");
+  acts.forEach((a, i) => P(`| ${i+1} | ${a.label} | ${a.priority} | ${a.gain ? "+" + a.gain + " pts" : "n/a"} |`));
+  P("");
+
+  let n = 0;
+  const step = (title, why, body, verify) => {
+    n++;
+    P(`## Step ${n}: ${title}`, "");
+    if(why) P(`**Why:** ${why}`, "");
+    P(...body, "");
+    if(verify) P(`**Check:** ${verify}`, "");
+  };
+
+  if(cats.has("access")){
+    const a = acts.find(x => x.category === "access");
+    step("Let AI crawlers reach the site", WHY.access, [
+      a.items[0], "", "What to do:",
+      "1. Open your CDN or firewall settings (Cloudflare, Akamai, Fastly, AWS WAF or similar).",
+      "2. In Cloudflare: Security > Bots. Turn off \"Block AI bots\" if you want AI tools to read and cite you. Check that \"Bot Fight Mode\" does not challenge verified bots.",
+      "3. Add an allow rule for verified AI crawlers: GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User, Google-Extended.",
+      "4. Do not allow every bot. Use your provider's \"verified bot\" list where you can.",
+    ], `run \`curl -I -A "ClaudeBot" ${origin}/\` from a cloud server. It must return 200.`);
+  }
+
+  if(cats.has("rendering")){
+    const fw = (ai.framework || "").toLowerCase();
+    const how = fw.includes("next") ? [
+        "This site uses **Next.js**. Make sure key pages are rendered on the server:",
+        "- App Router: keep page components as Server Components. Move `\"use client\"` down to small interactive parts.",
+        "- Fetch data in the server component, not in `useEffect`.",
+        "- For pages that rarely change, use static generation (`export const dynamic = \"force-static\"` or `generateStaticParams`)."]
+      : fw.includes("nuxt") ? ["This site uses **Nuxt**. Keep `ssr: true` (the default) in `nuxt.config`, and fetch data with `useFetch` or `useAsyncData`, not only on the client."]
+      : [
+        "The page content is built in the browser with JavaScript. Pick one way to put it in the HTML:",
+        "- **Best:** use a framework with server rendering or static generation (Next.js, Astro, Remix, Nuxt, SvelteKit).",
+        "- **Quick (Vite or Create React App):** prerender the main routes at build time, for example with a prerender plugin or `react-snap`.",
+        "- **Minimum:** put a short static version of the key content (what you do, for whom, prices, contact) in `index.html`, in a visible block that JavaScript later replaces.",
+      ];
+    step("Put the content in the HTML, not only in JavaScript", WHY.rendering, [
+      `Now: only ${ai.word_count ?? 0} words are in the HTML before JavaScript runs.`, "", ...how,
+    ], `run \`curl -s ${origin}/ | grep -i "<h1"\`. Your main heading must be in the output.`);
+  }
+
+  if(cats.has("schema") || cats.has("brand_entity") || has(/json-ld/)){
+    const org = {"@type": "Organization", "@id": origin + "/#organization", "name": name, "url": origin + "/", "logo": origin + "/TODO-logo.png"};
+    if(desc) org.description = desc;
+    if(has(/sameas/)) org.sameAs = ["https://www.linkedin.com/company/TODO", "https://x.com/TODO", "https://www.crunchbase.com/organization/TODO"];
+    if(has(/contactpoint|address|telephone/)) org.contactPoint = {"@type": "ContactPoint", "contactType": "customer support", "email": "TODO@" + host};
+    const graph = {"@context": "https://schema.org", "@graph": [org, {"@type": "WebSite", "@id": origin + "/#website", "name": name, "url": origin + "/", "inLanguage": lang, "publisher": {"@id": origin + "/#organization"}}]};
+    step("Add structured data (JSON-LD)", WHY.schema, [
+      "Add this to the `<head>` of the homepage. Replace the TODO values. Remove lines you do not have real values for.", "",
+      F + "html", '<script type="application/ld+json">', JSON.stringify(graph, null, 2), "<\/script>", F, "",
+      ...(has(/brand name|consistent/) ? ["Use the same brand name in the `<title>`, `og:title`, the `<h1>` and the JSON-LD `name`.", ""] : []),
+      "Optional, if the page has questions and answers: add a `FAQPage` block with the same questions and answers that are visible on the page.",
+    ], "paste the homepage URL in https://validator.schema.org/ and fix any errors.");
+  }
+
+  if(cats.has("llms") || has(/llms\.txt/)){
+    const linkLines = links.length ? links.map(l => `- [${l.text}](${l.url}): TODO short description`) : [`- [Home](${origin}/): TODO short description`, `- [Pricing](${origin}/pricing): TODO`, `- [Docs](${origin}/docs): TODO`];
+    step("Add /llms.txt", WHY.llms, [
+      "Create a file at `" + origin + "/llms.txt` (in your `public/` or static folder):", "",
+      F + "markdown", `# ${name}`, "", `> ${desc || "TODO: one or two sentences about what the site offers and for whom."}`, "",
+      "## Main pages", "", ...linkLines, "", "## Optional", "", `- [About](${origin}/about): TODO`, F,
+    ], `open ${origin}/llms.txt in a browser. It must show the text, not an error page.`);
+  }
+
+  const head = [];
+  if(has(/canonical/)) head.push(`<link rel="canonical" href="${origin}/">`);
+  if(has(/viewport/)) head.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
+  if(has(/open graph|og:title|og:image/)) head.push(`<meta property="og:title" content="${name}">`, `<meta property="og:description" content="${desc || "TODO"}">`, `<meta property="og:image" content="${origin}/TODO-og-image.png">`, '<meta property="og:type" content="website">');
+  if(!desc && has(/description/)) head.push('<meta name="description" content="TODO: 120 to 160 characters about the page">');
+  if(has(/rss|atom/)) head.push(`<link rel="alternate" type="application/rss+xml" title="${name}" href="${origin}/rss.xml">`);
+  if(has(/publication|update date|datemodified|freshness/)) head.push(`<meta property="article:modified_time" content="${today}T00:00:00Z">`);
+  if(has(/author|byline/)) head.push('<meta name="author" content="TODO: author or team name">');
+  const needLang = has(/lang attribute/);
+  if(head.length || needLang){
+    step("Fix the page head", WHY.meta, [
+      ...(needLang ? ["Set the language on the `<html>` tag:", "", F + "html", `<html lang="${lang}">`, F, ""] : []),
+      ...(head.length ? ["Add these tags inside `<head>` (skip any that already exist):", "", F + "html", ...head, F] : []),
+      ...(has(/rss|atom/) ? ["", "Only add the RSS link if you publish a blog or news feed."] : []),
+    ], "view the page source and confirm each tag appears once.");
+  }
+
+  if(has(/sitemap|robots\.txt/) || cats.has("robots")){
+    step("Update robots.txt", "robots.txt tells crawlers what they may read. Naming AI crawlers and your sitemap makes your intent clear.", [
+      "Make sure `" + origin + "/robots.txt` contains:", "",
+      F + "text", "User-agent: *", "Allow: /", "", "User-agent: GPTBot", "Allow: /", "", "User-agent: OAI-SearchBot", "Allow: /", "",
+      "User-agent: ClaudeBot", "Allow: /", "", "User-agent: Claude-SearchBot", "Allow: /", "", "User-agent: PerplexityBot", "Allow: /", "",
+      "User-agent: Google-Extended", "Allow: /", "", `Sitemap: ${origin}/sitemap.xml`, F, "",
+      "If you do not want AI training but do want AI search, block `GPTBot`, `ClaudeBot` and `Google-Extended`, and allow the search bots (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`).",
+      "Also make sure `/sitemap.xml` exists and lists your main pages.",
+    ], `open ${origin}/robots.txt and ${origin}/sitemap.xml.`);
+  }
+
+  if(cats.has("content") || cats.has("structure")){
+    const items = (acts.find(a => a.category === "content")?.items || []).map(x => "- " + x);
+    step("Improve the content structure", WHY.content, [
+      ...(cats.has("structure") ? ["- Wrap the main content in `<main>…</main>`. Keep menus in `<nav>` and the footer in `<footer>`."] : []),
+      "- Use one `<h1>` that says what the page is about, then `<h2>` and `<h3>` for sections.",
+      "- Start with one or two sentences that answer \"what is this and who is it for\".",
+      "- Add concrete facts: numbers, prices, dates, places. AI tools quote facts.",
+      ...items,
+    ], "read the AI view in AI Site Scan again. It should read like a clear document.");
+  }
+
+  const other = acts.find(a => a.category === "other");
+  if(other){
+    step("Smaller improvements", WHY.other, [
+      ...other.items.map(x => "- " + x),
+      ...(has(/alt text/) ? ["", "Example for images:", "", F + "html", '<img src="team.jpg" alt="Our support team at work">', F] : []),
+    ]);
+  }
+
+  if(cats.has("ai_discovery")){
+    step("Optional: AI discovery files", WHY.ai_discovery, [
+      "These are new, unofficial conventions. Add them only after the steps above.", "",
+      "`/.well-known/ai.txt`:", "", F + "text", "# AI usage policy for " + host, "User-agent: *", "Allow: /", F, "",
+      "`/ai/summary.json`:", "", F + "json", JSON.stringify({name, url: origin + "/", description: desc || "TODO", language: lang, updated: today}, null, 2), F,
+    ]);
+  }
+
+  const covered = new Set(["access","rendering","schema","brand_entity","llms","content","structure","other","ai_discovery","robots","meta","signals","google_ai"]);
+  const rest = acts.filter(a => !covered.has(a.category));
+  if(rest.length) step("Other findings", null, rest.flatMap(a => [`**${a.label}**`, ...a.items.map(x => "- " + x), ""]));
+
+  P("## Full list from the scan", "", "For reference, every finding from the scan:", "");
+  acts.forEach(a => { P(`### ${a.label} (${a.priority}${a.gain ? ", +" + a.gain + " pts" : ""})`); a.items.forEach(x => P("- " + x)); P(""); });
+  P("## After you deploy", "", `1. Scan again: ${location.origin}/?url=${encodeURIComponent(d.url)}`, "2. Compare the new score with this one in the History tab.", "3. Check the AI view: your key content should be there as readable text.", "");
+  P("---", "", "_The score shows how easy it is for AI tools to reach and understand the site. It does not promise that AI tools will cite it._");
+  return L.join("\n").replace(/\s+\u2014\s+(?=https?:)/g, ": ").replace(/\s+\u2014\s+/g, ". ").replace(/\u2014/g, ", ");
+}
+function cleanName(t){ return String(t).split(/\s[|\\\-–:]\s/)[0].trim() || t; }
+function internalLinks(md, origin){
+  const seen = new Set(), out = [];
+  const re = /\[([^\]\n]{2,60})\]\(([^)\s]+)\)/g; let m;
+  while((m = re.exec(md))){
+    let u; try { u = new URL(m[2], origin + "/"); } catch { continue; }
+    if(u.origin !== origin) continue;
+    const key = u.pathname.replace(/\/$/, "") || "/";
+    if(seen.has(key) || /\.(png|jpe?g|svg|gif|webp|pdf)$/i.test(key) || /^(image|button|input|select)/.test(m[1])) continue;
+    seen.add(key);
+    out.push({text: m[1].trim(), url: u.origin + (key === "/" ? "/" : key)});
+  }
+  return out;
+}
+
+/* ---------- start ---------- */
+updateCount();
 const q = new URLSearchParams(location.search).get("url");
-if(q){ $("#u").value = q; run(q); }
+if(q){ $("#u").value = q; toggleClear(); run(q); } else { $("#u").focus({preventScroll: true}); }
 </script>
 </body>
 </html>

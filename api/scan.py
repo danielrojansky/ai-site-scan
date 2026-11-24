@@ -317,6 +317,9 @@ CATEGORY_LABELS = {
 def _clean_rec(text: str, base_url: str) -> str:
     text = re.sub(r"^\[G-[A-Z-]+\]\s*", "", text)
     text = re.sub(r":\s*geo llms --base-url \S+\.?", ". You can generate one with a free llms.txt generator.", text)
+    # No long dashes in output: "X — Y" becomes "X: Y" (links) or "X. Y" (sentences).
+    text = re.sub(r"\s+\u2014\s+(?=https?://)", ": ", text)
+    text = re.sub(r"\s+\u2014\s+", ". ", text).replace("\u2014", ", ")
     text = text.replace("/about or /chi-siamo link", "/about link").replace(" or /chi-siamo", "")
     return _clean(text)
 

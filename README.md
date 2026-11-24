@@ -7,6 +7,13 @@ A small web app. Enter a URL and get:
 3. A **simulated AI view**: the page HTML before JavaScript runs, turned into text. This is what most AI crawlers and fetch tools get. It is shown next to a screenshot of the real page.
 4. A **bot access test**: robots.txt rules plus the real HTTP answer the server gives to ClaudeBot, GPTBot and PerplexityBot user agents.
 
+## Features
+
+- **New scan** button in the top bar, always one tap away.
+- **History** tab: the last 30 scans are saved in the browser (localStorage). Open any old report, rescan it, or delete it. Score changes since the last scan of the same site are shown.
+- **Fix guide (.md)**: a Markdown file with each fix, why it matters, ready-to-paste code filled in for the site (JSON-LD, llms.txt, robots.txt, head tags, SSR advice), how to check each fix, and a prompt for AI coding tools.
+- Plain-language verdict, top 3 fixes, filters by priority, share link, copy summary.
+
 ## How it works
 
 - `index.html`: the whole frontend (no build step).
