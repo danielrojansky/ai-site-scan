@@ -351,7 +351,7 @@ def build_actions(audit: dict, ai: dict) -> list[dict]:
         elif ai.get("js_risk") == "high":
             actions.append({
                 "category": "rendering", "label": "Content needs JavaScript", "priority": "critical", "gain": None,
-                "items": [f"Only {words} {'is' if wc == 1 else 'are'} in the HTML before JavaScript runs. Most AI fetchers do not run JavaScript, so they see an almost empty page. Use server-side rendering or static generation (for example Next.js SSR/SSG, Astro, or prerendering)."],
+                "items": [("No words are" if wc == 0 else f"Only {words} {'is' if wc == 1 else 'are'}") + " in the HTML before JavaScript runs. Most AI fetchers do not run JavaScript, so they see an almost empty page. Use server-side rendering or static generation (for example Next.js SSR/SSG, Astro, or prerendering)."],
             })
         elif ai.get("js_risk") == "medium":
             actions.append({
