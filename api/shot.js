@@ -60,7 +60,7 @@ module.exports = async function handler(req, res) {
   let browser;
   try {
     const chromium = (await import("@sparticuz/chromium")).default;
-    const puppeteer = require("puppeteer-core");
+    const puppeteer = (await import("puppeteer-core")).default;
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: WIDTH, height: HEIGHT },
