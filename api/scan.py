@@ -361,6 +361,10 @@ def build_actions(audit: dict, ai: dict) -> list[dict]:
 # ---------------------------------------------------------------------------
 # Handler
 # ---------------------------------------------------------------------------
+class ScanError(Exception):
+    pass
+
+
 def scan(url: str) -> dict:
     t0 = time.time()
     result = run_full_audit(url, load_plugins=False)
@@ -369,6 +373,8 @@ def scan(url: str) -> dict:
         ai = build_ai_view(url)
     except Exception as e:  # keep the report even if the AI view fails
         ai = {"ok": False, "error": f"AI view failed: {type(e).__name__}"}
+    if audit.get("error") and not ai.get("ok"):
+        raise ScanError(f"Could not reach the site: {audit['error']}")
     jsr = audit.get("js_rendering") or {}
     if ai.get("ok") and jsr.get("checked"):
         ai["framework"] = jsr.get("framework_detected") or None
@@ -436,6 +442,8 @@ class handler(BaseHTTPRequestHandler):
                               {"Retry-After": str(retry)})
         try:
             data = scan(url)
+        except ScanError as e:
+            return self._send(502, {"error": str(e)[:300]})
         except Exception as e:
             return self._send(500, {"error": f"Scan failed: {type(e).__name__}: {str(e)[:200]}"})
         with _lock:
