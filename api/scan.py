@@ -413,6 +413,17 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        try:
+            return self._get()
+        except BaseException as e:  # never crash the function
+            import traceback, sys
+            traceback.print_exc(file=sys.stderr)
+            try:
+                return self._send(500, {"error": f"Scan failed: {type(e).__name__}"})
+            except Exception:
+                return None
+
+    def _get(self):
         qs = parse_qs(urlparse(self.path).query)
         raw = (qs.get("url") or [""])[0].strip()
         if not raw or len(raw) > 2048:
@@ -423,7 +434,9 @@ class handler(BaseHTTPRequestHandler):
         p = urlparse(url)
         if not p.hostname or "." not in p.hostname:
             return self._send(400, {"error": "This does not look like a valid public URL."})
+        print(f"scan request host={p.hostname}", flush=True)
         ok, err = validate_public_url(url)
+        print(f"validate host={p.hostname} ok={ok} err={err}", flush=True)
         if not ok:
             return self._send(400, {"error": f"URL not allowed: {err}"})
 
