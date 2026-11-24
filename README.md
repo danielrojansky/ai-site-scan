@@ -7,6 +7,10 @@ A small web app. Enter a URL and get:
 3. A **simulated AI view**: the page HTML before JavaScript runs, turned into text. This is what most AI crawlers and fetch tools get. It is shown next to a screenshot of the real page.
 4. A **bot access test**: robots.txt rules plus the real HTTP answer the server gives to ClaudeBot, GPTBot and PerplexityBot user agents.
 
+## Documentation
+
+Full docs are in [`docs/`](docs/): overview, architecture, operations, decisions and changelog, roadmap.
+
 ## Features
 
 - **New scan** button in the top bar, always one tap away.
