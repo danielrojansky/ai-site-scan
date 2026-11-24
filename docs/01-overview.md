@@ -1,6 +1,6 @@
 # AI Site Scan: overview
 
-Last updated: 24 Nov 2026, 23:45 (Asia/Jerusalem)
+Last updated: 25 Nov 2026, 00:40 (Asia/Jerusalem). App version 2.0.0
 Owner: Daniel Rojansky
 
 ## What it is
@@ -19,24 +19,26 @@ AI Site Scan is a free web app. You enter a website address. The app tells you h
 
 ## What the user gets
 
-1. **Score (0 to 100)** with a plain-language verdict, for example "AI tools see an almost empty page".
-2. **Start here:** the 3 most important fixes.
+1. **Score (0 to 100)** with a plain-language verdict, for example "AI tools see an almost empty page". The ring counts up, a mascot reacts, and a "potential score" bar shows what the top fixes could add.
+2. **Start here:** the 3 most important fixes. **Already working:** a list of what is fine, so the report is not only bad news.
 3. **How AI sees your site:** a side-by-side view.
    - Visitor view: a real screenshot from headless Chrome (runs JavaScript).
    - AI view: the HTML before JavaScript runs, turned into text. This is what most AI crawlers and fetch tools get.
-4. **All fixes:** ranked by priority (critical, high, medium, low), with "+N pts" (points the area can still gain) and a "why it matters" note. Filter by priority.
-5. **Key facts:** words visible to AI, JavaScript risk, structured data, page size, language.
-6. **AI bot access table:** robots.txt rule and the real server answer for ClaudeBot, GPTBot and PerplexityBot.
-7. **Score by area:** 9 areas from the engine.
-8. **Fix guide (.md) export:** a step-by-step Markdown guide for a developer or an AI coding tool, with ready-to-paste code filled in for the site.
-9. **History tab:** last 30 scans, saved in the browser. Open, rescan, delete, and see score changes.
-10. **Other:** New scan button, Rescan, Share link (opens a fresh scan), Copy summary, JSON download.
+4. **All fixes:** ranked by priority (critical, high, medium, low), with "+N pts" (points the area can still gain) and a "why it matters" note. Filter by priority. Tick fixes off and see progress. Fixes from our own checks carry an "extra check" tag and do not change the score.
+5. **Key facts:** 8 tiles: words visible to AI, JavaScript risk, structured data, page size, server speed, sitemap, headings, images.
+6. **Can the AI bots get in?** 14 crawlers and AI assistants (OpenAI, Anthropic, Perplexity, Google, Microsoft, Apple, Common Crawl, Amazon, Meta), each with its robots.txt rule and the real server answer.
+7. **How each AI platform sees you:** ChatGPT, Perplexity and Google AI scores with strengths and tips.
+8. **Score by area:** 9 areas from the engine, plus trust signals.
+9. **Fix guide (.md) export:** a step-by-step Markdown guide for a developer or an AI coding tool, with ready-to-paste code filled in for the site.
+10. **History tab:** last 30 scans, saved in the browser. Open, rescan, delete, and see score changes.
+11. **Other:** New scan button, Rescan, Share link (opens a fresh scan), Copy summary, JSON download.
 
-## Status (24 Nov 2026)
+## Status (25 Nov 2026)
 
 - Live and public. No login.
-- Auto-deploy: each push to `main` deploys to production.
-- Tested on: anthropic.com (57), react.dev (63), excalidraw.com (50, JavaScript-only), nytimes.com (blocks all cloud traffic), duet121.com (45, JavaScript-only), a fake domain, and a private address (refused).
+- Auto-deploy: each push to `main` deploys to production. Other branches get a preview URL.
+- Version 2.0.0: new playful interface, parallel scan engine (about 4 to 6 times faster), 14-bot test, extra checks.
+- Tested on: anthropic.com (57), react.dev (63), excalidraw.com (50, JavaScript-only), stripe.com (86), duet121.com (45, JavaScript-only), paulgraham.com (35, little text, no JavaScript), wikipedia.org (69), nytimes.com (blocks all cloud traffic), cnn.com (refuses AI bots with HTTP 451), a fake domain, and a private address (refused). Scores match the old one-by-one engine on every site compared.
 
 ## Documents in this project
 
@@ -47,4 +49,4 @@ AI Site Scan is a free web app. You enter a website address. The app tells you h
 | `03-operations.md` | Deploy, config, testing, troubleshooting |
 | `04-decisions-and-changelog.md` | Why it is built this way, and what changed when |
 | `05-roadmap.md` | Known limits and next ideas |
-| `code/scan.py`, `code/shot.js` | Copies of the two API files. The full code, including `index.html`, is in the GitHub repo (the source of truth) |
+| `code/scan.py`, `code/shot.js` | Copies of the two API files. The full code, including `index.html`, `api/_checks.py` and `tests/`, is in the GitHub repo (the source of truth) |
