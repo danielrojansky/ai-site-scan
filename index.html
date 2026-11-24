@@ -156,7 +156,7 @@ footer{color:var(--muted);font-size:13px;padding:40px 0}
           <div class="term" id="term"></div>
         </div>
       </div>
-      <p class="meta">The AI view is a simulation. It shows the server HTML with no JavaScript run, turned into text. This is what most AI crawlers and fetch tools (ChatGPT, Claude, Perplexity) get. Some tools, such as Google, can run JavaScript. The screenshot comes from a free screenshot service and can take a few seconds to load.</p>
+      <p class="meta">The AI view is a simulation. It shows the server HTML with no JavaScript run, turned into text. This is what most AI crawlers and fetch tools (ChatGPT, Claude, Perplexity) get. Some tools, such as Google, can run JavaScript. The screenshot comes from a real browser that runs JavaScript, like a human visitor. Compare the two views: text that is in the screenshot but not in the AI view is invisible to most AI tools.</p>
     </section>
 
     <section class="card">
@@ -269,13 +269,12 @@ function drawTerm(){
 }
 
 function loadShot(url){
-  const img = $("#shot");
-  img.classList.remove("hide"); $("#shotErr").classList.add("hide");
-  img.onerror = () => { img.classList.add("hide"); $("#shotErr").classList.remove("hide"); };
-  const src = "https://s0.wp.com/mshots/v1/" + encodeURIComponent(url) + "?w=1280&h=1600";
-  img.src = src;
-  // The service returns a placeholder first. Reload a few times until the real image is ready.
-  let n = 0; const iv = setInterval(()=>{ if(++n > 4) return clearInterval(iv); img.src = src + "&t=" + Date.now(); }, 5000);
+  const img = $("#shot"), msg = $("#shotErr");
+  img.classList.add("hide"); msg.classList.remove("hide");
+  msg.textContent = "Taking a screenshot in a real browser… (5 to 20 seconds)";
+  img.onload = () => { msg.classList.add("hide"); img.classList.remove("hide"); };
+  img.onerror = () => { img.classList.add("hide"); msg.classList.remove("hide"); msg.textContent = 'The screenshot is not available for this site. Use "Open site" to view the page.'; };
+  img.src = "/api/shot?url=" + encodeURIComponent(url);
 }
 
 function reportMarkdown(d){

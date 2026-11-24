@@ -16,7 +16,7 @@ A small web app. Enter a URL and get:
   - Turns the engine's recommendations into ranked actions and adds its own checks (JavaScript dependence, bot blocking at server level, `<main>` element).
   - Uses the engine's SSRF protection, so it only fetches public addresses.
   - Basic rate limit (10 scans per IP per 10 minutes, per function instance) and a 10 minute result cache.
-- The screenshot comes from the free WordPress mShots service.
+- `api/shot.js`: a Node function that opens the page in headless Chrome (`@sparticuz/chromium` + `puppeteer-core`) and returns a JPEG. It blocks private addresses and caches each image at the Vercel edge for 10 minutes.
 
 ## Run locally
 
