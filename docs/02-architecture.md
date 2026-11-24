@@ -40,7 +40,7 @@ All hosting is on Vercel. There is no database.
 1. Read `url`. Empty or longer than 2048 characters: 400.
 2. Add `https://` if no scheme. Host must have a dot: else 400.
 3. SSRF check with the engine's `validate_public_url` (public IPs only, DNS resolved once). Unknown domain: 400 "This domain could not be found". Private or metadata address: 400 "URL not allowed".
-4. Cache: same URL within 10 minutes returns the cached result with `cached: true`.
+4. Cache: same URL within 10 minutes returns the cached result with `cached: true` and `cached_age_s`. `fresh=1` skips the cache. Every Rescan in the page sends it, so a rescan after a fix never shows an old answer.
 5. Rate limit: 10 scans per IP per 10 minutes, per function instance. Over the limit: 429 with `Retry-After`.
 6. Run `scan(url)`. Site unreachable for both the engine and the page fetch: 502 with a clear message. Scan longer than 50 s: 502 "took too long". Any other error: 500, logged to stderr. The handler never crashes the function. One log line per scan: host, score, times.
 
@@ -68,6 +68,7 @@ Measured on 8 sites: scores identical, scan time 0.8 to 4.9 s (before: 3.2 to 10
 | `penalty` | Negative points from the engine |
 | `actions[]` | `category`, `label`, `priority`, `gain`, `items[]`, `source` (`engine` or `extra`), ranked |
 | `wins[]` | Plain sentences about what already works |
+| `missed` | What the AI agent missed: `items[]` (`stage`, `impact`, `title`, `detail`), `optional[]` (unproven conventions, not counted), `stages[]` (journey step with `status` ok, warn, fail or skipped), `count`, `potential` (score if every engine gain is earned, at most 100), `usable` (false if the page could not be read) |
 | `platforms[]` | ChatGPT, Perplexity, Google AI: `score`, `strengths`, `tips` (from the engine) |
 | `trust` | Trust grade and 5 layers with found and missing signals (from the engine) |
 | `ai_view` | See below |
@@ -93,6 +94,17 @@ Measured on 8 sites: scores identical, scan time 0.8 to 4.9 s (before: 3.2 to 10
 
 The browser request itself is checked too: a bot check page there (for example AWS WAF, HTTP 202) means the whole scan was blocked.
 
+### What the AI agent missed (`build_missed`)
+
+Built in `api/_checks.py` from the same data as the actions, told from the agent's side. Only measured facts are listed. Each item has a stage, an impact (critical, high, medium, low), a title in the agent's voice ("Could not tell who you are") and a plain detail.
+- **Get in:** page not found, server error or bot check page (then nothing else is listed, `usable` is false), AI crawlers refused, robots.txt blocks, long crawl delay, noindex or noai, slow server, huge page.
+- **Read:** almost empty page (JavaScript) or very little text, text blocked by `data-nosnippet`, images without alt text, video without captions, cookie notice first, bots get a different page.
+- **Understand:** no title, summary or H1, no sections, little text, no or broken or incomplete structured data (Organization, WebSite, FAQ), no canonical, language missing or wrong, no preview tags, different brand names, no numbers, key facts too late.
+- **Trust:** no author (articles only), no date, no official profile links, no contact details, no About link, plain HTTP.
+- **Find more:** links that are not real links, sitemap missing, broken or not listed, nofollow.
+- **Optional (listed apart, never counted):** llms.txt, news feed, AI files. They are new, unproven conventions.
+
+The stage status is `fail` if any critical or high item is in it, `warn` for medium or low, `ok` for none. Google, Bing and Apple bots are never counted as missed (many sites refuse imitations of them on purpose). `potential` is the score plus every engine gain, at most 100.
 ### Actions (`build_actions`)
 
 Own checks first, then the engine's recommendations by category, then more own checks:
@@ -114,9 +126,10 @@ Own checks first, then the engine's recommendations by category, then more own c
 
 ## Frontend (`index.html`)
 
-- Views: **Scan** and **History** (tabs in the sticky top bar), plus a **＋ New scan** button.
+- Views: **Scan** and **History** (tabs in the sticky top bar). The brand name returns to the home screen. Clicking the active **Scan** tab scrolls to the address bar and selects the address.
+- **One scan button.** The address bar button starts every scan. If the address is the same site as the report on screen it says **Rescan** (with a refresh icon, and a fresh scan is requested); for any other address it says **Scan**. It changes while you type. A one-line hint under the bar explains the two cases. There is no separate New scan button and no second Rescan button. After all fixes are ticked, a banner offers **Rescan now** and the bar button pulses.
 - Scan flow: form, example chips, scan stage (page mock with a laser line, mascot, progress bar, funny status lines, checklist with cosmetic timing that finishes fast when the answer arrives), then the report.
-- Report sections: summary (count-up score ring, band badge, verdict, potential-score bar, mascot, trend sparkline, "fixed since last scan", 4 stat tiles, buttons), sticky section nav with scroll spy, Start here (top 3), Already working, How AI sees your site (Compare, Visitor view, AI view with typed lines), Can the AI bots get in? (14 bot cards), How each AI platform sees you, All fixes (filters, accordion, tick-off list with progress), fix guide export card, Key facts (8 tiles), Score by area and trust signals.
+- Report sections: summary (count-up score ring, band badge, verdict, potential-score bar, mascot, trend sparkline, "fixed since last scan", 4 stat tiles, buttons), sticky section nav with scroll spy, **What the AI agent missed**, Start here (top 3), Already working, How AI sees your site (Compare, Visitor view, AI view with typed lines), Can the AI bots get in? (14 bot cards), How each AI platform sees you, All fixes (filters, accordion, tick-off list with progress), fix guide export card, Key facts (8 tiles), Score by area and trust signals.
 - Motion: reveal on scroll, count-ups, confetti for scores of 80 and up, spotlight on hover, mascot eyes follow the pointer. All of it is switched off for visitors who ask for reduced motion.
 - Ticked fixes are stored in `localStorage` key `aiSiteScan.done.v1` per site and reset on a fresh scan.
 - `?url=` in the address runs a scan on load. Share link uses this.

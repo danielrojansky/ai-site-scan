@@ -679,8 +679,8 @@ def check_performance(page_ms: list[int], html_bytes: int, encoding: str | None)
     ms = [m for m in page_ms if m]
     med = statistics.median(ms) if ms else 0
     if med >= 6000:
-        items.append(f"The server takes about {med / 1000:.1f} seconds to answer. Many AI tools stop waiting after a "
-                     "few seconds, so a slow page is often skipped. Check hosting, caching and slow database calls.")
+        items.append(f"The server takes about {med / 1000:.1f} seconds to answer. Fetchers set time limits, so a slow "
+                     "page is more likely to be skipped. Check hosting, caching and slow database calls.")
         prio = "high"
     elif med >= 2500:
         items.append(f"The server takes about {med / 1000:.1f} seconds to answer. Fast pages are fetched more "
@@ -688,8 +688,8 @@ def check_performance(page_ms: list[int], html_bytes: int, encoding: str | None)
         prio = "medium"
     mb = html_bytes / 1_048_576
     if html_bytes > 3_000_000:
-        items.append(f"The HTML is {mb:.1f} MB. AI tools read a limited amount of text, and very large pages get cut. "
-                     "Aim for under 1 MB: move big inline scripts and data out of the HTML.")
+        items.append(f"The HTML is {mb:.1f} MB. Tools that read pages for AI often limit how much they take, so a very "
+                     "large page can get cut. Aim for under 1 MB: move big inline scripts and data out of the HTML.")
         prio = _worst(prio, "high" if html_bytes > 8_000_000 else "medium")
     elif html_bytes > 1_500_000:
         items.append(f"The HTML is {mb:.1f} MB. Large pages are slow to fetch and may be cut by AI tools. "
@@ -852,3 +852,241 @@ def build_wins(ai: dict, audit: dict, rows: dict[str, dict], sitemap: dict | Non
     if ai.get("lang") and not ai.get("lang_note"):
         wins.append(f"The page language is set ({ai['lang']}).")
     return wins[:8]
+
+
+# ---------------------------------------------------------------------------
+# What the AI agent missed: the same audit data, told from the agent's side.
+# Only facts we measured. Optional conventions (llms.txt, feeds) are kept apart.
+# ---------------------------------------------------------------------------
+STAGES = (("reach", "Get in"), ("read", "Read"), ("understand", "Understand"), ("trust", "Trust"), ("discover", "Find more"))
+_STAGE_ORDER = {k: i for i, (k, _) in enumerate(STAGES)}
+
+
+def _it(stage: str, id_: str, impact: str, title: str, detail: str, optional: bool = False) -> dict:
+    return {"id": id_, "stage": stage, "impact": impact, "title": title, "detail": detail, "optional": optional}
+
+
+def _few(names, n: int = 4) -> str:
+    names = list(names)
+    return ", ".join(names[:n]) + (f" and {len(names) - n} more" if len(names) > n else "")
+
+
+def _details(audit: dict, key: str) -> dict:
+    return (((audit or {}).get("checks") or {}).get(key) or {}).get("details") or {}
+
+
+def _google_check(audit: dict, cid: str) -> dict | None:
+    for c in ((audit or {}).get("google_ai") or {}).get("checks") or []:
+        if c.get("id") == cid:
+            return c
+    return None
+
+
+def _pack(items: list[dict], usable: bool, score, potential) -> dict:
+    core = [i for i in items if not i["optional"]]
+    stages = []
+    for key, label in STAGES:
+        its = [i for i in core if i["stage"] == key]
+        if not usable and key != "reach":
+            st = "skipped"
+        elif any(i["impact"] in ("critical", "high") for i in its):
+            st = "fail"
+        elif its:
+            st = "warn"
+        else:
+            st = "ok"
+        stages.append({"key": key, "label": label, "status": st, "count": len(its)})
+    core.sort(key=lambda i: (_STAGE_ORDER[i["stage"]], _RANK[i["impact"]]))
+    return {"usable": usable, "count": len(core), "items": core, "optional": [i for i in items if i["optional"]],
+            "stages": stages, "score": score, "potential": potential}
+
+
+def _page_problem(ai: dict) -> dict | None:
+    """The page itself could not be read: then nothing else was missed on purpose, the agent never got in."""
+    status = ai.get("browser_status") or 0
+    if not ai.get("ok") and not status:
+        return _it("reach", "no_answer", "critical", "Could not open the page",
+                   f"The site did not answer ({ai.get('error') or 'no response'}), so the AI agent read nothing.")
+    if status in (404, 410):
+        return _it("reach", "not_found", "critical", "The page does not exist",
+                   f"The server says HTTP {status}. Check the address, then scan a page that exists.")
+    if status >= 500:
+        return _it("reach", "server_error", "critical", "The server returned an error",
+                   f"HTTP {status}. The site may be down or overloaded, so the AI agent read nothing.")
+    if ai.get("browser_challenge"):
+        return _it("reach", "site_blocked", "critical", "Could not open the page",
+                   f"The site showed a bot check page (HTTP {status}) instead of its content, so the AI agent read nothing.")
+    if status >= 400:
+        return _it("reach", "site_blocked", "critical", "Could not open the page",
+                   f"The site answered HTTP {status} instead of its content, so the AI agent read nothing.")
+    return None
+
+
+def build_missed(ai: dict, audit: dict, rows: dict, files: dict, score, actions: list[dict]) -> dict:
+    """List what an AI agent could not find, read, understand or trust on this page."""
+    ai, audit, rows, files = ai or {}, audit or {}, rows or {}, files or {}
+    gain = sum(a.get("gain") or 0 for a in actions or [] if a.get("source") == "engine")
+    potential = min(100, (score or 0) + gain) if score is not None else None
+    problem = _page_problem(ai)
+    if problem:
+        return _pack([problem], False, score, potential)
+
+    items: list[dict] = []
+    add = items.append
+    meta, schema, content = _details(audit, "meta_tags"), _details(audit, "schema_jsonld"), _details(audit, "content")
+    signals, brand, robots = _details(audit, "signals"), _details(audit, "brand_entity"), _details(audit, "robots_txt")
+    llms, discovery = _details(audit, "llms_txt"), _details(audit, "ai_discovery")
+    recs = audit.get("recommendations") or []
+    words = ai.get("word_count") or 0
+
+    # ---- Get in -----------------------------------------------------------
+    core_bad = [n for n, r in rows.items() if r.get("core") and r.get("verdict") in ("blocked", "challenge", "error")]
+    if core_bad:
+        total = sum(1 for r in rows.values() if r.get("core"))
+        first = rows[core_bad[0]]
+        why = "a bot check page" if first.get("verdict") == "challenge" else "no answer" if first.get("verdict") == "error" else f"HTTP {first.get('status')}"
+        one = len(core_bad) == 1
+        add(_it("reach", "bots_refused", "critical" if len(core_bad) >= 4 else "high",
+                "An AI crawler was turned away" if one else "Some AI crawlers were turned away",
+                f"{len(core_bad)} of {total} AI crawlers {'was' if one else 'were'} refused ({_few(core_bad)}). "
+                f"{'It' if one else 'For example ' + core_bad[0]} got {why} instead of your page."))
+    if robots.get("bots_blocked"):
+        add(_it("reach", "robots_block", "high", "robots.txt told AI to stay out",
+                f"Your robots.txt blocks {_few(robots['bots_blocked'], 5)}. They will not read your pages."))
+    if (robots.get("crawl_delay") or 0) > 10:
+        add(_it("reach", "crawl_delay", "medium", "Was told to wait a long time",
+                f"robots.txt asks crawlers to wait {int(robots['crawl_delay'])} seconds between requests, which slows them down a lot."))
+    if meta.get("x_robots_noindex"):
+        add(_it("reach", "noindex", "critical", "The page said \"do not use me\"",
+                "An X-Robots-Tag: noindex header tells crawlers to skip this page entirely."))
+    if meta.get("has_noai"):
+        add(_it("reach", "noai", "high", "The page asked AI not to use it",
+                "A \"noai\" tag asks AI tools not to use your content."))
+    med_ms = ai.get("response_ms") or 0
+    if med_ms >= 2500:
+        add(_it("reach", "slow", "high" if med_ms >= 6000 else "medium", "Waited a long time for an answer",
+                f"Your server took about {med_ms / 1000:.1f} seconds to answer. Fetchers set time limits, so a slow page is more likely to be skipped."))
+    if (ai.get("html_bytes") or 0) > 1_500_000:
+        add(_it("reach", "huge_page", "medium" if ai["html_bytes"] > 3_000_000 else "low", "The page was too big to read in full",
+                f"The HTML is {ai['html_bytes'] / 1_048_576:.1f} MB. Tools that read pages for AI often limit how much they take, so it can get cut."))
+
+    # ---- Read -------------------------------------------------------------
+    if ai.get("js_risk") == "high":
+        add(_it("read", "js_only", "critical", "Saw an almost empty page",
+                ("No words" if not words else f"Only {words} word{'s' if words != 1 else ''}") + " reached the AI. Your content is built by JavaScript, and most AI crawlers do not run it (Google's does)."))
+    elif ai.get("thin"):
+        add(_it("read", "thin", "high", "Found almost no text",
+                f"Only {words} word{'s' if words != 1 else ''}, and no JavaScript is involved. There is very little to read."))
+    elif ai.get("js_risk") == "medium":
+        add(_it("read", "little_text", "high", "Saw very little text",
+                f"Only {words} words are in the HTML before JavaScript runs. Key content may be loaded later by scripts."))
+    snip = _google_check(audit, "G-SNIPPET")
+    if snip and snip.get("status") in ("warn", "fail"):
+        m = re.search(r"(\d+)%", str(snip.get("evidence") or ""))
+        add(_it("read", "nosnippet", "medium", "Was blocked from part of the text",
+                (f"{m.group(1)}% of your page text" if m else "Part of your page text") + " is marked data-nosnippet, so AI summaries cannot use it."))
+    mm = audit.get("multimodal") or {}
+    if (mm.get("total_images") or 0) >= 3 and (mm.get("alt_coverage") or 0) < 0.8:
+        blind = mm["total_images"] - (mm.get("images_with_alt") or 0)
+        add(_it("read", "images", "medium" if mm["alt_coverage"] < 0.5 else "low", f"Could not see {blind} of {mm['total_images']} images",
+                "They have no alt text, so the AI cannot tell what they show. Decorative images can stay empty."))
+    if mm.get("has_video") and not (mm.get("has_video_captions") or mm.get("has_transcript")):
+        add(_it("read", "video", "low", "Could not follow your video", "There are no captions or transcript, so the AI reads nothing from the video."))
+    cookie = check_cookie_banner(ai.get("markdown", ""))
+    if cookie:
+        add(_it("read", "cookie", "low", "Read a cookie notice first", "The first text the AI got was your cookie banner, not your content."))
+    diff = check_bot_content(rows)
+    if diff:
+        add(_it("read", "bot_page", diff["priority"], "Got a different page than visitors", diff["items"][0]))
+
+    # ---- Understand -------------------------------------------------------
+    if meta and not meta.get("has_title"):
+        add(_it("understand", "no_title", "critical", "Found no page title", "The page has no title tag. It is the first thing AI uses to name the page."))
+    if meta and not meta.get("has_description"):
+        add(_it("understand", "no_description", "high", "Had no summary to go on", "There is no meta description, so the AI had to guess what the page is about."))
+    if content and not content.get("has_h1"):
+        add(_it("understand", "no_h1", "high", "Could not find the main topic", "The page has no H1 heading that says what it is about."))
+    elif content and not content.get("has_heading_hierarchy"):
+        add(_it("understand", "no_sections", "medium", "Could not split the page into answers", "There are no H2 or H3 subheadings, so there are no clear sections to quote."))
+    if ai.get("js_risk") == "low" and not ai.get("thin") and 0 < words < 300:
+        add(_it("understand", "short", "medium", "Found little to quote", f"Only {words} words. AI needs more substance to cite you."))
+    found_types = schema.get("found_types") or []
+    if schema and not found_types and not ai.get("jsonld_types"):
+        add(_it("understand", "no_schema", "high", "Found no structured facts", "There is no JSON-LD data on the page, so the AI had to guess your name, logo and what you offer."))
+    elif found_types:
+        if any("Organization JSON-LD" in r for r in recs):
+            add(_it("understand", "no_org", "high", "Could not tell who you are", "The page has no Organization data. It helps AI tell you apart from other companies with a similar name."))
+        if schema.get("has_website") is False:
+            add(_it("understand", "no_website", "low", "Found no WebSite data", "The page does not describe your site (name and address) in structured data."))
+    if ai.get("jsonld_invalid"):
+        n = ai["jsonld_invalid"]
+        add(_it("understand", "broken_schema", "high", "Ignored broken structured data", f"{n} structured data block{'s' if n != 1 else ''} could not be read (invalid JSON), so the AI skipped {'them' if n != 1 else 'it'}."))
+    gaps = [f"The {m.group(1)} data is missing {m.group(2).strip()}." for m in
+            (re.match(r"Incomplete (\w+) schema: add required fields ([^(]+)", r) for r in recs) if m]
+    if gaps:
+        add(_it("understand", "schema_fields", "medium", "Structured data is incomplete", " ".join(gaps[:2])))
+    if schema.get("has_visible_faq") and not schema.get("has_faq"):
+        add(_it("understand", "faq", "low", "Did not know your Q&A is Q&A", "The page shows questions and answers but has no FAQ markup."))
+    if meta and not meta.get("has_canonical"):
+        add(_it("understand", "no_canonical", "medium", "Could not tell which URL is the real one", "There is no canonical link, so copies of the page can look like separate pages."))
+    if signals and not signals.get("has_lang"):
+        add(_it("understand", "no_lang", "medium", "Did not know your language", "The page does not say which language it is written in."))
+    elif ai.get("lang_note"):
+        add(_it("understand", "wrong_lang", "medium", "Was told the wrong language", ai["lang_note"].split(". AI tools")[0] + "."))
+    if meta and not (meta.get("has_og_title") and meta.get("has_og_description")):
+        add(_it("understand", "no_og", "low", "Found no preview card", "The page has no Open Graph tags (title, description, image) for AI and link previews."))
+    if brand and brand.get("brand_name_consistent") is False and len(brand.get("names_found") or []) >= 2:
+        add(_it("understand", "brand", "medium", "Saw different names for you", "Your title, headings and data use different brand names, so AI is unsure which is yours."))
+    if content and content.get("has_numbers") is False and words >= 120:
+        add(_it("understand", "no_facts", "low", "Found no numbers to quote", "There are no concrete figures such as prices, dates or statistics. AI quotes facts."))
+    if content and content.get("has_front_loading") is False and words >= 300:
+        add(_it("understand", "buried", "low", "Key facts come too late", "The key information is not near the top of the page."))
+
+    # ---- Trust ------------------------------------------------------------
+    types = {str(t).lower() for t in (ai.get("jsonld_types") or found_types)}
+    article = bool(types & {"article", "blogposting", "newsarticle", "techarticle", "report", "scholarlyarticle"}) or meta.get("og_type") == "article"
+    by = _google_check(audit, "G-BYLINE")
+    if article and by and by.get("status") in ("warn", "fail"):  # a company homepage needs no byline
+        add(_it("trust", "no_author", "medium", "Could not tell who wrote it", "There is no author name on the page."))
+    dt = _google_check(audit, "G-DATES")
+    if dt and dt.get("status") in ("warn", "fail"):
+        only_code = "structured data" in str(dt.get("evidence") or "").lower()
+        add(_it("trust", "no_date", "medium" if article else "low", "Could not tell how fresh it is",
+                "The date is only in the code, not shown on the page." if only_code else "There is no publish or update date on the page."))
+    if brand:
+        k = brand.get("kg_pillar_count") or 0
+        if k == 0:
+            add(_it("trust", "no_profiles", "medium", "Could not confirm who you are", "Your structured data does not link to your official profiles (LinkedIn, Wikipedia, Wikidata, Crunchbase)."))
+        elif k < 3:
+            add(_it("trust", "few_profiles", "low", "Found few official profiles", f"Only {k} of 4 official profiles {'is' if k == 1 else 'are'} linked (LinkedIn, Wikipedia, Wikidata, Crunchbase)."))
+        if brand.get("has_contact_info") is False:
+            add(_it("trust", "no_contact", "medium", "Found no contact details", "There is no address, phone or contact point in your structured data."))
+        if brand.get("has_about_link") is False:
+            add(_it("trust", "no_about", "low", "Found no About page", "There is no visible link to an About page."))
+    if (ai.get("final_url") or "").startswith("http://"):
+        add(_it("trust", "no_https", "high", "The page is not secure", "It is served over plain HTTP, which browsers and AI tools trust less."))
+
+    # ---- Find more --------------------------------------------------------
+    lk = _google_check(audit, "G-LINKS")
+    if lk and lk.get("status") == "fail":
+        add(_it("discover", "links", "high", "Could not follow your links", "Your links are not real links (they run through JavaScript), so the AI could not reach other pages."))
+    sm, declared = files.get("sitemap"), files.get("declared") or []
+    smap = check_sitemap(sm, declared)
+    if smap:
+        title = {"Sitemap does not work": "The sitemap link is broken", "Sitemap is not listed in robots.txt": "Did not know about your sitemap",
+                 "Sitemap is empty": "The sitemap is empty"}.get(smap["label"], smap["label"])
+        add(_it("discover", "sitemap", smap["priority"], title, smap["items"][0]))
+    elif not declared and not robots.get("sitemaps") and (sm is None or (not sm.get("ok") and sm.get("status") not in (None, 401, 403, 429))):
+        add(_it("discover", "no_sitemap", "medium", "Found no sitemap", "There is no sitemap, so crawlers must guess which pages exist."))
+    crawl = check_crawl(ai.get("robots_tokens") or [], ai.get("x_robots_tag"))
+    if crawl:
+        add(_it("discover", "nofollow", "medium", "Was told not to follow links", crawl["items"][0]))
+
+    # ---- Optional conventions: shown apart, never counted ---------------------
+    if llms and llms.get("found") is False:
+        add(_it("discover", "llms", "low", "llms.txt", "No llms.txt guide to your site. It is a new, unproven convention.", True))
+    if signals and signals.get("has_rss") is False:
+        add(_it("discover", "feed", "low", "News feed", "No RSS or Atom feed to announce new content.", True))
+    if discovery and not discovery.get("has_well_known_ai") and not discovery.get("has_summary"):
+        add(_it("discover", "ai_files", "low", "AI files", "No /.well-known/ai.txt or /ai/summary.json. These are new, unofficial conventions.", True))
+    return _pack(items, True, score, potential)

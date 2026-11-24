@@ -3,12 +3,13 @@
 A small web app. Enter a URL and get:
 
 1. An **AI readiness score** (0 to 100) with a score per category, and a mascot that reacts to it.
-2. A **ranked list of fixes**, with the points each category can still gain. Tick fixes off as you do them.
-3. A **simulated AI view**: the page HTML before JavaScript runs, turned into text. This is what most AI crawlers and fetch tools get. It is shown next to a screenshot of the real page.
-4. A **bot access test**: robots.txt rules plus the real HTTP answer the server gives to 14 crawlers and AI assistants (GPTBot, ClaudeBot, PerplexityBot, Googlebot and more), all tested at once.
-5. **What already works**, a per-platform view (ChatGPT, Perplexity, Google AI) and trust signals.
+2. **What the AI agent missed**, right after the score: the page read as an AI agent reads it, as a journey (get in, read, understand, trust, find more) with a card for every blind spot. It is the free teaser for the full report and the fix guide.
+3. A **ranked list of fixes**, with the points each category can still gain. Tick fixes off as you do them.
+4. A **simulated AI view**: the page HTML before JavaScript runs, turned into text. This is what most AI crawlers and fetch tools get. It is shown next to a screenshot of the real page.
+5. A **bot access test**: robots.txt rules plus the real HTTP answer the server gives to 14 crawlers and AI assistants (GPTBot, ClaudeBot, PerplexityBot, Googlebot and more), all tested at once.
+6. **What already works**, a per-platform view (ChatGPT, Perplexity, Google AI) and trust signals.
 
-Current version: **2.0.0** (shown in the page footer).
+Current version: **2.1.0** (shown in the page footer).
 
 ## Documentation
 
@@ -16,7 +17,7 @@ Full docs are in [`docs/`](docs/): overview, architecture, operations, decisions
 
 ## Features
 
-- **New scan** button in the top bar, always one tap away.
+- **One scan button** in the address bar. It says **Rescan** when the address is the report on screen (always a fresh scan, never a cached one) and **Scan** for any other address. It changes as you type.
 - **History** tab: the last 30 scans are saved in the browser (localStorage). Open any old report, rescan it, or delete it. Score changes and "fixed since last scan" are shown.
 - **Fix guide (.md)**: a Markdown file with each fix, why it matters, ready-to-paste code filled in for the site (JSON-LD, llms.txt, robots.txt, head tags, SSR advice), how to check each fix, and a prompt for AI coding tools.
 - Plain-language verdict, top 3 fixes, filters by priority, share link, copy summary.

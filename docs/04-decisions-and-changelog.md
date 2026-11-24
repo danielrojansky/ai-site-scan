@@ -16,6 +16,8 @@
 | Extra checks (v2) | Own pure functions in `api/_checks.py`, shown as "extra check", not in the score | Add them to the score; fork the engine | The score stays the engine's, so it can be compared and trusted. Extra checks are testable offline |
 | Bot imitations (v2) | Report only AI-vendor bots as a problem; show Google, Bing and Apple in the table | Report every refused bot | Many sites refuse imitations of verified bots on purpose, so it would raise false alarms |
 | Interface (v2) | Playful motion and a mascot in plain CSS and JS | Animation library; separate asset files | Keeps one file with no build step. Motion is off for "reduce motion" |
+| One scan button (v2.1) | One address-bar button: Rescan for the same site, Scan for another; Rescan skips the cache; no separate New scan or second Rescan | Keep both buttons and rename them; keep a New scan button in the top bar | Two primary buttons and three ways to rescan confused people. One control that names what it will do needs no explaining |
+| What the AI missed (v2.1) | Free section right after the score, from measured data only; optional conventions kept apart | Show best-practice lists; lock the details now | It shows owners what they are missing in the agent's own words. Payment is not built; the section is the teaser for it |
 
 ## Changelog
 
@@ -46,6 +48,17 @@ All times Asia/Jerusalem.
 | 00:40 | Fixes: 404 and 5xx are no longer shown as "blocked"; AWS WAF and Cloudflare bot check pages are detected; pages with little text and no JavaScript are no longer called "needs JavaScript" (for example paulgraham.com and example.com); non-UTF-8 pages are decoded correctly; pages up to 10 MB are read (cnn.com was 6.7 MB); the "since last scan" number compared a scan with itself |
 | 00:40 | New interface: animated hero with mascot, scan stage, count-up score ring, confetti, reveal on scroll, "Already working", bot cards, platform scores, tick-off fix list with progress, "fixed since last scan", trend line, 8 key facts, sticky section nav, back to top |
 | 00:40 | Version shown in the footer. Offline tests added (`tests/`) |
+
+### 25 Nov 2026, version 2.1.0
+
+All times Asia/Jerusalem.
+
+| Time | Change |
+|---|---|
+| 01:07 | New section "What the AI agent missed" right after the score: journey bar (get in, read, understand, trust, find more), a card for every blind spot, optional extras apart, and a call to action for the full report and fix guide |
+| 01:07 | One smart Scan/Rescan button in the address bar. The top-bar New scan button and the second Rescan button are gone. Rescan always asks for a fresh scan (`fresh=1`), because a cached answer made a rescan look like it did nothing |
+| 01:07 | Cache age shown ("cached, 3 min ago"); an "all fixes ticked" banner with Rescan now; clicking the address selects it all |
+| 01:07 | Wording: slow servers and big pages are described with hedged claims, not unverified numbers. 12 new tests (60 in all) |
 
 ## Test results at launch
 
