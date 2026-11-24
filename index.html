@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Site Scan: is your site readable by AI?</title>
+<meta name="description" content="Scan any website and see how AI assistants and crawlers read it. Get an AI readiness score, a text view of what AI sees, and a ranked list of fixes.">
+<link rel="canonical" href="https://ai-site-scan.vercel.app/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Site Scan","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Scan a website for AI readiness and see how AI reads it.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--ink:#14171c;--muted:#5d6673;--line:#e3e6eb;
+  --accent:#3b5bdb;--accent-soft:#edf1ff;
+  --crit:#c92a2a;--crit-soft:#fff0f0;--high:#d9480f;--high-soft:#fff4e6;
+  --med:#9c7a00;--med-soft:#fff9db;--low:#5d6673;--low-soft:#f1f3f5;
+  --ok:#2b8a3e;--ok-soft:#ebfbee;
+  --term:#0f1720;--term-ink:#d6e2f0;--term-dim:#7d8ea3;
+  --r:14px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header.top{padding:40px 0 8px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.brand .dot{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--accent),#7048e8)}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.15;letter-spacing:-.02em;margin:22px 0 8px}
+.lede{color:var(--muted);max-width:640px;margin:0 0 22px}
+form.scan{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+form.scan input{flex:1;border:0;outline:0;font:inherit;font-size:17px;padding:10px 12px;background:transparent;min-width:0}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);padding:8px 14px}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;padding:10px 22px}
+button.primary:disabled{opacity:.6;cursor:wait}
+.hint{color:var(--muted);font-size:13px;margin:8px 4px 0}
+.err{background:var(--crit-soft);color:var(--crit);border-radius:10px;padding:12px 14px;margin-top:16px}
+.loading{margin-top:28px;display:flex;align-items:center;gap:12px;color:var(--muted)}
+.spin{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+section{margin-top:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.grid{display:grid;gap:16px}
+.summary{grid-template-columns:280px 1fr}
+@media(max-width:820px){.summary{grid-template-columns:1fr}}
+.scorebox{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
+.ring{--p:0;--c:var(--accent);width:150px;height:150px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0)}
+.ring>div{width:122px;height:122px;border-radius:50%;background:var(--card);display:grid;place-items:center}
+.ring b{font-size:44px;line-height:1;letter-spacing:-.03em}
+.ring small{color:var(--muted);font-size:13px}
+.band{font-weight:600;text-transform:capitalize}
+.meta{color:var(--muted);font-size:13px}
+.tiles{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{border:1px solid var(--line);border-radius:12px;padding:14px}
+.tile .k{color:var(--muted);font-size:13px}
+.tile .v{font-size:22px;font-weight:700;margin-top:2px}
+.tile .s{font-size:13px;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.p-critical{background:var(--crit-soft);color:var(--crit)}.p-high{background:var(--high-soft);color:var(--high)}
+.p-medium{background:var(--med-soft);color:var(--med)}.p-low{background:var(--low-soft);color:var(--low)}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+h2{font-size:20px;letter-spacing:-.01em;margin:0 0 14px}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:240px 1fr 64px;gap:12px;align-items:center;font-size:14px}
+@media(max-width:620px){.bar{grid-template-columns:1fr 54px}.bar .track{grid-column:1/-1;order:3}}
+.track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:99px}
+.bar .n{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.actions{display:grid;gap:12px}
+.action{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.action header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.action h3{font-size:16px;margin:0;flex:1}
+.gain{font-size:13px;color:var(--ok);font-weight:600}
+.action ul{margin:10px 0 0;padding-left:20px}
+.action li{margin:4px 0;font-size:15px}
+.action li a{word-break:break-all}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.views.one{grid-template-columns:1fr}
+@media(max-width:900px){.views{grid-template-columns:1fr}}
+.pane{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:420px}
+.pane .bar2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);background:#fafbfc}
+.human img{width:100%;display:block;background:#eef0f3;min-height:380px;object-fit:cover;object-position:top}
+.term{background:var(--term);color:var(--term-ink);font:13px/1.6 var(--mono);padding:14px 16px;overflow:auto;max-height:720px;white-space:pre-wrap;word-break:break-word;flex:1}
+.term .h{color:#fff;font-weight:700}.term .l{color:#8fb4ff}.term .d{color:var(--term-dim)}.term .w{color:#ffd8a8}
+.pane.ai .bar2{background:#161f2b;color:var(--term-dim);border-color:#233042}
+.pane.ai .bar2 button{background:#233042;color:var(--term-ink);border-color:#2f3f55;padding:4px 10px;font-size:12px}
+.facts{font:12.5px/1.6 var(--mono);color:var(--term-dim);padding:12px 16px;background:#121b26;border-bottom:1px solid #233042}
+.facts b{color:var(--term-ink);font-weight:500}
+table.bots{width:100%;border-collapse:collapse;font-size:14px}
+table.bots td,table.bots th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+footer{color:var(--muted);font-size:13px;padding:40px 0}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="dot"></span> AI Site Scan</div>
+    <h1>Can AI read your website?</h1>
+    <p class="lede">Enter a URL. You get an AI readiness score, the page as AI tools see it (no JavaScript), and a ranked list of fixes.</p>
+    <form class="scan" id="f">
+      <input id="u" type="text" inputmode="url" autocomplete="url" placeholder="https://yoursite.com" aria-label="Website URL" required>
+      <button class="primary" id="go" type="submit">Scan</button>
+    </form>
+    <div class="hint">Scans the page you enter (usually your homepage) plus robots.txt, llms.txt and sitemap. Takes 5 to 30 seconds.</div>
+    <div id="err" class="err hide"></div>
+    <div id="loading" class="loading hide"><div class="spin"></div><span id="step">Starting scan…</span></div>
+  </header>
+
+  <main id="out" class="hide">
+    <section class="grid summary">
+      <div class="card scorebox">
+        <div class="ring" id="ring"><div><span><b id="score">0</b><br><small>of 100</small></span></div></div>
+        <div class="band" id="band"></div>
+        <div class="meta" id="when"></div>
+        <div class="row" style="justify-content:center;margin-top:6px">
+          <button id="copyMd" type="button">Copy report</button>
+          <button id="dlJson" type="button">Download JSON</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2 id="siteTitle">Summary</h2>
+        <div class="grid tiles" id="tiles"></div>
+        <div style="margin-top:16px">
+          <table class="bots" id="bots"></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Suggested actions</h2>
+      <p class="meta" style="margin-top:-6px">Ranked by impact. "+N pts" is how many score points the category can still gain.</p>
+      <div class="actions" id="actions"></div>
+    </section>
+
+    <section class="card">
+      <h2>How AI sees your site</h2>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-v="both" aria-selected="true">Side by side</button>
+        <button role="tab" data-v="ai" aria-selected="false">AI view</button>
+        <button role="tab" data-v="human" aria-selected="false">Human view</button>
+      </div>
+      <div class="views" id="views">
+        <div class="pane human" id="paneHuman">
+          <div class="bar2"><span>What a visitor sees</span><a id="openSite" target="_blank" rel="noopener">Open site ↗</a></div>
+          <img id="shot" alt="Screenshot of the website">
+          <div id="shotErr" class="meta hide" style="padding:20px">The screenshot is not available. Use "Open site" to view the page.</div>
+        </div>
+        <div class="pane ai" id="paneAi">
+          <div class="bar2"><span>What AI gets: HTML before JavaScript, as text</span><button id="rawToggle" type="button">Show raw</button></div>
+          <div class="facts" id="facts"></div>
+          <div class="term" id="term"></div>
+        </div>
+      </div>
+      <p class="meta">The AI view is a simulation. It shows the server HTML with no JavaScript run, turned into text. This is what most AI crawlers and fetch tools (ChatGPT, Claude, Perplexity) get. Some tools, such as Google, can run JavaScript. The screenshot comes from a free screenshot service and can take a few seconds to load.</p>
+    </section>
+
+    <section class="card">
+      <h2>Score by category</h2>
+      <div class="bars" id="bars"></div>
+      <p class="meta" id="engine" style="margin-top:14px"></p>
+    </section>
+  </main>
+
+  <footer>AI Site Scan. Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const linkify = s => esc(s).replace(/(https?:\/\/[^\s<)]+[^\s<).,;])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+let DATA = null, RAW = false;
+const kb = b => (b||0) < 1024 ? (b||0) + " bytes" : Math.round(b/1024).toLocaleString("en-US") + " KB";
+
+const STEPS = ["Fetching the page","Reading robots.txt","Looking for llms.txt and sitemap","Checking structured data","Checking content structure","Testing access as ClaudeBot, GPTBot and PerplexityBot","Building the AI view","Ranking fixes"];
+
+function colorFor(p){ return p>=80?"var(--ok)":p>=60?"var(--accent)":p>=40?"var(--med)":p>=20?"var(--high)":"var(--crit)"; }
+
+async function run(url){
+  $("#err").classList.add("hide"); $("#out").classList.add("hide");
+  $("#loading").classList.remove("hide"); $("#go").disabled = true;
+  let i = 0; $("#step").textContent = STEPS[0] + "…";
+  const t = setInterval(()=>{ i = Math.min(i+1, STEPS.length-1); $("#step").textContent = STEPS[i] + "…"; }, 2500);
+  try{
+    const r = await fetch("/api/scan?url=" + encodeURIComponent(url));
+    let d; try{ d = await r.json(); }catch{ throw new Error(r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners." : "The server returned an error (" + r.status + ")."); }
+    if(!r.ok) throw new Error(d.error || ("Error " + r.status));
+    DATA = d; render(d);
+    const u = new URL(location); u.searchParams.set("url", url); history.replaceState(null, "", u);
+  }catch(e){
+    $("#err").textContent = e.message; $("#err").classList.remove("hide");
+  }finally{
+    clearInterval(t); $("#loading").classList.add("hide"); $("#go").disabled = false;
+  }
+}
+
+function render(d){
+  const ai = d.ai_view || {};
+  $("#out").classList.remove("hide");
+  if(d.error){ $("#err").textContent = "The engine could not fully scan this site: " + d.error; $("#err").classList.remove("hide"); }
+  const s = d.score ?? 0;
+  $("#score").textContent = s;
+  $("#ring").style.setProperty("--p", s); $("#ring").style.setProperty("--c", colorFor(s));
+  $("#band").textContent = (d.band || "").replace(/_/g," ");
+  $("#when").textContent = "Scanned " + d.scanned_at + (d.cached ? " (cached)" : "");
+  $("#siteTitle").textContent = ai.title || d.url;
+
+  const risk = ai.js_risk || "unknown";
+  const riskCls = {high:"p-critical",medium:"p-high",low:"p-ok"}[risk] || "p-low";
+  const tiles = [
+    ["Words AI can read", ai.ok ? (ai.word_count ?? 0).toLocaleString("en-US") : "n/a", ai.has_main ? "Has a &lt;main&gt; element" : "No &lt;main&gt; element"],
+    ["Needs JavaScript?", `<span class="pill ${riskCls}">${esc({high:"High risk",medium:"Some risk",low:"Low risk"}[risk] || "Unknown")}</span>`, ai.ok ? `${ai.script_count} script tags` : ""],
+    ["Structured data", ai.jsonld_types?.length ? ai.jsonld_types.length + " type" + (ai.jsonld_types.length>1?"s":"") : "None", esc((ai.jsonld_types||[]).slice(0,3).join(", ") || "No JSON-LD found")],
+    ["Page size", ai.ok ? kb(ai.html_bytes) : "n/a", ai.lang ? "Language: " + esc(ai.lang) : "No lang attribute"],
+  ];
+  $("#tiles").innerHTML = tiles.map(([k,v,s])=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+
+  const robots = d.audit?.checks?.robots_txt?.details || {};
+  const allowedSet = new Set(robots.bots_allowed || []), blockedSet = new Set(robots.bots_blocked || []);
+  const botRows = Object.entries(ai.bot_access || {}).map(([name,v])=>{
+    const http = v.status ? (v.status < 400 ? `<span class="pill p-ok">HTTP ${v.status}</span>` : `<span class="pill p-critical">HTTP ${v.status}</span>`) : `<span class="pill p-critical">No response</span>`;
+    const rb = blockedSet.has(name) ? `<span class="pill p-critical">Blocked</span>` : allowedSet.has(name) ? `<span class="pill p-ok">Allowed</span>` : `<span class="pill p-low">Not listed (allowed)</span>`;
+    return `<tr><td>${esc(name)}</td><td>${rb}</td><td>${http}</td></tr>`;
+  }).join("");
+  $("#bots").innerHTML = botRows ? `<tr><th>AI bot</th><th>robots.txt</th><th>Server answer</th></tr>${botRows}` : "";
+
+  $("#actions").innerHTML = (d.actions||[]).length ? d.actions.map(a=>`
+    <div class="action">
+      <header><span class="pill p-${a.priority}">${a.priority}</span><h3>${esc(a.label)}</h3>${a.gain ? `<span class="gain">+${a.gain} pts</span>` : ""}</header>
+      <ul>${a.items.map(i=>`<li>${linkify(i)}</li>`).join("")}</ul>
+    </div>`).join("") : `<p>No actions. Nice work.</p>`;
+
+  $("#bars").innerHTML = (d.categories||[]).map(c=>{
+    const p = c.max ? Math.round(100*(c.score||0)/c.max) : 0;
+    return `<div class="bar"><span>${esc(c.label)}</span><div class="track"><i style="width:${p}%;background:${colorFor(p)}"></i></div><span class="n">${c.score ?? 0} / ${c.max}</span></div>`;
+  }).join("") + (d.penalty ? `<div class="bar"><span>Penalties</span><div class="track"></div><span class="n">${d.penalty}</span></div>` : "");
+  $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${(d.duration_ms/1000).toFixed(1)} s.`;
+
+  const target = ai.final_url || d.url;
+  $("#openSite").href = target;
+  loadShot(target);
+
+  $("#facts").innerHTML = ai.ok ? [
+    ["title", ai.title], ["description", ai.description], ["lang", ai.lang], ["canonical", ai.canonical],
+    ["json-ld", (ai.jsonld_types||[]).join(", ")], ["http", ai.status + " · " + kb(ai.html_bytes) + " · " + ai.markdown_chars.toLocaleString("en-US") + " chars of text"]
+  ].map(([k,v])=>`${k.padEnd(12," ")}<b>${esc(v || "(missing)")}</b>`).join("\n").replace(/\n/g,"<br>") : "";
+  RAW = false; $("#rawToggle").textContent = "Show raw"; drawTerm();
+  window.scrollTo({top: $("#out").offsetTop - 12, behavior: "smooth"});
+}
+
+function drawTerm(){
+  const ai = DATA?.ai_view || {};
+  if(!ai.ok){ $("#term").innerHTML = `<span class="w">Could not build the AI view: ${esc(ai.error || "unknown error")}</span>`; return; }
+  let md = ai.markdown || "";
+  if(!md.trim()){ $("#term").innerHTML = `<span class="w">(empty) The HTML has no readable text before JavaScript runs. AI tools that do not run JavaScript see a blank page.</span>`; return; }
+  const tail = ai.markdown_truncated ? `\n\n<span class="d">… cut at 40,000 characters</span>` : "";
+  if(RAW){ $("#term").innerHTML = esc(md) + tail; return; }
+  $("#term").innerHTML = esc(md).split("\n").map(line=>{
+    if(/^#{1,6} /.test(line)) return `<span class="h">${line}</span>`;
+    return line
+      .replace(/\[image: ([^\]]*)\]/g, (m,a)=>`<span class="${a==='no alt text'?'w':'d'}">[image: ${a}]</span>`)
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, `<span class="l">$1</span><span class="d"> → $2</span>`)
+      .replace(/\*\*([^*]+)\*\*/g, `<span class="h">$1</span>`);
+  }).join("\n") + tail;
+}
+
+function loadShot(url){
+  const img = $("#shot");
+  img.classList.remove("hide"); $("#shotErr").classList.add("hide");
+  img.onerror = () => { img.classList.add("hide"); $("#shotErr").classList.remove("hide"); };
+  const src = "https://s0.wp.com/mshots/v1/" + encodeURIComponent(url) + "?w=1280&h=1600";
+  img.src = src;
+  // The service returns a placeholder first. Reload a few times until the real image is ready.
+  let n = 0; const iv = setInterval(()=>{ if(++n > 4) return clearInterval(iv); img.src = src + "&t=" + Date.now(); }, 5000);
+}
+
+function reportMarkdown(d){
+  const ai = d.ai_view || {};
+  const L = [];
+  L.push(`# AI readiness report: ${d.url}`, "", `Score: **${d.score}/100** (${(d.band||"").replace(/_/g," ")})`, `Scanned: ${d.scanned_at}`, "");
+  if(ai.ok){
+    L.push("## Key facts", `- Words visible without JavaScript: ${ai.word_count}`, `- JavaScript risk: ${ai.js_risk}`, `- Structured data: ${(ai.jsonld_types||[]).join(", ") || "none"}`);
+    Object.entries(ai.bot_access||{}).forEach(([n,v])=>L.push(`- ${n}: HTTP ${v.status ?? "no response"}`));
+    L.push("");
+  }
+  L.push("## Suggested actions");
+  (d.actions||[]).forEach((a,i)=>{ L.push("", `### ${i+1}. ${a.label} (${a.priority}${a.gain?`, +${a.gain} pts`:""})`); a.items.forEach(t=>L.push(`- ${t}`)); });
+  L.push("", "## Score by category");
+  (d.categories||[]).forEach(c=>L.push(`- ${c.label}: ${c.score}/${c.max}`));
+  L.push("", `Engine: ${d.engine?.name} v${d.engine?.version}`);
+  return L.join("\n");
+}
+
+$("#f").addEventListener("submit", e=>{ e.preventDefault(); const v = $("#u").value.trim(); if(v) run(v); });
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click", ()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected", x===b));
+  const v = b.dataset.v;
+  $("#paneHuman").classList.toggle("hide", v==="ai"); $("#paneAi").classList.toggle("hide", v==="human");
+  $("#views").classList.toggle("one", v!=="both");
+}));
+$("#rawToggle").addEventListener("click", ()=>{ RAW = !RAW; $("#rawToggle").textContent = RAW ? "Show formatted" : "Show raw"; drawTerm(); });
+$("#copyMd").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText(reportMarkdown(DATA)); $("#copyMd").textContent = "Copied"; setTimeout(()=>$("#copyMd").textContent="Copy report",1500);}catch{ alertless(); } });
+function alertless(){ $("#copyMd").textContent = "Copy failed"; }
+$("#dlJson").addEventListener("click", ()=>{
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"}));
+  a.download = "ai-site-scan-" + (new URL(DATA.url).hostname) + ".json"; a.click();
+});
+const q = new URLSearchParams(location.search).get("url");
+if(q){ $("#u").value = q; run(q); }
+</script>
+</body>
+</html>
