@@ -723,7 +723,7 @@ function buildFixGuide(d){
         "- **Minimum:** put a short static version of the key content (what you do, for whom, prices, contact) in `index.html`, in a visible block that JavaScript later replaces.",
       ];
     step("Put the content in the HTML, not only in JavaScript", WHY.rendering, [
-      `Now: only ${ai.word_count ?? 0} words are in the HTML before JavaScript runs.`, "", ...how,
+      (ai.word_count ? `Now: only ${ai.word_count} word${ai.word_count === 1 ? " is" : "s are"} in the HTML before JavaScript runs.` : "Now: the HTML has no readable text before JavaScript runs."), "", ...how,
     ], `run \`curl -s ${origin}/ | grep -i "<h1"\`. Your main heading must be in the output.`);
   }
 
