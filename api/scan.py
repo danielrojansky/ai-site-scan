@@ -241,7 +241,7 @@ def build_ai_view(url: str) -> dict:
 
     if words < 50 or has_noscript_warning or (spa_roots and all(x["words"] < 20 for x in spa_roots) and words < 200):
         js_risk = "high"
-    elif words < 200 or len(ext_scripts) > 25:
+    elif words < 120:
         js_risk = "medium"
     else:
         js_risk = "low"
@@ -291,7 +291,7 @@ CATEGORY_LABELS = {
     "ai_discovery": "AI discovery files",
     "brand_entity": "Brand and entity signals",
     "google_ai": "Google AI readiness",
-    "blockers": "Blockers",
+    "blockers": "Possible blockers",
     "other": "Other improvements",
 }
 
@@ -340,7 +340,9 @@ def build_actions(audit: dict, ai: dict) -> list[dict]:
         gain = (mx - sc) if isinstance(mx, int) and isinstance(sc, int) else None
         items = [_clean_rec(r, audit.get("url", "")) for r in recs]
         prio = "high" if (gain or 0) >= 8 else "medium" if (gain or 0) >= 3 else "low"
-        if cat == "blockers" or any(r.lower().startswith(("critical", "[critical")) or "noindex" in r.lower() for r in recs):
+        if cat == "blockers":
+            prio = "high"
+        if any(r.lower().startswith(("critical", "[critical")) or "noindex" in r.lower() or "noai" in r.lower() for r in recs):
             prio = "critical"
         if cat == "blockers" and any(a["category"] == "rendering" for a in actions):
             items = [i for i in items if "javascript" not in i.lower()]
@@ -367,6 +369,11 @@ def scan(url: str) -> dict:
         ai = build_ai_view(url)
     except Exception as e:  # keep the report even if the AI view fails
         ai = {"ok": False, "error": f"AI view failed: {type(e).__name__}"}
+    jsr = audit.get("js_rendering") or {}
+    if ai.get("ok") and jsr.get("checked"):
+        ai["framework"] = jsr.get("framework_detected") or None
+        if jsr.get("js_dependent") and ai.get("js_risk") != "high":
+            ai["js_risk"] = "high"
     return {
         "url": url,
         "scanned_at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
