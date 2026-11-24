@@ -1,1 +1,1 @@
-geo-optimizer-skill==4.28.0
+geo-optimizer-skill[async]==4.28.0
