@@ -11,6 +11,7 @@
 7. **Engine text is in English and sometimes technical.** We clean it, but some items keep engine wording.
 8. **The score is one tool's opinion.** It shows readiness, not a promise of AI citations.
 9. **The location check is per page and a heuristic.** It reads the page you scan, so a page can lack the address that the homepage has. It knows Israeli towns and about 230 big cities. A business in a place that is not on the list is still found through a street address, an "Address:" label or an `<address>` block.
+10. **Agent readiness is a reading of public standards.** A pass means the file or answer is there and valid. It does not mean any agent uses it. We do not call isitagentready.com. Differences from its website: a missing optional check shows a dash here and red with an "Optional" tag there; the Poppy and level 5 rules follow its public text and may differ at the edges; ap2 is not tested because no public rules exist; WebMCP is read from the homepage code first and then, when the panel opens, in a real browser. Each check adds about 25 requests to the scanned site.
 
 ## Next ideas (not started)
 
@@ -32,7 +33,8 @@
 | Run a real AI agent on a task ("What does this site do, who is it for, where is it?") and show its notes | The closest test of what AI really understands. is-agentic.com does it | Medium, has cost and needs an API key |
 | "Copy prompt" button on each fix | One click to hand a fix to an AI coding tool. isitagentready.com and is-agentic.com have it | Low |
 | Location check across the homepage and the contact page | Tells "this page lacks the address" from "the whole site lacks it" | Medium |
-| Markdown content negotiation check (`Accept: text/markdown`) | A Cloudflare feature for agents. Optional extra | Low |
+| The fix guide writes the agent files (API catalog, Agent Skills index with real digests, MCP server card) when the site has the material | Closes the gaps the Agent readiness panel shows | Medium |
+| Show the agent readiness level in History and the trend line | Progress over time for the new panel | Low |
 | Own domain (for example aisitescan.com) | Branding, trust | Low |
 | Fix the Duet121 site (SSR or prerender) using its fix guide | Duet121 scored 45, 0 words visible to AI | Depends on its stack |
 
@@ -44,4 +46,4 @@
 | is-agentic.com (Ora, Vercel) | Guesses the site type (docs, business, app, commerce) and weights checks for it: essential 80 points, recommended 20, bonus 5. Critical access first. Runs a real AI agent on a task and shows its notes. Copy fix prompt per gap | Only in structured data ("Organization schema complete with contactPoint and address") |
 | agnt.one site checker | A crawl preview ("the raw text an agent would use") and an agency upsell | In our test the button sent no scan request, so no result |
 
-What we took: apply a check only when the page shows it matters (is-agentic's site types, our local-business gate), and an optional Content Signals extra. Ideas not built are in the table above.
+What we took: apply a check only when the page shows it matters (is-agentic's site types, our local-business gate), an optional Content Signals extra, and (v2.4.0) every check of isitagentready.com as the Agent readiness panel. Ideas not built are in the table above.

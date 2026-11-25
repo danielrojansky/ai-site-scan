@@ -20,6 +20,7 @@
 | What the AI missed (v2.1) | Free section right after the score, from measured data only; optional conventions kept apart | Show best-practice lists; lock the details now | It shows owners what they are missing in the agent's own words. Payment is not built; the section is the teaser for it |
 | Local business location (v2.2) | A check that flags a local business whose page text never says where it is. Critical when the page clearly depends on a place (local business data, opening hours, or 5 signals), high for a shop or delivery business, medium when only a country or area is named. Not in the score. Software and media sites are never flagged | A score penalty; flag every site without an address; ask an AI model | The score stays the engine's. A flag on every site would be a false alarm, so it applies only to a business that depends on a place. Found on a real site: the address was only in hidden JSON-LD, so most AI tools never saw it |
 | New interface (v2.3) | One narrow column. One list of issues (each issue once: what the AI saw, how to fix), severe first. The AI journey is a strip that filters the list. Details (AI view, bots, platforms, key facts, score breakdown) are closed panels. The screenshot loads only when its panel opens | Keep the separate "What the AI missed", "Start here" and "All fixes" sections; remove the mascot; keep the wide layout | Daniel asked for less visible text, everything still reachable, severe issues first. Showing one issue three times (missed, top fixes, all fixes) was the main source of text. The mascot stays small and calm |
+| Agent readiness (v2.4) | A separate function `/api/agent` and a closed Details panel with 23 rows and a level from 0 to 5. The page asks for it after the scan. Only WebMCP uses a real browser, once, when the panel opens. Not in the score | Put the checks in `/api/scan`; add them to the score; run every check in Chrome; depend on isitagentready.com's own scanner | The scan stays at 1 to 3 seconds and the score stays the engine's. Files, headers and DNS can be read exactly and cheaply. Only WebMCP needs a running page. We apply the public standards and the rules in isitagentready.com's public documentation ourselves, and compared the results with its website on four real sites |
 
 ## Changelog
 
@@ -74,16 +75,28 @@ All times Asia/Jerusalem.
 | 22:40 | Extras: empty map pin (`geo` with no latitude and longitude), Content Signals line in robots.txt (optional, never counted). 14 new tests (74 in all) |
 | 22:40 | Checked on about 60 real pages: only the page above got a critical flag. Software, media and documentation sites were never flagged. Three national brands got a medium flag (they name only the country) |
 
-### 26 Nov 2026, version 2.3.0
+### 25 Nov 2026, version 2.3.0
 
 All times Asia/Jerusalem.
 
 | Time | Change |
 |---|---|
-| 00:10 | The whole interface is rebuilt: one narrow column, a score card with the verdict, severity pills and the main button, then the AI journey strip, then **Fix first** (critical and high), **More to improve**, **What works**, and five closed **Details** panels |
-| 00:10 | The three lists (What the AI missed, Start here, All fixes) became one list. API: each missed item now has `fix` (the action category) and some have `hint`; the `location` action has `lead` and `note`; its steps are shorter |
-| 00:10 | Less text: shorter verdicts, one-line summaries on rows, steps shown three at a time, the home screen is a headline, the address box and examples. The screenshot loads only when its panel is opened (it took 5 to 20 seconds on every scan before) |
-| 00:10 | Reports saved by older versions still open (the page maps missed items to fixes itself). 2 new tests (76 in all) |
+| 22:59 | The whole interface is rebuilt: one narrow column, a score card with the verdict, severity pills and the main button, then the AI journey strip, then **Fix first** (critical and high), **More to improve**, **What works**, and five closed **Details** panels |
+| 22:59 | The three lists (What the AI missed, Start here, All fixes) became one list. API: each missed item now has `fix` (the action category) and some have `hint`; the `location` action has `lead` and `note`; its steps are shorter |
+| 22:59 | Less text: shorter verdicts, one-line summaries on rows, steps shown three at a time, the home screen is a headline, the address box and examples. The screenshot loads only when its panel is opened (it took 5 to 20 seconds on every scan before) |
+| 22:59 | Reports saved by older versions still open (the page maps missed items to fixes itself). 2 new tests (76 in all) |
+
+### 25 Nov 2026, version 2.4.0
+
+All times Asia/Jerusalem.
+
+| Time | Change |
+|---|---|
+| 23:37 | New **Agent readiness** panel in Details: 23 checks of the standards AI agents look for, the same set that isitagentready.com tests (robots.txt, sitemap, Link headers, DNS-AID, Markdown negotiation, Search for Agents, AI bot rules, Content Signals, Web Bot Auth, API catalog, OAuth and OIDC, OAuth Protected Resource, Auth.md, MCP server card, A2A agent card, Agent Skills, WebMCP, ARD, Poppy, x402, MPP, UCP, ACP). A level from 0 (Not Ready) to 5 (Agent-Native), what the next level needs, and for every check what we asked, why it matters, how to fix it and a link to the standard. It does not change the score |
+| 23:37 | Two new functions: `api/agent.py` (files, headers and DNS over HTTPS, about 25 requests to the site) and `api/webmcp.js` (headless Chrome with a WebMCP stand-in). The page asks for the first after the scan and for the second when the panel opens. The result is saved in the history |
+| 23:37 | The fix guide gets an optional step for Content Signals, a Link header and Markdown for agents |
+| 23:37 | Compared with the isitagentready.com website on four sites: the level matched on all four (a small shop at level 1, developers.cloudflare.com at level 5, isitagentready.com at level 5, vercel.com at level 1). Differences are listed in the roadmap |
+| 23:37 | 32 new tests (108 in all) |
 
 ## Test results at launch
 

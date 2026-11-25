@@ -232,7 +232,7 @@ form.scan.shake{animation:shake .45s}
 .it b{font-size:16px;line-height:1.3}
 .it .sm{grid-column:1;font-size:14.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .it .chev{grid-column:2;grid-row:1/3;align-self:center;color:var(--muted);font-size:22px;line-height:1;transition:transform .25s var(--ease)}
-.acc.open>.ih .chev,.acc.open>.ph .chev,.acc.open>.grp .chev{transform:rotate(90deg)}
+.acc.open>.ih .chev,.acc.open>.ph .chev,.acc.open>.grp .chev,.acc.open>.ckh .chev{transform:rotate(90deg)}
 .issue.open .it .sm{display:none}
 .issue.done{opacity:.62}
 .issue.done .it b{text-decoration:line-through;color:var(--muted)}
@@ -344,6 +344,39 @@ form.scan.shake{animation:shake .45s}
 .sub{font-size:16px;margin:20px 0 8px;display:flex;align-items:center;gap:10px}
 .grade{font-weight:800;border-radius:10px;padding:1px 10px;background:var(--accent-soft);color:var(--accent)}
 .lnote{font-size:14px;color:var(--muted);margin:2px 0 6px}
+
+/* ---------- agent readiness ---------- */
+.alevel{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.alevel .big{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.alevel .nm{color:var(--muted);font-size:15px}
+.lvbar{display:flex;gap:4px;margin:8px 0 6px;max-width:300px}
+.lvbar i{flex:1;height:8px;border-radius:99px;background:var(--line)}
+.lvbar i.on{background:var(--grad)}
+.anext{font-size:14.5px;color:var(--muted);margin:0 0 4px}
+.agh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:18px 0 6px}
+.agh b{font-size:15px}
+.agh span{color:var(--muted);font-size:13.5px}
+.ck{border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:6px}
+.ckh{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:start;text-align:left;border:0;background:transparent;padding:8px 10px;min-height:46px;box-shadow:none;border-radius:12px}
+.ckh:hover{box-shadow:none}
+.ckst{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;margin-top:1px;background:var(--low-soft);color:var(--low)}
+.st-pass .ckst{background:var(--ok);color:#fff}.st-fail .ckst{background:var(--crit);color:#fff}.st-unable .ckst{background:var(--med-soft);color:var(--med)}
+.ckt{min-width:0}
+.ckt b{font-size:15px;line-height:1.3}
+.ckt .m{display:-webkit-box;font-size:14px;color:var(--muted);line-height:1.35;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ck.open .ckt .m{-webkit-line-clamp:unset}
+.ck .chev{align-self:center;color:var(--muted);font-size:22px;line-height:1;transition:transform .25s var(--ease)}
+.acc.open>.ckh .chev{transform:rotate(90deg)}
+.ckb{padding:0 12px 12px 46px;font-size:14.5px}
+@media(max-width:520px){.ckb{padding-left:12px}}
+.ckb h4{margin:10px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.ckb p{margin:0}
+.ckb ul{margin:2px 0 0;padding-left:18px}
+.ckb li{margin:3px 0}
+.ckb code{font-size:13px;background:var(--low-soft);padding:0 5px;border-radius:5px;word-break:break-all}
+.ckb .spec{margin-top:8px}
+.tag{font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:4px;white-space:nowrap}
+.loadrow{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:15px}
 
 /* ---------- history ---------- */
 .hhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 4px;flex-wrap:wrap}
@@ -513,6 +546,11 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
           </div></div></div>
         </div>
 
+        <div class="panel acc" id="pAgent">
+          <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">🧩</span><span class="t"><b>Agent readiness</b><span id="tAgent">Checking 23 standards…</span></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pb" id="agentBody"></div></div></div>
+        </div>
+
         <div class="panel acc hide" id="pPlat">
           <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">🧠</span><span class="t"><b>AI platforms</b><span id="tPlat"></span></span><span class="chev">›</span></button>
           <div class="fold"><div class="foldin" inert><div class="pb"><div class="plats" id="plats"></div></div></div></div>
@@ -544,14 +582,14 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
     <div class="hlist" id="hlist"></div>
   </div>
 
-  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v2.3.0</span></footer>
+  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v2.4.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
-const APP_VERSION = "2.3.0"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "2.4.0"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -832,7 +870,7 @@ async function run(raw, opts = {}){
     clearInterval(t1); setProg(100);
     quip.textContent = "Done!"; await sleep(REDUCED ? 0 : 320);
     DATA = d; ENTRY = addToHistory(d);
-    render(d, {entry: ENTRY});
+    render(d, {entry: ENTRY, fresh});
     setUrlParam(d.url);
   }catch(e){
     mood($("#heroBot"), "sad");
@@ -1008,12 +1046,13 @@ function render(d, opts){
   ISSUES = buildIssues(d);
   OPEN = new Set(); const firstCrit = ISSUES.find(i => i.sev === "critical"); if(firstCrit) OPEN.add(firstCrit.key);  /* the worst issue opens by itself */
   $("#out").classList.remove("hide");
-  ["moreAcc", "worksAcc", "pView", "pBots", "pPlat", "pFacts", "pScores"].forEach(id => setAcc($("#" + id), false));
+  ["moreAcc", "worksAcc", "pView", "pBots", "pAgent", "pPlat", "pFacts", "pScores"].forEach(id => setAcc($("#" + id), false));
   renderTop(d, entry, opts);
   renderJourney(d);
   renderIssues();
   renderWins(d);
   renderView(d, ai); renderBots(ai, d); renderPlats(d.platforms || []); renderFacts(d, ai); renderScores(d);
+  AGENT_OPEN = new Set(); AGENT_BROWSER = ""; loadAgent(d, !!opts.fresh);  /* in the background: the panel fills in when the answer arrives */
   $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${((d.duration_ms||0)/1000).toFixed(1)} s.${d.app_version ? ` Extra checks by AI Site Scan v${esc(d.app_version)} do not change the score.` : ""}`;
   updateGo();
   window.scrollTo({top: 0, behavior: REDUCED ? "auto" : "smooth"});
@@ -1063,6 +1102,8 @@ $("#out").addEventListener("click", e => {
     const open = !acc.classList.contains("open"); setAcc(acc, open);
     if(acc.classList.contains("issue")){ const k = acc.dataset.k; open ? OPEN.add(k) : OPEN.delete(k); }
     if(acc.id === "pView" && open) openView();
+    if(acc.id === "pAgent" && open) openAgent();
+    if(acc.dataset.ck){ open ? AGENT_OPEN.add(acc.dataset.ck) : AGENT_OPEN.delete(acc.dataset.ck); }
     return;
   }
   const st = e.target.closest("[data-stage]");
@@ -1085,6 +1126,7 @@ $("#out").addEventListener("click", e => {
     ib.querySelectorAll(".xs").forEach(li => li.classList.toggle("hide", !hidden));
     b.textContent = hidden ? "Show fewer steps" : `Show ${b.dataset.n} more step${b.dataset.n > 1 ? "s" : ""}`;
   }
+  else if(act === "agent-retry"){ if(DATA){ delete DATA.agent_ready; AGENT_BROWSER = ""; loadAgent(DATA, true); } }
   else if(act === "clearstage"){ STAGE = null; $$("#journey button").forEach(b => b.setAttribute("aria-pressed", "false")); renderIssues(); }
 });
 
@@ -1196,6 +1238,89 @@ function renderScores(d){
   }).join("")}</div>` : "";
 }
 
+/* ---------- details: agent readiness (the standards AI agents look for) ---------- */
+let AGENT_OPEN = new Set(), AGENT_BROWSER = "";  /* AGENT_BROWSER: "" not asked yet, "pending", "done" */
+const AGENT_ICON = {pass: "✓", fail: "✕", neutral: "–", unable: "?"};
+function agentTeaser(a){
+  if(!a) return "Checking 23 standards…";
+  if(!a.reachable) return "The site did not answer";
+  return `Level ${a.level} of 5 · ${a.passed} of ${a.scored} checks`;
+}
+function recountAgent(a){  /* after the browser check changes a result */
+  const ok = c => c.scored && c.status !== "unable", sc = a.checks.filter(ok);
+  a.scored = sc.length; a.passed = sc.filter(c => c.status === "pass").length; a.percent = a.scored ? Math.round(100 * a.passed / a.scored) : null;
+  a.groups.forEach(g => { const cs = a.checks.filter(c => c.group === g.key), s2 = cs.filter(ok); g.scored = s2.length; g.passed = s2.filter(c => c.status === "pass").length; g.optional_passed = cs.filter(c => !c.scored && c.status === "pass").length; });
+}
+function agentRow(c){
+  const open = AGENT_OPEN.has(c.id), pending = c.id === "webMcp" && AGENT_BROWSER === "pending";
+  const ev = (c.evidence || []).map(e => `<li><code>${esc(e.path)}</code> ${typeof e.status === "number" ? "answered HTTP " + e.status + (e.note ? " (" + esc(e.note) + ")" : "") : e.status == null ? esc(e.note || "gave no answer") : esc(e.status)}</li>`).join("");
+  return `<div class="ck acc st-${c.status}${open ? " open" : ""}" data-ck="${esc(c.id)}">
+    <button class="ckh" type="button" data-acc aria-expanded="${open}">
+      <span class="ckst" aria-hidden="true">${AGENT_ICON[c.status] || "?"}</span>
+      <span class="ckt"><b>${esc(c.label)}</b>${c.scored ? "" : '<span class="tag">optional</span>'}<span class="m">${pending ? "Checking in a real browser…" : esc(c.message)}</span></span>
+      <span class="chev">›</span>
+    </button>
+    <div class="fold"><div class="foldin"${open ? "" : " inert"}><div class="ckb">
+      ${ev ? `<h4>What we asked</h4><ul>${ev}</ul>` : ""}
+      <h4>Why it matters</h4><p>${esc(c.why)}</p>
+      ${c.status === "pass" ? "" : `<h4>How to fix</h4><p>${esc(c.fix)}</p>`}
+      <p class="spec"><a href="${esc(c.spec)}" target="_blank" rel="noopener">Read the standard ↗</a></p>
+    </div></div></div>
+  </div>`;
+}
+function renderAgent(a){
+  $("#tAgent").textContent = agentTeaser(a);
+  const body = $("#agentBody");
+  if(!a.reachable){ body.innerHTML = `<p class="pnote">The site did not answer our requests, so the standards could not be checked.</p><button class="small" type="button" data-act="agent-retry">Try again</button>`; return; }
+  const next = a.next ? `<p class="anext">Next: level ${a.next.level}, ${esc(a.next.name)}. It needs ${esc(a.next.needs)}.</p>` : `<p class="anext">This is the top level.</p>`;
+  const bar = [1, 2, 3, 4, 5].map(n => `<i class="${n <= a.level ? "on" : ""}"></i>`).join("");
+  const groups = a.groups.map(g => {
+    const cs = a.checks.filter(c => c.group === g.key);
+    return `<div class="agh"><b>${esc(g.label)}</b><span>${g.scored ? g.passed + " of " + g.scored : "optional"}</span></div>${g.key === "commerce" ? `<p class="pnote">Payment standards are new and do not count.${a.is_commerce ? "" : " No shop was found on this site."}</p>` : ""}${cs.map(agentRow).join("")}`;
+  }).join("");
+  body.innerHTML = `<div class="alevel"><span class="big">Level ${a.level} of 5</span><span class="nm">${esc(a.level_name)}</span></div><div class="lvbar" aria-hidden="true">${bar}</div>${next}${groups}<p class="pnote" style="margin-top:14px">These checks follow the public standards that <a href="https://isitagentready.com" target="_blank" rel="noopener">isitagentready.com</a> (Cloudflare) tests. They do not change the score.</p>`;
+}
+function persistAgent(){
+  if(!ENTRY || !DATA?.agent_ready) return;
+  const list = loadHistory(), i = list.findIndex(h => h.id === ENTRY.id);
+  if(i >= 0){ list[i].data = {...list[i].data, agent_ready: DATA.agent_ready}; saveHistory(list); }
+}
+async function loadAgent(d, fresh){
+  if(d.agent_ready){ renderAgent(d.agent_ready); return; }
+  $("#tAgent").textContent = agentTeaser(null);
+  $("#agentBody").innerHTML = `<div class="loadrow"><span class="spin"></span><span>Looking for 23 files and records on the site. This takes a few seconds.</span></div>`;
+  try{
+    const r = await fetch("/api/agent?url=" + encodeURIComponent(d.url) + (fresh ? "&fresh=1" : ""));
+    let a; try { a = await r.json(); } catch { throw new Error("The check did not answer (error " + r.status + ")."); }
+    if(!r.ok) throw new Error(a.error || ("Error " + r.status));
+    if(DATA !== d) return;
+    d.agent_ready = a; persistAgent(); renderAgent(a);
+    if($("#pAgent").classList.contains("open")) openAgent();
+  }catch(e){
+    if(DATA !== d) return;
+    $("#tAgent").textContent = "Could not check";
+    $("#agentBody").innerHTML = `<p class="pnote">${esc(e.message || "The check failed.")}</p><button class="small" type="button" data-act="agent-retry">Try again</button>`;
+  }
+}
+async function openAgent(){  /* WebMCP can only be seen by running the page, so it is checked in a real browser, once, when the panel opens */
+  const d = DATA, a = d?.agent_ready; if(!a || AGENT_BROWSER) return;
+  const c = a.checks.find(x => x.id === "webMcp"); if(!c || !c.browser) return;
+  AGENT_BROWSER = "pending"; renderAgent(a);
+  try{
+    const r = await fetch("/api/webmcp?url=" + encodeURIComponent(d.ai_view?.final_url || d.url));
+    const j = await r.json(); if(!r.ok) throw new Error(j.error || ("Error " + r.status));
+    if(DATA !== d) return;
+    c.browser = false;
+    c.evidence = [{path: "the page, run in a real browser", status: j.toolCount ? "found " + j.toolCount + (j.toolCount === 1 ? " tool" : " tools") : "found no tools", note: ""}];
+    if(j.toolCount){ c.status = "pass"; c.message = `Found ${j.toolCount} tool${j.toolCount > 1 ? "s" : ""} via ${j.via}: ${j.tools.slice(0, 4).map(t => t.name).join(", ")}${j.toolCount > 4 ? " and " + (j.toolCount - 4) + " more" : ""}`; }
+    else { c.status = "fail"; c.message = "No WebMCP tools detected on page load (checked in a real browser)"; }
+  }catch(e){
+    if(DATA !== d) return;
+    c.browser = false; c.message += ". The browser check did not run.";
+  }
+  AGENT_BROWSER = "done"; recountAgent(a); persistAgent(); renderAgent(a);
+}
+
 /* ---------- download, copy ---------- */
 function download(text, name, type){
   const a = document.createElement("a");
@@ -1207,7 +1332,9 @@ function summaryMarkdown(d){
   const ai = d.ai_view || {}, L = [];
   L.push(`# AI readiness: ${hostOf(d.url)}`, "", `Score: **${d.score}/100**. ${verdictFor(d)[0]}.`, "", "Top fixes:");
   (d.actions||[]).filter(a => a.priority !== "low").slice(0,5).forEach(a => L.push(`- ${a.label} (${a.priority}${a.gain?`, +${a.gain} pts`:""})`));
-  L.push("", `Words visible to AI without JavaScript: ${ai.word_count ?? "n/a"}`, "", `Full report: ${location.origin}/?url=${encodeURIComponent(d.url)}`);
+  L.push("", `Words visible to AI without JavaScript: ${ai.word_count ?? "n/a"}`);
+  if(d.agent_ready?.reachable) L.push(`Agent readiness: level ${d.agent_ready.level} of 5 (${d.agent_ready.level_name}), ${d.agent_ready.passed} of ${d.agent_ready.scored} checks`);
+  L.push("", `Full report: ${location.origin}/?url=${encodeURIComponent(d.url)}`);
   return L.join("\n");
 }
 
@@ -1396,6 +1523,13 @@ function buildFixGuide(d){
     ]);
   }
 
+  const ar = d.agent_ready, arFail = id => ar?.checks?.find(c => c.id === id && c.status === "fail");
+  const arBlocks = [
+    arFail("contentSignals") && ["**Content Signals.** Add one line under `User-agent: *` in robots.txt. Choose the values that match your policy:", "", F + "text", "Content-Signal: ai-train=no, search=yes, ai-input=no", F],
+    arFail("linkHeaders") && ["**A Link header on the homepage.** It points agents to your documentation or API description. In nginx:", "", F + "nginx", `add_header Link '<${origin}/docs>; rel="service-doc"' always;`, F, "In Apache: `Header add Link \"<" + origin + "/docs>; rel=service-doc\"`. Registered types: `api-catalog`, `service-desc`, `service-doc`, `describedby`."],
+    arFail("markdownNegotiation") && ["**Markdown for agents.** When a request sends `Accept: text/markdown`, answer with a Markdown version of the page and `Content-Type: text/markdown`. If the site is on Cloudflare, turn on Markdown for Agents."],
+  ].filter(Boolean);
+  if(arBlocks.length) step("Optional: agent readiness basics", "These are the newest standards AI agents look for first. They do not change the score.", arBlocks.flatMap((b, i) => i ? ["", ...b] : b), "scan again and open Agent readiness. Each fixed item turns green.");
   const covered = new Set(["access","rendering","schema","brand_entity","llms","content","structure","headings","other","ai_discovery","robots","meta","signals","google_ai","sitemap"]);
   const rest = acts.filter(a => !covered.has(a.category));
   if(rest.length) step("Other findings", null, rest.flatMap(a => [`**${a.label}**` + (WHY[a.category] ? ` (${WHY[a.category]})` : ""), ...a.items.map(x => "- " + x), ""]));
