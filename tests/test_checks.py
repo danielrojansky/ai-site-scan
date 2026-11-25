@@ -455,8 +455,11 @@ class Location(unittest.TestCase):
         self.assertEqual(C.location_impact(loc), "critical")
         a = C.check_location(loc)
         self.assertEqual((a["category"], a["priority"], a["label"]), ("location", "critical", "Say where your business is"))
-        self.assertIn("נחלה 6", a["items"][0])
+        self.assertIn("נחלה 6", a["lead"])
         self.assertTrue(any("map pin" in i for i in a["items"]) and any("only a country" in i for i in a["items"]))
+        self.assertIn("local business", a["note"])
+        self.assertFalse(any("local business because" in i for i in a["items"]))  # the note is not a step
+        self.assertTrue(all(len(i) < 200 for i in a["items"]))  # short steps
         m = self.missed(loc)
         it = [i for i in m["items"] if i["id"] == "location"][0]
         self.assertEqual((it["stage"], it["impact"], it["title"]), ("understand", "critical", "Could not tell where you are"))
@@ -478,7 +481,7 @@ class Location(unittest.TestCase):
         loc = loc_of(he_page(schema=None, extra="<button>הוסף לסל</button><p>משלוחים מהירים</p>"))
         self.assertEqual((loc["local"]["level"], loc["visible"]["status"]), ("likely", "none"))
         self.assertEqual(C.location_impact(loc), "high")
-        self.assertIn("no address in the structured data", C.check_location(loc)["items"][0])
+        self.assertIn("no address in the structured data", C.check_location(loc)["lead"])
 
     def test_restaurant_with_hours_and_no_address_is_critical(self):
         html = ('<html lang="en"><head><title>Luigi</title></head><body><h1>Luigi\'s Pizza</h1><p>Wood fired pizza, made fresh every day.</p>'
@@ -520,7 +523,7 @@ class Location(unittest.TestCase):
         strong = loc_of(he_page(extra="<p>משלוחים לכל הארץ</p>", schema=HE_SCHEMA))
         self.assertEqual(strong["visible"]["status"], "area")
         self.assertEqual(C.location_impact(strong), "medium")
-        self.assertIn("not where the business is", C.check_location(strong)["items"][0])
+        self.assertIn("not where the business is", C.check_location(strong)["lead"])
 
     def test_email_label_and_form_labels_are_not_addresses(self):
         loc = loc_of(he_page(footer="כתובת אימייל: a@b.co", schema=None, extra="<p>הוסף לסל</p>"))
@@ -553,6 +556,28 @@ class Location(unittest.TestCase):
         self.assertIsNotNone(ai["location"])
         self.assertEqual(ai["location"]["visible"]["status"], "none")
 
+    def test_every_missed_item_names_its_fix(self):
+        m = self.missed(loc_of(he_page()))
+        loc_item = [i for i in m["items"] if i["id"] == "location"][0]
+        self.assertEqual(loc_item["fix"], "location")
+        self.assertEqual([i["fix"] for i in m["items"] if i["id"] == "geo_empty"], ["location"])
+        self.assertTrue(all("fix" in i for i in m["items"] + m["optional"]))
+        self.assertTrue(all(i["fix"] is None for i in m["optional"]))  # optional extras have no fix row
+        # every id the report can raise has a known fix category (a missing one would make a lone row)
+        for id_, cat in C.FIX_FOR.items():
+            self.assertRegex(cat, r"^[a-z_]+$", id_)
+        self.assertEqual(C.FIX_FOR["bots_refused"], "access")
+
+    def test_hints_exist_for_items_that_may_stand_alone(self):
+        for id_ in ("no_sitemap", "robots_block", "images"):
+            self.assertIn(id_, C.HINTS)
+            self.assertIn(id_, C.FIX_FOR)
+        m = C.build_missed(PAGE_OK, audit(robots_txt={"bots_blocked": [], "sitemaps": [], "crawl_delay": None}), {}, {"declared": [], "sitemap": None}, 80, [])
+        item = [i for i in m["items"] if i["id"] == "no_sitemap"]
+        self.assertTrue(item and item[0]["hint"].startswith("Create a sitemap.xml"))
+        for h in C.HINTS.values():
+            self.assertNotIn("\u2014", h)
+
     def test_content_signal_is_an_optional_extra(self):
         self.assertTrue(C.has_content_signal("User-agent: *\nContent-Signal: ai-train=no, search=yes"))
         self.assertFalse(C.has_content_signal("User-agent: *\nDisallow: /x"))
@@ -568,7 +593,7 @@ class Location(unittest.TestCase):
                     loc_of(he_page(extra="<p>משלוחים לכל הארץ</p>")), loc_of(he_page(footer='<iframe src="https://www.google.com/maps/embed"></iframe>'))):
             a = C.check_location(loc)
             self.assertIsNotNone(a)
-            for t in a["items"] + [i["title"] + i["detail"] for i in self.missed(loc)["items"]]:
+            for t in a["items"] + [a["lead"], a.get("note", "")] + [i["title"] + i["detail"] for i in self.missed(loc)["items"]]:
                 self.assertNotIn("—", t)
 
 if __name__ == "__main__":

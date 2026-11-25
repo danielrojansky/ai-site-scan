@@ -67,9 +67,9 @@ Measured on 8 sites: scores identical, scan time 0.8 to 4.9 s (before: 3.2 to 10
 | `error` | Engine error (for example "HTTP 403"), else null |
 | `categories[]` | `key`, `label`, `score`, `max` for 9 areas |
 | `penalty` | Negative points from the engine |
-| `actions[]` | `category`, `label`, `priority`, `gain`, `items[]`, `source` (`engine` or `extra`), ranked |
+| `actions[]` | `category`, `label`, `priority`, `gain`, `items[]` (the steps), `source` (`engine` or `extra`), ranked. The `location` action also has `lead` (what is wrong, one sentence) and `note` (why it was flagged) |
 | `wins[]` | Plain sentences about what already works |
-| `missed` | What the AI agent missed: `items[]` (`stage`, `impact`, `title`, `detail`), `optional[]` (unproven conventions, not counted), `stages[]` (journey step with `status` ok, warn, fail or skipped), `count`, `potential` (score if every engine gain is earned, at most 100), `usable` (false if the page could not be read) |
+| `missed` | What the AI agent missed: `items[]` (`stage`, `impact`, `title`, `detail`, `fix` = the action category that holds the how-to, `hint` = a one-line how-to for items that may have no action), `optional[]` (unproven conventions, not counted), `stages[]` (journey step with `status` ok, warn, fail or skipped), `count`, `potential` (score if every engine gain is earned, at most 100), `usable` (false if the page could not be read) |
 | `platforms[]` | ChatGPT, Perplexity, Google AI: `score`, `strengths`, `tips` (from the engine) |
 | `trust` | Trust grade and 5 layers with found and missing signals (from the engine) |
 | `ai_view` | See below |
@@ -139,10 +139,14 @@ Own checks first, then the engine's recommendations by category, then more own c
 
 - Views: **Scan** and **History** (tabs in the sticky top bar). The brand name returns to the home screen. Clicking the active **Scan** tab scrolls to the address bar and selects the address.
 - **One scan button.** The address bar button starts every scan. If the address is the same site as the report on screen it says **Rescan** (with a refresh icon, and a fresh scan is requested); for any other address it says **Scan**. It changes while you type. A one-line hint under the bar explains the two cases. There is no separate New scan button and no second Rescan button. After all fixes are ticked, a banner offers **Rescan now** and the bar button pulses.
-- Scan flow: form, example chips, scan stage (page mock with a laser line, mascot, progress bar, funny status lines, checklist with cosmetic timing that finishes fast when the answer arrives), then the report.
-- Report sections: summary (count-up score ring, band badge, verdict, potential-score bar, mascot, trend sparkline, "fixed since last scan", 4 stat tiles, buttons), sticky section nav with scroll spy, **What the AI agent missed**, Start here (top 3), Already working, How AI sees your site (Compare, Visitor view, AI view with typed lines), Can the AI bots get in? (14 bot cards), How each AI platform sees you, All fixes (filters, accordion, tick-off list with progress), fix guide export card, Key facts (8 tiles), Score by area and trust signals.
-- Motion: reveal on scroll, count-ups, confetti for scores of 80 and up, spotlight on hover, mascot eyes follow the pointer. All of it is switched off for visitors who ask for reduced motion.
-- **Location alert:** when the `location` fix is critical (red) or high (orange), an alert sits under the verdict with the address problem in one sentence and a link to the fixes. The verdict and the mascot bubble change, and there is no confetti for a good score.
+- Scan flow: form, example chips, then a short scan screen (page mock with a laser line, mascot, one funny status line, progress bar), then the report.
+- **Layout (v2.3):** one narrow centered column (760 px) on every screen size. Information comes in three layers, and only the first is open:
+  1. **Score card:** ring, verdict in one line, severity pills (critical, high, medium, low), the main button **Get the fix guide**, a menu (share link, copy summary, JSON), and the AI agent's journey (five steps, each a filter for the list below).
+  2. **One list of issues.** Each issue shows once. **Fix first** holds critical and high issues; **More to improve** (closed unless nothing is severe) holds medium and low plus the optional extras; **What works** is closed. A row shows severity, title, points and one line. Opening it shows what the AI saw, why it matters and the steps (three at first, then "Show N more steps"). The worst critical issue opens by itself. A tick box marks an issue done.
+  3. **Details**, five closed panels with a one-line teaser each: How AI sees your page (screenshot loads only when opened), AI bots, AI platforms, Key facts, Score breakdown.
+- **Joining the lists:** an issue is an action (the how-to, points, priority). The report adds the agent-voice items of `missed` whose `fix` equals the action category as "What the AI saw", and raises the severity to the worst of the two. A missed item with no action becomes its own row and uses its `hint`. Reports saved before 2.3.0 have no `fix`, so the page maps them with the same table (`FIX_FOR`).
+- Motion: score count-up, smooth open and close, confetti only for a score of 80 or more with no critical issue, mascot mood and eyes. All of it is switched off for visitors who ask for reduced motion.
+- **Location:** a critical `location` issue changes the verdict ("AI can't tell where the business is") and removes the confetti. It is also the first row, and it opens by itself.
 - Ticked fixes are stored in `localStorage` key `aiSiteScan.done.v1` per site and reset on a fresh scan.
 - `?url=` in the address runs a scan on load. Share link uses this.
 - History: `localStorage` key `aiSiteScan.history.v1`, max 30 entries. Each entry stores the scan JSON without the large raw `audit` (only the robots lists are kept). If storage is full, the oldest entries are dropped.

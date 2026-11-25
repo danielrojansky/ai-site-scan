@@ -22,7 +22,7 @@
   --med:#946c00;--med-soft:#fff9db;--low:#5d6673;--low-soft:#f1f3f5;
   --ok:#2b8a3e;--ok-soft:#ebfbee;
   --term:#0f1720;--term-ink:#d6e2f0;--term-dim:#7d8ea3;
-  --r:16px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:16px;--col:760px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
   --shadow-lg:0 12px 32px rgba(40,52,120,.14);
   --ease:cubic-bezier(.2,.8,.2,1);--spring:cubic-bezier(.34,1.56,.64,1);
@@ -30,11 +30,12 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 html{scroll-behavior:smooth}
-body{font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent}
+body{font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent}
 a{color:var(--accent)}
+h1,h2,h3,h4,p{margin:0}
 button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;min-height:40px;transition:transform .15s var(--ease),border-color .2s,box-shadow .2s,background .2s}
 button:hover{border-color:#c0c7d2;box-shadow:var(--shadow)}
-button:active{transform:scale(.96)}
+button:active{transform:scale(.97)}
 button:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #a5b4fc;outline-offset:2px}
 button.primary{background:var(--grad);color:var(--accent-ink);border-color:transparent;font-weight:600;position:relative;overflow:hidden}
 button.primary::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);transition:left .6s var(--ease)}
@@ -42,63 +43,52 @@ button.primary:hover{box-shadow:0 6px 18px rgba(59,91,219,.35);border-color:tran
 button.primary:hover::after{left:130%}
 button.primary:disabled{opacity:.7;cursor:wait}
 button.ghost{background:transparent;border-color:transparent}
-button.small{min-height:32px;padding:4px 10px;font-size:14px}
-.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+button.small{min-height:34px;padding:4px 12px;font-size:14px}
+.col{max-width:var(--col);margin:0 auto;padding:0 16px}
 .hide{display:none!important}
 .muted{color:var(--muted)}
-.meta{color:var(--muted);font-size:14px}
 .nowrap{white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
 
-/* ---------- motion helpers ---------- */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(var(--i,0)*70ms)}
-.reveal.in{opacity:1;transform:none}
-.lift{transition:translate .25s var(--ease),box-shadow .25s var(--ease),border-color .2s}
-.lift:hover{translate:0 -3px;box-shadow:var(--shadow-lg);border-color:#cfd6f5}
-.reveal.lift{transition:opacity .6s var(--ease) calc(var(--i,0)*70ms),transform .6s var(--ease) calc(var(--i,0)*70ms),translate .25s var(--ease),box-shadow .25s var(--ease),border-color .2s}
-.spot{position:relative;overflow:hidden}
-.spot::before{content:"";position:absolute;inset:0;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(76,99,230,.11),transparent 65%);opacity:0;transition:opacity .25s;pointer-events:none}
-.spot:hover::before{opacity:1}
+/* ---------- motion ---------- */
 @keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 @keyframes shake{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes shimmer{to{background-position:-200% 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes draw{to{stroke-dashoffset:0}}
-@keyframes blob1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(70px,30px) scale(1.15)}}
-@keyframes blob2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-60px,40px) scale(1.1)}}
-@keyframes blob3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-30px) scale(1.2)}}
-@keyframes slidein{from{transform:translateY(60%);opacity:0}to{transform:none;opacity:1}}
-@keyframes ringpop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes slidein{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes rowin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes ringpop{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
 @keyframes read{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes jump{0%,100%{transform:translateY(0)}30%{transform:translateY(-14px)}60%{transform:translateY(0)}80%{transform:translateY(-5px)}}
+@keyframes jump{0%,100%{transform:translateY(0)}30%{transform:translateY(-12px)}60%{transform:translateY(0)}80%{transform:translateY(-4px)}}
 @keyframes pillpulse{0%,100%{box-shadow:0 0 0 0 rgba(201,42,42,.32)}60%{box-shadow:0 0 0 6px rgba(201,42,42,0)}}
 @keyframes antpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
 @keyframes laser{0%{top:0}50%{top:calc(100% - 3px)}100%{top:0}}
 @keyframes fall{0%{transform:translate(0,0) rotate(0);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),calc(var(--dy) + 280px)) rotate(var(--rot));opacity:0}}
 @keyframes lineIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
-@keyframes caret{50%{opacity:0}}
 @keyframes sheen{0%{left:-60%}100%{left:130%}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(59,91,219,.45)}70%,100%{box-shadow:0 0 0 10px rgba(59,91,219,0)}}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(59,91,219,.55)}60%{box-shadow:0 0 0 12px rgba(59,91,219,0)}}
 
 /* ---------- top bar ---------- */
-.topbar{position:sticky;top:0;z-index:30;background:rgba(245,246,248,.9);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
-.topbar .wrap{display:flex;align-items:center;gap:10px;height:60px}
+.top{position:sticky;top:0;z-index:30;background:rgba(245,246,248,.92);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.top .col{display:flex;align-items:center;gap:10px;height:56px}
 .brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.01em;cursor:pointer;margin-right:auto;white-space:nowrap;user-select:none}
 .brand .dot{width:26px;height:26px;border-radius:9px;background:var(--grad);display:grid;place-items:center;position:relative;transition:transform .3s var(--spring)}
 .brand .dot::before{content:"";width:9px;height:9px;border:2.5px solid #fff;border-radius:50%}
 .brand .dot::after{content:"";position:absolute;inset:0;border-radius:9px;box-shadow:0 0 0 0 rgba(59,91,219,.45);animation:ping 2.8s ease-out infinite}
-@keyframes ping{0%{box-shadow:0 0 0 0 rgba(59,91,219,.45)}70%,100%{box-shadow:0 0 0 10px rgba(59,91,219,0)}}
 .brand:hover .dot{transform:rotate(-12deg) scale(1.12)}
 .nav{display:flex;gap:4px;background:#e9ecf1;padding:3px;border-radius:11px;position:relative}
 .nav .ind{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--card);border-radius:8px;box-shadow:var(--shadow);transition:transform .35s var(--ease),width .35s var(--ease)}
 .nav button{border:0;background:transparent;min-height:34px;padding:4px 12px;font-size:15px;color:var(--muted);border-radius:8px;position:relative;z-index:1;box-shadow:none}
 .nav button[aria-selected=true]{color:var(--ink);font-weight:600}
 .count{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;margin-left:4px}
-@media(max-width:560px){.brand span.t{display:none}}
+@media(max-width:480px){.brand span.t{display:none}}
 
 /* ---------- mascot ---------- */
-.bot{--ex:0px;--ey:0px;width:84px;height:84px;display:block;position:relative}
+.bot{--ex:0px;--ey:0px;width:72px;height:72px;display:block;position:relative}
 .bot svg{width:100%;height:100%;overflow:visible}
 .bot .antdot{transform-origin:48px 11px;animation:antpulse 2s ease-in-out infinite}
 .bot .head{animation:bob 3.4s ease-in-out infinite;transform-origin:48px 50px}
@@ -113,236 +103,194 @@ button.small{min-height:32px;padding:4px 10px;font-size:14px}
 .bot[data-mood=sad] .head{animation:none;transform:rotate(-4deg)}
 .bot[data-mood=sad]{animation:shake .6s 1}
 
-/* ---------- hero + form ---------- */
-.hero{padding:34px 0 6px;text-align:center;position:relative;isolation:isolate}
-.aurora{position:absolute;left:-10%;right:-10%;top:-30px;height:400px;z-index:-1;pointer-events:none;filter:blur(46px);opacity:.55;transition:opacity .6s}
-.aurora i{position:absolute;border-radius:50%}
-.aurora i:nth-child(1){left:8%;top:30px;width:340px;height:260px;background:#c7d2fe;animation:blob1 14s ease-in-out infinite}
-.aurora i:nth-child(2){right:10%;top:10px;width:300px;height:240px;background:#e9d5ff;animation:blob2 17s ease-in-out infinite}
-.aurora i:nth-child(3){left:38%;top:120px;width:280px;height:200px;background:#bfdbfe;animation:blob3 12s ease-in-out infinite}
+/* ---------- home + address bar ---------- */
+.hero{padding:30px 0 0;text-align:center}
 .hero .bot{margin:0 auto 6px}
-.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.12;letter-spacing:-.028em;margin:0 0 12px}
+.hero h1{font-size:clamp(28px,7vw,40px);line-height:1.12;letter-spacing:-.028em;margin-bottom:8px}
 .hero h1 .rot{display:inline-block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;min-width:2ch}
 .hero h1 .rot.swap{animation:slidein .45s var(--ease)}
-.hero p.lede{color:var(--muted);max-width:640px;margin:0 auto 26px;font-size:17px}
-.hero.compact{padding:18px 0 0;text-align:left}
-.hero.compact h1,.hero.compact .lede,.hero.compact .how,.hero.compact .examples,.hero.compact>.bot{display:none}
-.hero.compact .aurora{opacity:0}
-form.scan{display:flex;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:7px;box-shadow:var(--shadow);max-width:720px;margin:0 auto;transition:box-shadow .25s,border-color .25s}
+.hero .lede{color:var(--muted);margin:0 auto 20px;font-size:17px;max-width:480px}
+.hero.compact{padding:14px 0 0;text-align:left}
+.hero.compact h1,.hero.compact .lede,.hero.compact .examples,.hero.compact>.bot{display:none}
+form.scan{display:flex;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px;box-shadow:var(--shadow);transition:box-shadow .25s,border-color .25s}
 form.scan:focus-within{border-color:#a9b6f5;box-shadow:0 0 0 4px rgba(59,91,219,.14),0 10px 30px rgba(59,91,219,.12)}
-.hero.compact form.scan{max-width:none}
 .inputwrap{flex:1;display:flex;align-items:center;min-width:0;position:relative}
 .inputwrap svg{position:absolute;left:12px;color:var(--muted);transition:color .2s,transform .5s var(--ease)}
 form.scan:focus-within .inputwrap svg{color:var(--accent);transform:rotate(180deg)}
-form.scan input{flex:1;width:100%;border:0;outline:0;font:inherit;font-size:17px;padding:10px 36px 10px 40px;background:transparent;min-width:0}
-#clearInput{position:absolute;right:4px;min-height:30px;padding:0 8px;border:0;color:var(--muted);background:transparent;font-size:20px;line-height:1;box-shadow:none}
-form.scan button.primary{padding:10px 24px;min-height:46px;font-size:17px;display:flex;align-items:center;gap:8px}
+form.scan input{flex:1;width:100%;border:0;outline:0;font:inherit;font-size:17px;padding:10px 34px 10px 40px;background:transparent;min-width:0}
+#clearInput{position:absolute;right:2px;min-height:30px;padding:0 8px;border:0;color:var(--muted);background:transparent;font-size:20px;line-height:1;box-shadow:none}
+form.scan button.primary{padding:10px 20px;min-height:46px;font-size:17px;display:flex;align-items:center;gap:8px}
 form.scan button.primary .sp{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
 form.scan button.primary:disabled .sp{display:block}
+form.scan button.primary .gi{display:grid;place-items:center}
+form.scan button.primary .gi svg{width:18px;height:18px;display:block;transition:transform .5s var(--ease)}
+form.scan button.primary:hover .gi svg{transform:rotate(180deg)}
+form.scan button.primary:disabled .gi{display:none}
+form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
 form.scan.shake{animation:shake .45s}
-.examples{margin:16px 0 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.examples{margin:14px 0 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
 .chip{border-radius:99px;padding:4px 14px;min-height:34px;font-size:14px}
 .chip:hover{translate:0 -2px;border-color:#aab6f5;color:var(--accent)}
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:38px auto 0;text-align:left}
-@media(max-width:720px){.how{grid-template-columns:1fr}}
-.how div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 16px 16px}
-.how b{display:block;margin-bottom:2px}
-.how .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:14px;margin-bottom:10px;transition:transform .3s var(--spring),background .2s,color .2s}
-.how div:hover .n{transform:rotate(-8deg) scale(1.15);background:var(--grad);color:#fff}
-
-.err{background:var(--crit-soft);color:var(--crit);border-radius:14px;padding:14px 16px;margin:16px auto 0;max-width:720px;display:flex;gap:14px;align-items:center;text-align:left;animation:shake .5s}
-.err .bot{width:54px;height:54px;flex:none}
+.barhint{margin:8px 4px 0;font-size:14px;color:var(--muted);text-align:left}
+.err{background:var(--crit-soft);color:var(--crit);border-radius:14px;padding:14px 16px;margin:14px 0 0;display:flex;gap:14px;align-items:center;text-align:left;animation:shake .5s}
+.err .bot{width:50px;height:50px;flex:none}
 .err b{display:block;color:#8f1d1d}
 .err button{margin-top:8px}
-.hero.compact .err{max-width:none}
-.notice{background:var(--med-soft);color:#6b4f00;border-radius:12px;padding:12px 14px;margin-top:16px}
 
-/* ---------- progress ---------- */
-.progress{display:grid;grid-template-columns:190px 1fr;gap:26px;align-items:center;max-width:700px;margin:28px auto 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;box-shadow:var(--shadow-lg);animation:slidein .5s var(--ease)}
-@media(max-width:620px){.progress{grid-template-columns:1fr;justify-items:center}.progress .sw{width:100%}}
-.stage{position:relative;width:170px;height:176px}
-.mock{position:absolute;left:6px;top:14px;right:18px;bottom:6px;border:2px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;padding:14px 12px;display:grid;gap:9px;align-content:start}
-.mock i{display:block;height:9px;border-radius:6px;background:linear-gradient(90deg,#e6e9f0 25%,#f4f6fa 50%,#e6e9f0 75%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
-.mock i:nth-child(1){width:55%;height:14px}.mock i:nth-child(3){width:85%}.mock i:nth-child(5){width:70%}.mock i:nth-child(6){width:40%}
+/* ---------- scanning ---------- */
+.progress{display:flex;gap:18px;align-items:center;margin:20px 0 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow-lg);animation:slidein .5s var(--ease)}
+.stage{position:relative;width:104px;height:112px;flex:none}
+.mock{position:absolute;left:0;top:6px;right:14px;bottom:0;border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;padding:12px 10px;display:grid;gap:8px;align-content:start}
+.mock i{display:block;height:8px;border-radius:6px;background:linear-gradient(90deg,#e6e9f0 25%,#f4f6fa 50%,#e6e9f0 75%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+.mock i:nth-child(1){width:55%;height:12px}.mock i:nth-child(3){width:85%}.mock i:nth-child(5){width:70%}.mock i:nth-child(6){width:40%}
 .laser{position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 14px 4px rgba(59,91,219,.4);animation:laser 1.7s ease-in-out infinite}
-.stage .bot{position:absolute;right:-26px;bottom:-12px;width:70px;height:70px}
-.progress h3{margin:0;font-size:18px;letter-spacing:-.01em}
-.quip{margin:2px 0 0;color:var(--muted);min-height:24px;font-size:15px}
-.pbar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:12px 0 14px}
+.stage .bot{position:absolute;right:-18px;bottom:-10px;width:56px;height:56px}
+.sw{flex:1;min-width:0}
+.progress h3{font-size:18px;letter-spacing:-.01em;overflow-wrap:anywhere}
+.quip{margin-top:2px;color:var(--muted);min-height:24px;font-size:15px}
+.pbar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:12px}
 .pbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .45s var(--ease);position:relative;overflow:hidden}
 .pbar i::after{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);animation:sheen 1.3s linear infinite}
-.progress ol{list-style:none;margin:0;padding:0;display:grid;gap:7px}
-.progress li{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:15px;transition:color .25s}
-.progress li .ic{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;position:relative;transition:background .25s,border-color .25s}
-.progress li.active{color:var(--ink);font-weight:600}
-.progress li.active .ic{border-color:var(--line);border-top-color:var(--accent);animation:spin 1s linear infinite}
-.progress li.done .ic{border-color:var(--ok);background:var(--ok);animation:pop .35s var(--spring)}
-.progress li.done .ic::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+@media(max-width:420px){.progress{flex-direction:column;text-align:center}.sw{width:100%}}
 
-/* ---------- cards + sections ---------- */
-section{margin-top:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--shadow)}
-.grid{display:grid;gap:14px}
-h2{font-size:21px;letter-spacing:-.015em;margin:0 0 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-h2 .hi{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;background:var(--accent-soft);font-size:16px}
-h2+.meta{margin:0 0 14px}
-section[id]{scroll-margin-top:122px}
-
-/* ---------- summary ---------- */
-.summary{display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center}
-@media(max-width:900px){.summary{grid-template-columns:auto 1fr}.summary .sbot{display:none}}
-@media(max-width:720px){.summary{grid-template-columns:1fr;text-align:center;justify-items:center}}
-.ringwrap{display:grid;justify-items:center;gap:10px}
-.ring{--p:0;--c:var(--accent);width:156px;height:156px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0);position:relative;box-shadow:0 8px 24px rgba(59,91,219,.12)}
-.ring>div{width:126px;height:126px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
-.ring b{font-size:48px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.ring small{display:block;color:var(--muted);font-size:14px}
+/* ---------- score card ---------- */
+.out{margin-top:14px}
+.scorecard{padding:18px}
+.sc-top{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+.ringwrap{display:grid;justify-items:center;gap:8px}
+.ring{--p:0;--c:var(--accent);width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0);box-shadow:0 6px 18px rgba(59,91,219,.12)}
+.ring>div{width:82px;height:82px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
+.ring b{font-size:34px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;display:block}
+.ring small{display:block;color:var(--muted);font-size:12px;margin-top:1px}
 .ring.done{animation:ringpop .7s var(--ease)}
-.band{display:inline-block;font-weight:700;font-size:14px;padding:3px 12px;border-radius:99px;background:var(--accent-soft);color:var(--accent);transform:scale(0);opacity:0}
+.band{display:inline-block;font-weight:700;font-size:13px;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);transform:scale(0);opacity:0}
 .band.in{animation:pop .5s var(--spring) forwards}
 .band.excellent{background:var(--ok-soft);color:var(--ok)}.band.foundation{background:var(--med-soft);color:var(--med)}.band.critical{background:var(--crit-soft);color:var(--crit)}
-.site{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
-.verdict{font-size:23px;font-weight:700;letter-spacing:-.018em;margin:4px 0 6px;line-height:1.25}
-.verdict-sub{color:var(--muted);margin:0 0 14px;max-width:640px}
-.btnrow{display:flex;gap:8px;flex-wrap:wrap}
-@media(max-width:720px){.btnrow{justify-content:center}}
-.delta{display:inline-block;font-size:13px;font-weight:700;border-radius:99px;padding:1px 9px;margin-left:6px;vertical-align:middle}
-a.delta{text-decoration:none}a.delta:hover{filter:brightness(.96)}
+.sc-main{min-width:0}
+.site{font-size:13.5px;color:var(--muted);overflow-wrap:anywhere}
+.delta{display:inline-block;font-size:12.5px;font-weight:700;border-radius:99px;padding:0 8px;margin-left:4px;vertical-align:middle}
 .delta.up{background:var(--ok-soft);color:var(--ok)}.delta.down{background:var(--crit-soft);color:var(--crit)}.delta.same{background:var(--low-soft);color:var(--low)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
-@media(max-width:720px){.chips{justify-content:center}}
-.potential{margin:0 0 14px;max-width:520px}
-.potential .t{font-size:14px;color:var(--muted);margin-bottom:6px}
-.potential .t b{color:var(--ink)}
-.alert{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--crit-soft);border:1px solid #f3b6b6;border-left:5px solid var(--crit);border-radius:12px;padding:12px 14px;margin:0 0 14px;max-width:640px;animation:alertin .55s var(--spring) both}
-.alert .ai{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#fff;font-size:19px;line-height:1;animation:pillpulse 2.6s ease-out infinite}
-.alert b{display:block;color:var(--crit);font-size:15px;line-height:1.3}
-.alert span.s{display:block;font-size:14px;color:#5a2a2a;margin-top:2px}
-.alert a{display:inline-block;margin-top:6px;font-weight:700;font-size:14px;color:var(--crit)}
-.alert.high{background:var(--high-soft);border-color:#f6c9a8;border-left-color:var(--high)}
-.alert.high b,.alert.high a{color:var(--high)}.alert.high span.s{color:#5f3516}
-@keyframes alertin{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
-.ptrack{height:10px;background:var(--line);border-radius:99px;position:relative;overflow:hidden}
-.ptrack .g,.ptrack .n{position:absolute;left:0;top:0;bottom:0;border-radius:99px;width:0;transition:width 1.2s var(--ease) .5s}
-.ptrack .g{background:repeating-linear-gradient(-45deg,#c7d2fe,#c7d2fe 6px,#dbe4ff 6px,#dbe4ff 12px)}
-.ptrack .n{background:var(--grad)}
-.sbot{display:grid;justify-items:center;gap:6px;width:150px}
-.sbot .bubble{position:relative;background:var(--accent-soft);color:#2f3f8f;border-radius:14px;padding:8px 10px;font-size:14px;font-weight:600;text-align:center;line-height:1.3}
-.sbot .bubble::after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:var(--accent-soft);transform:translateX(-50%) rotate(45deg)}
-.spark{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:4px}
-.spark svg{display:block;overflow:visible}
-.spark polyline{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:300;stroke-dashoffset:300;animation:draw 1.2s var(--ease) .6s forwards}
-.spark circle{fill:var(--accent);opacity:0;animation:pop .4s var(--spring) 1.6s forwards}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
-@media(max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}}
-.stat{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#fbfcfe}
-.stat .ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--accent-soft);flex:none}
-.stat.good .ico{background:var(--ok-soft)}.stat.warn .ico{background:var(--high-soft)}.stat.bad .ico{background:var(--crit-soft)}
-.stat b{display:block;font-size:22px;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
-.stat span{font-size:14px;color:var(--muted)}
+.verdict{font-size:21px;font-weight:700;letter-spacing:-.018em;line-height:1.22;margin:3px 0 3px}
+.verdict-sub{color:var(--muted);font-size:15px}
+.sc-bot{width:58px;height:58px}
+@media(max-width:520px){.sc-top{grid-template-columns:auto 1fr}.sc-bot{display:none}.ring{width:92px;height:92px}.ring>div{width:72px;height:72px}.ring b{font-size:30px}.verdict{font-size:19px}}
+.sevrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.sev{display:inline-flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:3px 12px 3px 10px;min-height:34px;font-size:14px;font-weight:600;background:#fff}
+.sev i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.sev b{font-variant-numeric:tabular-nums}
+.sev.crit{--c:var(--crit)}.sev.high{--c:var(--high)}.sev.med{--c:#e0a800}.sev.low{--c:#aab2bf}
+.sev.crit b{color:var(--crit)}
+.sev.good{color:var(--ok);background:var(--ok-soft);border-color:#cdecd6;cursor:default}
+.potential{margin-top:10px;font-size:14px;color:var(--muted)}
+.potential b{color:var(--ink)}
+.sc-actions{display:flex;gap:8px;margin-top:14px}
+.sc-actions .primary{flex:1;min-height:46px;font-size:16px}
+.menuwrap{position:relative}
+.menuwrap>button{min-height:46px;width:48px;padding:0;font-size:20px;line-height:1}
+.menu{position:absolute;right:0;top:52px;min-width:210px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;z-index:25;animation:rowin .2s var(--ease)}
+.menu button{display:flex;width:100%;border:0;background:transparent;text-align:left;border-radius:8px;gap:10px;align-items:center;min-height:42px}
+.menu button:hover{background:var(--low-soft);box-shadow:none}
+.oldnotice{margin-top:12px;background:var(--med-soft);color:#6b4f00;border-radius:10px;padding:8px 12px;font-size:14px}
 
-/* ---------- section nav ---------- */
-.secnav{position:sticky;top:60px;z-index:20;display:flex;gap:6px;overflow-x:auto;padding:8px 2px;margin:10px 0 0;scrollbar-width:none;background:linear-gradient(var(--bg) 70%,rgba(245,246,248,0))}
-.secnav::-webkit-scrollbar{display:none}
-.secnav a{flex:none;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:6px 14px;border-radius:99px;font-size:14px;transition:background .2s,color .2s,border-color .2s,transform .2s var(--spring)}
-.secnav a:hover{translate:0 -2px}
-.secnav a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* ---------- the AI agent's journey ---------- */
+.jcap{font-size:13px;color:var(--muted);margin:16px 2px 6px}
+.journey{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.journey button{width:100%;display:grid;justify-items:center;gap:3px;padding:9px 2px 7px;border:1px solid var(--line);border-radius:14px;background:var(--card);min-height:0}
+.journey .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:var(--low-soft);color:var(--low)}
+.journey .ok .dot{background:var(--ok);color:#fff}
+.journey .warn .dot{background:var(--med-soft);color:var(--med);box-shadow:inset 0 0 0 2px #e0a800}
+.journey .fail .dot{background:var(--crit);color:#fff;animation:pillpulse 2.6s ease-out infinite}
+.journey .skipped{opacity:.55}
+.journey .lbl{font-size:13px;font-weight:700;line-height:1.1}
+.journey .ct{font-size:12px;color:var(--muted);line-height:1.1}
+.journey button[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 2px rgba(20,23,28,.14)}
+@media(max-width:420px){.journey .lbl{font-size:12px}.journey .ct{font-size:11px}}
 
-/* ---------- wins + top 3 ---------- */
-.wins{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
-.win{display:flex;gap:10px;align-items:flex-start;background:var(--ok-soft);border:1px solid #cdecd6;border-radius:12px;padding:11px 13px;color:#1d5a2b;font-size:15px}
-.win .tick{flex:none;width:24px;height:24px;border-radius:50%;background:var(--ok);display:grid;place-items:center;margin-top:1px}
-.win .tick svg{width:14px;height:14px}
-.win .tick path{stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22}
-.reveal.in .win .tick path,.win.reveal.in .tick path{animation:draw .5s var(--ease) calc(var(--i,0)*70ms + .25s) forwards}
-.top3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:820px){.top3{grid-template-columns:1fr}}
-.top3 .t{border:1px solid var(--line);border-radius:14px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:6px;position:relative;border-top:4px solid var(--low)}
-.top3 .t.p-critical{border-top-color:var(--crit)}.top3 .t.p-high{border-top-color:var(--high)}.top3 .t.p-medium{border-top-color:#e0a800}
-.top3 .t .num{position:absolute;right:12px;top:8px;font-size:34px;font-weight:800;color:#e6e9f0;line-height:1}
-.top3 .t b{font-size:16px;padding-right:30px}
-.top3 .t p{margin:0;font-size:15px;color:var(--muted)}
-.okbox{background:var(--ok-soft);color:var(--ok);border-radius:14px;padding:16px;font-weight:600;display:flex;gap:12px;align-items:center}
+/* ---------- issues ---------- */
+.issues{margin-top:22px}
+.gh{display:flex;align-items:center;gap:10px;margin:0 2px 10px;flex-wrap:wrap}
+.gh h2{font-size:19px;letter-spacing:-.015em}
+.gcount{font-size:13px;font-weight:700;border-radius:99px;padding:1px 10px;background:var(--crit-soft);color:var(--crit)}
+.gcount.zero{background:var(--ok-soft);color:var(--ok)}
+.gprog{margin-left:auto;font-size:13px;color:var(--muted)}
+.filternote{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);margin:0 2px 10px}
+.filternote button{min-height:30px;padding:2px 10px;font-size:13px;border-radius:99px}
+.rows{display:grid;gap:10px}
+.okrow{background:var(--ok-soft);color:#1d5a2b;border:1px solid #cdecd6;border-radius:14px;padding:14px 16px;font-weight:600}
+.issue{--sevc:#aab2bf;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sevc);border-radius:14px;box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s,opacity .3s;animation:rowin .45s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
+.issue.sev-critical{--sevc:var(--crit)}.issue.sev-high{--sevc:var(--high)}.issue.sev-medium{--sevc:#e0a800}
+.issue.open{box-shadow:var(--shadow-lg);border-color:#cfd6f5;border-left-color:var(--sevc)}
+.ih{display:flex;align-items:flex-start;gap:4px;padding:6px 8px 6px 8px}
+.chk{flex:none;width:28px;height:28px;min-height:28px;padding:0;border-radius:9px;display:grid;place-items:center;border:2px solid #c3cad6;background:#fff;margin-top:9px}
+.chk svg{width:15px;height:15px}
+.chk path{stroke:#fff;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .3s var(--ease)}
+.chk[aria-checked=true]{background:var(--ok);border-color:var(--ok);animation:pop .35s var(--spring)}
+.chk[aria-checked=true] path{stroke-dashoffset:0}
+.it{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto;gap:3px 8px;text-align:left;border:0;background:transparent;padding:8px 4px 8px 6px;box-shadow:none;min-height:46px;align-items:start}
+.it:hover{box-shadow:none}
+.it .tt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.it b{font-size:16px;line-height:1.3}
+.it .sm{grid-column:1;font-size:14.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.it .chev{grid-column:2;grid-row:1/3;align-self:center;color:var(--muted);font-size:22px;line-height:1;transition:transform .25s var(--ease)}
+.acc.open>.ih .chev,.acc.open>.ph .chev,.acc.open>.grp .chev{transform:rotate(90deg)}
+.issue.open .it .sm{display:none}
+.issue.done{opacity:.62}
+.issue.done .it b{text-decoration:line-through;color:var(--muted)}
+.gain{font-size:13px;color:var(--ok);font-weight:700}
 .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
 .p-critical{background:var(--crit-soft);color:var(--crit)}.p-high{background:var(--high-soft);color:var(--high)}
 .p-medium{background:var(--med-soft);color:var(--med)}.p-low{background:var(--low-soft);color:var(--low)}
 .p-ok{background:var(--ok-soft);color:var(--ok)}
 .pill.p-critical{animation:pillpulse 2.6s ease-out infinite}
+.fold{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s var(--ease)}
+.acc.open>.fold{grid-template-rows:1fr}
+.foldin{overflow:hidden;min-height:0}
+.ib{padding:0 16px 14px 46px}
+@media(max-width:520px){.ib{padding-left:16px}}
+.ib h4{margin:12px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.ib ul,.ib ol{margin:4px 0 0;padding-left:20px}
+.ib li{margin:5px 0;font-size:15px}
+.ib li a{word-break:break-all}
+.ib .steps-btn{margin-top:6px;border-radius:99px}
+.ib .inote{margin-top:10px;font-size:13.5px;color:var(--muted)}
+.ib .why{background:var(--accent-soft);color:#2f3f8f;border-radius:10px;padding:8px 12px;font-size:14.5px;margin-top:12px}
+.fixcta{margin-top:12px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,#eef2ff,#f3e8ff);border:1px solid #dbe0fb;border-radius:14px;padding:12px 14px}
+.fixcta span{color:#2f3f8f;font-weight:600;font-size:15px}
+.fixcta .primary{min-height:40px}
+.donebar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--ok-soft);color:#1d5a2b;border:1px solid #cdecd6;border-radius:12px;padding:10px 14px;margin-bottom:10px;animation:slidein .4s var(--ease)}
+.grp{width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;min-height:52px;font-weight:700;box-shadow:var(--shadow)}
+.grp .n{font-size:12px;font-weight:700;border-radius:99px;padding:1px 9px;background:var(--low-soft);color:var(--low)}
+.grp .sub{margin-left:auto;color:var(--muted);font-weight:500;font-size:14px}
+.grp .chev{margin-left:auto;color:var(--muted);font-size:22px;line-height:1;transition:transform .25s var(--ease)}
+.grp .sub+.chev{margin-left:4px}
+.grp.ok .n{background:var(--ok-soft);color:var(--ok)}
+.gwrap{margin-top:12px}
+.pad{padding-top:10px}
+.opt{margin-top:10px;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ochip{border:1px dashed #c3cad6;border-radius:99px;padding:1px 10px;font-size:13px;color:var(--muted);cursor:help}
+.wins{list-style:none;margin:0;padding:10px 0 0;display:grid;gap:8px}
+.wins li{display:flex;gap:10px;align-items:flex-start;font-size:15px;background:var(--ok-soft);border:1px solid #cdecd6;border-radius:12px;padding:9px 12px;color:#1d5a2b}
+.wins li::before{content:"✓";font-weight:800;color:var(--ok)}
 
-/* ---------- key facts ---------- */
-.tiles{grid-template-columns:repeat(4,1fr)}
-@media(max-width:900px){.tiles{grid-template-columns:repeat(2,1fr)}}
-.tile{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
-.tile .k{color:var(--muted);font-size:14px}
-.tile .v{font-size:23px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
-.tile .s{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
-
-/* ---------- bots ---------- */
-.botsum{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:0 0 14px}
-.botmeter{flex:1;min-width:180px;max-width:320px;height:10px;background:var(--line);border-radius:99px;overflow:hidden;display:flex;gap:2px}
-.botmeter i{height:100%;width:0;transition:width .9s var(--ease) .3s}
-.botmeter .a{background:var(--ok)}.botmeter .b{background:#e8590c}.botmeter .c{background:#e0a800}
-.bots{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px}
-.botcard{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:var(--card);display:flex;flex-direction:column;gap:6px}
-.botcard .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.botcard b{font-size:15px}
-.role{font-size:12px;font-weight:700;color:var(--muted);background:var(--low-soft);border-radius:99px;padding:1px 9px;white-space:nowrap}
-.botcard .vendor{font-size:14px;color:var(--muted);margin-top:-4px}
-.botcard .pills{display:flex;gap:6px;flex-wrap:wrap}
-.botcard.bad{border-color:#f1c4c4;background:#fffafa}
-.botcard.warn{border-color:#f0dd9c;background:#fffdf4}
-.botcard.reveal.in.bad{animation:shake .5s calc(var(--i,0)*70ms + .5s)}
-.note{font-size:14px;color:var(--muted);margin:14px 0 0;background:#f8f9fb;border-radius:10px;padding:10px 12px}
-
-/* ---------- fixes ---------- */
-.fhead{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
-.fprog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
-.fprog .tr{width:140px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
-.fprog .tr i{display:block;height:100%;width:0;background:var(--ok);border-radius:99px;transition:width .5s var(--ease)}
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.filters button{border-radius:99px;min-height:34px;padding:3px 14px;font-size:14px}
-.filters button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
-.actions{display:grid;gap:10px}
-.action{border:1px solid var(--line);border-radius:12px;background:var(--card);transition:border-color .2s,box-shadow .2s,opacity .3s}
-.action:hover{border-color:#cfd6e6}
-.action.open{box-shadow:var(--shadow);border-color:#cfd6f5}
-.a-head{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 10px}
-.chk{flex:none;width:30px;height:30px;min-height:30px;padding:0;border-radius:9px;display:grid;place-items:center;border:2px solid #c3cad6;background:#fff}
-.chk svg{width:16px;height:16px}
-.chk path{stroke:#fff;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .3s var(--ease)}
-.chk[aria-checked=true]{background:var(--ok);border-color:var(--ok);animation:pop .35s var(--spring)}
-.chk[aria-checked=true] path{stroke-dashoffset:0}
-.a-toggle{flex:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-align:left;border:0;background:transparent;padding:7px 4px;box-shadow:none;min-height:44px}
-.a-toggle:hover{box-shadow:none}
-.a-h{margin:0;flex:1;min-width:0;font-size:16px}
-.a-toggle{width:100%}
-.a-toggle .lbl{flex:1;min-width:160px;font-weight:600;font-size:16px}
-.a-toggle .chev{transition:transform .25s var(--ease);color:var(--muted);font-size:22px;line-height:1;margin-left:auto}
-.action.open .chev{transform:rotate(90deg)}
-.action.done .lbl{text-decoration:line-through;color:var(--muted)}
-.action.done{opacity:.7}
-.gain{font-size:13px;color:var(--ok);font-weight:700}
-.tag{font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:0 8px}
-.a-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease)}
-.action.open .a-body{grid-template-rows:1fr}
-.a-inner{overflow:hidden;min-height:0}
-.a-pad{padding:2px 16px 14px 48px}
-@media(max-width:560px){.a-pad{padding-left:16px}}
-.why{background:var(--accent-soft);color:#2f3f8f;border-radius:10px;padding:10px 12px;font-size:15px;margin:0 0 8px}
-.action ul{margin:6px 0 0;padding-left:20px}
-.action li{margin:6px 0;font-size:15px}
-.action li a{word-break:break-all}
-
-/* ---------- AI view ---------- */
+/* ---------- details panels ---------- */
+.details{margin-top:24px}
+.dh{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 2px 8px;font-weight:700}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.panel>.ph{width:100%;display:flex;align-items:center;gap:12px;text-align:left;border:0;background:transparent;padding:10px 14px;min-height:58px;box-shadow:none;border-radius:14px}
+.ph .ic{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;font-size:17px;flex:none}
+.ph .t{display:grid;min-width:0}
+.ph .t b{font-size:16px}
+.ph .t span{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .chev{margin-left:auto;color:var(--muted);font-size:22px;line-height:1;transition:transform .25s var(--ease)}
+.pb{padding:2px 14px 16px}
+.pnote{font-size:14px;color:var(--muted);margin:0 0 10px}
 .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .tabs button{border-radius:99px;min-height:36px;padding:4px 16px;font-size:14px}
 .tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
-.views{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.views.one{grid-template-columns:1fr}
-@media(max-width:900px){.views{grid-template-columns:1fr}}
-.pane{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:200px}
+.views{display:grid;grid-template-columns:1fr;gap:12px}
+.pane{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
 .pane .bar2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted);background:#fafbfc}
-.human .shotbox{position:relative;background:#eef0f3;min-height:240px}
+.human .shotbox{position:relative;background:#eef0f3;min-height:200px}
 .human img{width:100%;display:block;opacity:0;transform:scale(1.015);transition:opacity .6s var(--ease),transform .6s var(--ease)}
 .human img.ready{opacity:1;transform:none}
 .shotmsg{position:absolute;inset:0;padding:22px;color:var(--muted);font-size:15px;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:linear-gradient(90deg,#eef0f3 25%,#f7f8fb 50%,#eef0f3 75%);background-size:200% 100%;animation:shimmer 1.6s linear infinite}
@@ -350,135 +298,88 @@ a.delta{text-decoration:none}a.delta:hover{filter:brightness(.96)}
 .shotmsg .laser{position:absolute;left:0;right:0}
 .shotmsg.off .laser{display:none}
 .spin{width:18px;height:18px;border:2.5px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;flex:none}
-.term{background:var(--term);color:var(--term-ink);font:13.5px/1.6 var(--mono);padding:14px 16px;overflow:auto;max-height:720px;white-space:pre-wrap;word-break:break-word;flex:1}
+.term{background:var(--term);color:var(--term-ink);font:13.5px/1.6 var(--mono);padding:14px 16px;overflow:auto;max-height:420px;white-space:pre-wrap;word-break:break-word}
 .term .ln{display:block;min-height:1.6em}
 .term .ln.anim{opacity:0;animation:lineIn .35s var(--ease) forwards;animation-delay:calc(var(--d,0)*38ms)}
 .term .h{color:#fff;font-weight:700}.term .l{color:#8fb4ff}.term .d{color:var(--term-dim)}.term .w{color:#ffd8a8}
-.term .cur{display:inline-block;width:8px;height:15px;background:#8fb4ff;vertical-align:-2px;animation:caret 1s steps(1) infinite}
 .pane.ai{border-color:#233042}
 .pane.ai .bar2{background:#161f2b;color:var(--term-dim);border-color:#233042}
 .pane.ai .bar2 button{background:#233042;color:var(--term-ink);border-color:#2f3f55;min-height:28px;padding:2px 10px;font-size:13px;box-shadow:none}
 .facts{font:13px/1.65 var(--mono);color:var(--term-dim);padding:12px 16px;background:#121b26;border-bottom:1px solid #233042;word-break:break-word}
 .facts b{color:var(--term-ink);font-weight:500}
-
-/* ---------- platforms, scores ---------- */
-.plats{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
-.plat{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}
-.plat .ph{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.plat .ph b{font-size:16px}
-.plat .ps{font-size:28px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.botsum{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px;font-size:15px}
+.botmeter{flex:1;min-width:140px;height:10px;background:var(--line);border-radius:99px;overflow:hidden;display:flex;gap:2px}
+.botmeter i{height:100%;width:var(--w,0)}
+.botmeter .a{background:var(--ok)}.botmeter .b{background:#e8590c}.botmeter .c{background:#e0a800}
+.botlist{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.botrow{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:9px 12px;border-bottom:1px solid var(--line);align-items:center;background:#fff}
+.botrow:last-child{border-bottom:0}
+.botrow b{font-size:15px}
+.botrow .v{font-size:13px;color:var(--muted)}
+.botrow .pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;grid-row:1/3;grid-column:2}
+.botrow.bad{background:#fffafa}.botrow.warn{background:#fffdf4}
+.role{font-size:12px;font-weight:700;color:var(--muted);background:var(--low-soft);border-radius:99px;padding:1px 9px;margin-left:6px;white-space:nowrap}
+.note{font-size:14px;color:var(--muted);margin:12px 0 0;background:#f8f9fb;border-radius:10px;padding:10px 12px}
+.plats{display:grid;gap:10px}
+.plat{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.plat .ph2{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.plat .ph2 b{font-size:16px}
+.plat .ps{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .plat .track{margin:8px 0 4px}
 .plat ul{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px;font-size:15px}
 .plat li{display:flex;gap:8px}
 .plat li.ok::before{content:"✓";color:var(--ok);font-weight:800}
 .plat li.tip::before{content:"→";color:var(--accent);font-weight:800}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;min-width:0}
+.tile .k{color:var(--muted);font-size:13.5px}
+.tile .v{font-size:21px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile .s{font-size:13.5px;color:var(--muted);overflow-wrap:anywhere}
 .bars{display:grid;gap:10px}
-.bar{display:grid;grid-template-columns:240px 1fr 64px;gap:12px;align-items:center;font-size:15px}
-@media(max-width:620px){.bar{grid-template-columns:1fr 54px}.bar .track{grid-column:1/-1;order:3}}
+.bar{display:grid;grid-template-columns:1fr 64px;gap:4px 12px;align-items:center;font-size:15px}
+.bar .track{grid-column:1/-1;order:3}
 .track{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
-.track i{display:block;height:100%;border-radius:99px;width:0;transition:width 1s var(--ease) calc(var(--i,0)*80ms + .2s)}
-.reveal.in .track i,.reveal.in .botmeter i{width:var(--w,0)}
+.track i{display:block;height:100%;border-radius:99px;width:var(--w,0)}
 .bar .n{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
-.sub{font-size:17px;margin:22px 0 10px;display:flex;align-items:center;gap:10px}
+.sub{font-size:16px;margin:20px 0 8px;display:flex;align-items:center;gap:10px}
 .grade{font-weight:800;border-radius:10px;padding:1px 10px;background:var(--accent-soft);color:var(--accent)}
-.lnote{font-size:14px;color:var(--muted);margin:-4px 0 6px}
-
-.export{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,#eef2ff,#f3e8ff);border:1px solid #dbe0fb}
-.export p{margin:4px 0 0;color:#3d4570;max-width:620px}
+.lnote{font-size:14px;color:var(--muted);margin:2px 0 6px}
 
 /* ---------- history ---------- */
-.hhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 14px;flex-wrap:wrap}
-.hhead h1{font-size:27px;margin:0;letter-spacing:-.02em}
-.hlist{display:grid;gap:10px}
-.hitem{display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer}
-@media(max-width:620px){.hitem{grid-template-columns:auto 1fr auto}.hitem .hs{display:none}}
-.hscore{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff}
+.hhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 4px;flex-wrap:wrap}
+.hhead h1{font-size:26px;letter-spacing:-.02em}
+.hlist{display:grid;gap:10px;margin-top:12px}
+.hitem{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer;animation:rowin .4s var(--ease) both;animation-delay:calc(var(--i,0)*40ms)}
+.hitem:hover{border-color:#cfd6f5}
+@media(max-width:520px){.hitem{grid-template-columns:auto 1fr auto}.hitem .hs{display:none}}
+.hscore{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff}
 .hitem .host{font-weight:700;overflow-wrap:anywhere}
-.hitem .sub2{font-size:14px;color:var(--muted);word-break:break-word}
-.hitem .acts{display:flex;gap:4px}
+.hitem .sub2{font-size:13.5px;color:var(--muted);word-break:break-word}
+.hitem .acts{display:flex;gap:2px}
 .hs svg{display:block}.hs polyline{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.hs circle{fill:var(--accent)}
-.empty{text-align:center;padding:44px 16px;color:var(--muted);background:var(--card);border:1px dashed #cfd5df;border-radius:var(--r)}
+.empty{text-align:center;padding:40px 16px;color:var(--muted);background:var(--card);border:1px dashed #cfd5df;border-radius:var(--r)}
 .empty .bot{margin:0 auto 10px;animation:float 3.5s ease-in-out infinite}
-.empty b{display:block;color:var(--ink);font-size:19px;margin-bottom:6px}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
 
-/* ---------- overlays ---------- */
+/* ---------- overlays + footer ---------- */
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(24px) scale(.96);background:var(--ink);color:#fff;padding:11px 18px;border-radius:14px;font-size:15px;opacity:0;transition:.3s var(--spring);pointer-events:none;z-index:70;max-width:90vw;display:flex;gap:8px;align-items:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
-.totop{position:fixed;right:18px;bottom:22px;width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;font-size:20px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .25s,transform .3s var(--spring);z-index:40}
+.totop{position:fixed;right:16px;bottom:20px;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;font-size:20px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .25s,transform .3s var(--spring);z-index:40}
 .totop.show{opacity:1;pointer-events:auto;transform:none}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
 .confetti i{position:absolute;left:var(--x);top:var(--y);width:9px;height:13px;border-radius:3px;background:var(--c);animation:fall 1.6s cubic-bezier(.15,.7,.3,1) forwards;animation-delay:var(--dl,0s)}
-footer{color:var(--muted);font-size:14px;padding:36px 0 44px;text-align:center}
+footer{color:var(--muted);font-size:13.5px;padding:30px 0 40px;text-align:center}
 footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99px;background:var(--low-soft);font-weight:600;font-size:12px}
-
-
-/* ---------- one smart scan button + hint ---------- */
-form.scan button.primary .gi{display:grid;place-items:center}
-form.scan button.primary .gi svg{width:18px;height:18px;display:block;transition:transform .5s var(--ease)}
-form.scan button.primary:hover .gi svg{transform:rotate(180deg)}
-form.scan button.primary:disabled .gi{display:none}
-form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
-@keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(59,91,219,.55)}60%{box-shadow:0 0 0 12px rgba(59,91,219,0)}}
-.barhint{margin:10px 4px 0;font-size:14px;color:var(--muted);text-align:left;display:flex;gap:8px;align-items:flex-start}
-.barhint::before{content:"💡";flex:none}
-.donebanner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--ok-soft);color:#1d5a2b;border:1px solid #cdecd6;border-radius:12px;padding:12px 14px;margin-bottom:12px;animation:slidein .4s var(--ease)}
-
-/* ---------- what the AI agent missed ---------- */
-.miss{border-color:#f1d3d3;background:linear-gradient(180deg,#fff8f8,#fff 220px)}
-.miss.clear{border-color:#cdecd6;background:linear-gradient(180deg,#f4fcf6,#fff 220px)}
-.mhead{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
-.mhead h2{margin:0 0 2px}
-.mhead .meta{margin:0}
-.mhead .bot{width:70px;height:70px}
-.mcount{text-align:center;background:var(--crit-soft);color:var(--crit);border-radius:16px;padding:8px 20px;min-width:104px}
-.mcount b{display:block;font-size:36px;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.mcount span{font-size:13px;font-weight:700}
-.miss.clear .mcount{background:var(--ok-soft);color:var(--ok)}
-@media(max-width:620px){.mhead{grid-template-columns:auto 1fr}.mcount{grid-column:1/-1;display:flex;gap:8px;align-items:baseline;justify-content:center;padding:6px 16px}.mcount b{font-size:26px}}
-.journey{list-style:none;margin:18px 0 4px;padding:0;display:flex}
-.journey li{flex:1;position:relative;text-align:center;padding:0 2px;min-width:0}
-.journey li::before{content:"";position:absolute;top:18px;left:-50%;right:50%;height:4px;border-radius:2px;background:#d6dce6;z-index:0}
-.journey li:first-child::before{display:none}
-.journey .dot{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;font-weight:800;font-size:18px;background:#fff;border:3px solid var(--line);color:var(--muted);transform:scale(.5);opacity:0;transition:transform .5s var(--spring) calc(var(--i,0)*120ms + .15s),opacity .3s calc(var(--i,0)*120ms + .15s)}
-.reveal.in .journey .dot{transform:none;opacity:1}
-.journey li.ok .dot{border-color:var(--ok);background:var(--ok);color:#fff}
-.journey li.warn .dot{border-color:#e0a800;background:#fff9db;color:#946c00}
-.journey li.fail .dot{border-color:var(--crit);background:var(--crit);color:#fff}
-.journey li.skipped .dot{opacity:.45}
-.reveal.in .journey li.fail .dot{animation:pillpulse 2.6s ease-out 1s infinite}
-.journey .lbl{font-size:14px;font-weight:700;line-height:1.2}
-.journey .jsub{font-size:13px;color:var(--muted)}
-.mgroup{margin-top:20px}
-.mgroup h3{font-size:15px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
-.mgroup h3 .n{font-size:12px;font-weight:700;background:var(--crit-soft);color:var(--crit);border-radius:99px;padding:1px 9px}
-.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-@media(max-width:820px){.mgrid{grid-template-columns:1fr}}
-.mi{border:1px dashed #e6bdbd;border-left:5px solid var(--crit);border-radius:12px;background:#fff;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
-.mi.p-high{border-left-color:var(--high)}.mi.p-medium{border-left-color:#e0a800}.mi.p-low{border-left-color:#aab2bf}
-.mi .x{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--crit-soft);color:var(--crit);font-weight:800;font-size:14px;margin-top:1px}
-.mi.p-high .x{background:var(--high-soft);color:var(--high)}.mi.p-medium .x{background:var(--med-soft);color:var(--med)}.mi.p-low .x{background:var(--low-soft);color:var(--low)}
-.mi .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
-.mi b{font-size:16px;line-height:1.3}
-.mi p{margin:3px 0 0;font-size:15px;color:var(--muted)}
-.mopt{margin:18px 0 0;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.ochip{border:1px dashed #c3cad6;border-radius:99px;padding:1px 10px;font-size:13px;color:var(--muted);cursor:help}
-.mcta{margin-top:20px;border-radius:14px;background:linear-gradient(135deg,#eef2ff,#f3e8ff);border:1px solid #dbe0fb;padding:16px 18px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.mcta .ct{font-size:18px;display:block}
-.mcta p{margin:4px 0 0;color:#3d4570;max-width:560px}
-.mcta .pot{margin-top:6px;font-weight:600;color:#2f3f8f}
-.mcta .btns{display:flex;gap:8px;flex-wrap:wrap}
-@media(max-width:520px){.miss{padding:16px}.journey .lbl{font-size:11.5px;letter-spacing:-.01em}.journey .jsub{font-size:11px}.journey .dot{width:34px;height:34px;font-size:15px}.journey li::before{top:15px}.mcta .btns{width:100%}.mcta .btns button{flex:1}.stat{padding:10px}.stat .ico{width:34px;height:34px;font-size:17px}.stat b{font-size:20px}}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important}
-  .reveal{opacity:1;transform:none}
 }
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="wrap">
+<header class="top">
+  <div class="col">
     <div class="brand" id="brand" role="link" tabindex="0" aria-label="AI Site Scan home"><span class="dot"></span><span class="t">AI Site Scan</span></div>
     <nav class="nav" id="nav" role="tablist" aria-label="Views">
       <span class="ind" id="navInd"></span>
@@ -488,13 +389,12 @@ form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
   </div>
 </header>
 
-<div class="wrap">
+<div class="col">
   <div id="viewScan">
-    <div class="hero" id="hero">
-      <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <section class="hero" id="hero">
       <div class="bot" data-bot data-mood="idle" id="heroBot" aria-hidden="true"></div>
       <h1 aria-label="Can AI read your website?">Can <span class="rot" id="rot" aria-hidden="true">ChatGPT</span> read your website?</h1>
-      <p class="lede">See your site the way ChatGPT, Claude and Perplexity see it. Get a score, a side-by-side view, and a fix guide you can hand to your developer.</p>
+      <p class="lede">Free scan. See what AI sees, and what to fix first.</p>
       <form class="scan" id="f" autocomplete="off">
         <div class="inputwrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
@@ -509,13 +409,8 @@ form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
         <button class="chip" type="button" data-ex="react.dev">react.dev</button>
         <button class="chip" type="button" data-ex="excalidraw.com">excalidraw.com</button>
       </div>
-      <div class="how">
-        <div class="spot lift reveal" style="--i:0"><span class="n">1</span><b>Enter your address</b><span class="muted">Usually your homepage. Free, no login.</span></div>
-        <div class="spot lift reveal" style="--i:1"><span class="n">2</span><b>See what AI sees</b><span class="muted">Your page with no JavaScript, next to what a visitor sees. Plus 14 AI bots knock on your door.</span></div>
-        <div class="spot lift reveal" style="--i:2"><span class="n">3</span><b>Get a fix guide</b><span class="muted">Download step-by-step fixes with code you can paste.</span></div>
-      </div>
       <div id="err" class="err hide" role="alert"></div>
-    </div>
+    </section>
 
     <div id="progress" class="progress hide" aria-live="polite">
       <div class="stage" aria-hidden="true">
@@ -526,168 +421,137 @@ form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
         <h3 id="progTitle">Scanning…</h3>
         <p class="quip" id="quip">Waking up the robots…</p>
         <div class="pbar"><i id="pfill"></i></div>
-        <ol id="steps"></ol>
       </div>
     </div>
 
-    <main id="out" class="hide">
-      <section class="card" id="secSummary">
-        <div class="summary">
+    <main id="out" class="out hide">
+      <section class="card scorecard" id="scoreCard">
+        <div class="sc-top">
           <div class="ringwrap">
             <div class="ring" id="ring"><div><span><b id="score">0</b><small>of 100</small></span></div></div>
             <span class="band" id="band"></span>
           </div>
-          <div>
+          <div class="sc-main">
             <div class="site" id="siteLine"></div>
-            <div class="chips" id="chips"></div>
-            <div class="verdict" id="verdict"></div>
+            <h2 class="verdict" id="verdict"></h2>
             <p class="verdict-sub" id="verdictSub"></p>
-            <div class="alert hide" id="alertBar" role="alert"><span class="ai" aria-hidden="true">📍</span><div><b id="alertT"></b><span class="s" id="alertS"></span><a href="#secTop" id="alertGo">See how to fix it ↓</a></div></div>
-            <div class="potential" id="potential"></div>
-            <div class="btnrow">
-              <button id="shareBtn" type="button">🔗 Share link</button>
-              <button id="copyMd" type="button">Copy summary</button>
-              <button id="dlJson" type="button" class="ghost small">JSON</button>
-            </div>
-            <div class="spark" id="spark"></div>
           </div>
-          <div class="sbot" aria-hidden="true"><div class="bubble" id="bubble"></div><div class="bot" data-bot data-mood="idle" id="sumBot"></div></div>
+          <div class="bot sc-bot" data-bot data-mood="idle" id="sumBot" aria-hidden="true"></div>
         </div>
-        <div class="stats" id="stats"></div>
-        <div id="oldNotice" class="notice hide"></div>
-      </section>
-
-      <nav class="secnav" id="secnav" aria-label="Sections">
-        <a href="#secMissed" id="navMissed">AI missed</a><a href="#secTop">Top fixes</a><a href="#secWins" id="navWins">Working</a><a href="#secView">AI view</a><a href="#secBots">Bots</a><a href="#secPlat" id="navPlat">Platforms</a><a href="#secFixes">All fixes</a><a href="#secFacts">Key facts</a><a href="#secScores">Scores</a>
-      </nav>
-
-      <section class="card miss reveal" id="secMissed">
-        <div class="mhead">
-          <div data-bot data-mood="sad" id="missBot" aria-hidden="true"></div>
-          <div>
-            <h2 id="missTitle">What the AI agent missed</h2>
-            <p class="meta" id="missSub"></p>
-          </div>
-          <div class="mcount" id="missCount"><b data-count="0">0</b><span>missed</span></div>
-        </div>
-        <ol class="journey" id="journey" aria-label="The AI agent's reading journey"></ol>
-        <div id="missList"></div>
-        <p class="mopt hide" id="missOpt"></p>
-        <div class="mcta" id="missCta">
-          <div>
-            <b class="ct">Get the full report and fix guide</b>
-            <p id="missCtaText"></p>
-            <div class="pot hide" id="missPot"></div>
-          </div>
-          <div class="btns">
-            <button class="primary" id="exportBtn" type="button">⬇ Get the fix guide</button>
-            <button id="seeFull" type="button">See the full report ↓</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="card reveal" id="secTop">
-        <h2><span class="hi">🚀</span>Start here</h2>
-        <p class="meta">The fixes with the biggest effect.</p>
-        <div id="top3" class="top3"></div>
-      </section>
-
-      <section class="card reveal hide" id="secWins">
-        <h2><span class="hi">✅</span>Already working</h2>
-        <p class="meta">Good news first. Keep these as they are.</p>
-        <div id="wins" class="wins"></div>
-      </section>
-
-      <section class="card reveal" id="secView">
-        <h2><span class="hi">👀</span>How AI sees your site</h2>
-        <p class="meta">Visitor view: a real browser. AI view: what most AI tools get (no JavaScript). Text that is only in the visitor view is invisible to AI.</p>
-        <div class="tabs" role="tablist">
-          <button role="tab" data-v="both" aria-selected="true">Compare</button>
-          <button role="tab" data-v="human" aria-selected="false">Visitor view</button>
-          <button role="tab" data-v="ai" aria-selected="false">AI view</button>
-        </div>
-        <div class="views" id="views">
-          <div class="pane human" id="paneHuman">
-            <div class="bar2"><span>👤 What a visitor sees</span><a id="openSite" target="_blank" rel="noopener">Open site ↗</a></div>
-            <div class="shotbox">
-              <img id="shot" alt="Screenshot of the website">
-              <div id="shotMsg" class="shotmsg"></div>
+        <div class="sevrow" id="sevRow"></div>
+        <p class="potential hide" id="potential"></p>
+        <div class="sc-actions">
+          <button class="primary" id="exportBtn" type="button">⬇ Get the fix guide</button>
+          <div class="menuwrap">
+            <button id="moreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">⋯</button>
+            <div class="menu hide" id="moreMenu" role="menu">
+              <button type="button" role="menuitem" data-act="share">🔗 Share link</button>
+              <button type="button" role="menuitem" data-act="copy">📋 Copy summary</button>
+              <button type="button" role="menuitem" data-act="json">⬇ Download JSON</button>
             </div>
           </div>
-          <div class="pane ai" id="paneAi">
-            <div class="bar2"><span>🤖 What AI gets</span><button id="rawToggle" type="button">Show raw</button></div>
-            <div class="facts" id="facts"></div>
-            <div class="term" id="term"></div>
-          </div>
+        </div>
+        <div class="oldnotice hide" id="oldNotice"></div>
+      </section>
+
+      <p class="jcap hide" id="jcap">How the AI agent got on, step by step</p>
+      <ol class="journey hide" id="journey" aria-label="The AI agent's journey"></ol>
+
+      <section class="issues" id="issues">
+        <div class="gh"><h2>Fix first</h2><span class="gcount" id="sevCount"></span><span class="gprog" id="gprog"></span></div>
+        <div class="donebar hide" id="doneBar"><span>🎉 <b>All done.</b> Rescan to see your new score.</span><button class="primary small" id="doneRescan" type="button">↻ Rescan now</button></div>
+        <div class="filternote hide" id="filterNote"></div>
+        <div class="rows" id="severe"></div>
+        <div class="fixcta" id="fixCta"></div>
+
+        <div class="acc gwrap" id="moreAcc">
+          <button class="grp" type="button" data-acc aria-expanded="false"><span>More to improve</span><span class="n" id="moreN">0</span><span class="sub" id="moreSub"></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pad"><div class="rows" id="more"></div><p class="opt hide" id="optional"></p></div></div></div>
+        </div>
+
+        <div class="acc gwrap hide" id="worksAcc">
+          <button class="grp ok" type="button" data-acc aria-expanded="false"><span>What works</span><span class="n" id="worksN">0</span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><ul class="wins" id="wins"></ul></div></div>
         </div>
       </section>
 
-      <section class="card reveal" id="secBots">
-        <h2><span class="hi">🤖</span>Can the AI bots get in?</h2>
-        <p class="meta">We knock on your server as 14 crawlers and AI assistants, all at once, and compare with a normal browser.</p>
-        <div class="botsum" id="botsum"></div>
-        <div class="bots" id="bots"></div>
-        <p class="note" id="botnote"></p>
-      </section>
+      <section class="details" id="details">
+        <h2 class="dh">Details</h2>
 
-      <section class="card reveal hide" id="secPlat">
-        <h2><span class="hi">🧠</span>How each AI platform sees you</h2>
-        <p class="meta">A readiness estimate per platform, from the same scan.</p>
-        <div class="plats" id="plats"></div>
-      </section>
-
-      <section class="card reveal" id="secFixes">
-        <div class="fhead">
-          <div><h2><span class="hi">🛠</span>All fixes</h2>
-          <p class="meta" style="margin:0">Tap a fix to see why it matters. Tick it when done. "+N pts" is how much the score can still grow in that area.</p></div>
-          <div class="fprog" id="fprog"><span id="fprogTxt"></span><span class="tr"><i id="fprogBar"></i></span></div>
+        <div class="panel acc" id="pView">
+          <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">👀</span><span class="t"><b>How AI sees your page</b><span id="tView"></span></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pb">
+            <p class="pnote">The visitor view is a real browser. The AI view is what most AI tools get: the page with no JavaScript.</p>
+            <div class="tabs" role="tablist">
+              <button role="tab" data-v="both" aria-selected="true">Compare</button>
+              <button role="tab" data-v="human" aria-selected="false">Visitor view</button>
+              <button role="tab" data-v="ai" aria-selected="false">AI view</button>
+            </div>
+            <div class="views" id="views">
+              <div class="pane human" id="paneHuman">
+                <div class="bar2"><span>👤 What a visitor sees</span><a id="openSite" target="_blank" rel="noopener">Open site ↗</a></div>
+                <div class="shotbox">
+                  <img id="shot" alt="Screenshot of the website">
+                  <div id="shotMsg" class="shotmsg"></div>
+                </div>
+              </div>
+              <div class="pane ai" id="paneAi">
+                <div class="bar2"><span>🤖 What AI gets</span><button id="rawToggle" type="button">Show raw</button></div>
+                <div class="facts" id="facts"></div>
+                <div class="term" id="term"></div>
+              </div>
+            </div>
+          </div></div></div>
         </div>
-        <div class="donebanner hide" id="doneBanner"><span>🎉 <b>All fixes ticked.</b> Rescan to see your new score.</span><button class="primary" id="doneRescan" type="button">↻ Rescan now</button></div>
-        <div class="filters" id="filters"></div>
-        <div class="actions" id="actions"></div>
-      </section>
 
-      <section class="card export reveal">
-        <div>
-          <b>Give this to your developer or AI coding tool</b>
-          <p>The fix guide is a Markdown file with each fix, why it matters, and ready-to-paste code (JSON-LD, llms.txt, robots.txt and more), filled in for this site.</p>
+        <div class="panel acc" id="pBots">
+          <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">🤖</span><span class="t"><b>AI bots</b><span id="tBots"></span></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pb">
+            <div class="botsum" id="botsum"></div>
+            <div class="botlist" id="bots"></div>
+            <p class="note" id="botnote"></p>
+          </div></div></div>
         </div>
-        <button class="primary" id="exportBtn2" type="button">⬇ Download fix guide</button>
-      </section>
 
-      <section class="card reveal" id="secFacts">
-        <h2><span class="hi">📋</span>Key facts</h2>
-        <p class="meta" id="siteTitle"></p>
-        <div class="grid tiles" id="tiles"></div>
-      </section>
+        <div class="panel acc hide" id="pPlat">
+          <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">🧠</span><span class="t"><b>AI platforms</b><span id="tPlat"></span></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pb"><div class="plats" id="plats"></div></div></div></div>
+        </div>
 
-      <section class="card reveal" id="secScores">
-        <h2><span class="hi">📊</span>Score by area</h2>
-        <p class="meta">Each area adds up to the total score.</p>
-        <div class="bars" id="bars"></div>
-        <div id="trust"></div>
-        <p class="meta" id="engine" style="margin-top:14px"></p>
+        <div class="panel acc" id="pFacts">
+          <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">📋</span><span class="t"><b>Key facts</b><span id="tFacts"></span></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pb"><div class="tiles" id="tiles"></div></div></div></div>
+        </div>
+
+        <div class="panel acc" id="pScores">
+          <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">📊</span><span class="t"><b>Score breakdown</b><span id="tScores"></span></span><span class="chev">›</span></button>
+          <div class="fold"><div class="foldin" inert><div class="pb">
+            <div class="bars" id="bars"></div>
+            <div id="trust"></div>
+            <p class="lnote" id="engine" style="margin-top:14px"></p>
+          </div></div></div>
+        </div>
       </section>
     </main>
   </div>
 
   <div id="viewHistory" class="hide">
     <div class="hhead">
-      <h1>Scan history</h1>
+      <h1>History</h1>
       <button id="clearHistory" type="button" class="small">Clear all</button>
     </div>
-    <p class="meta" style="margin-top:-6px">Saved only in this browser. Tap a scan to open its full report.</p>
+    <p class="muted" style="font-size:14px">Saved only in this browser. Tap a scan to open it again.</p>
     <div class="hlist" id="hlist"></div>
   </div>
 
-  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.<span class="ver" id="appv">v2.2.0</span></footer>
+  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v2.3.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
-const APP_VERSION = "2.2.0"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "2.3.0"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -695,12 +559,16 @@ const linkify = s => esc(s).replace(/(https?:\/\/[^\s<)]+[^\s<).,;])/g, '<a href
 const kb = b => (b||0) < 1024 ? (b||0) + " bytes" : (b||0) < 1048576 ? Math.round(b/1024).toLocaleString("en-US") + " KB" : (b/1048576).toFixed(1) + " MB";
 const hostOf = u => { try { return new URL(/^https?:/i.test(u) ? u : "https://" + u).hostname.replace(/^www\./,""); } catch { return u; } };
 const fmtTime = ts => new Date(ts).toLocaleString("en-GB", {day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit", hour12:false});
+const shortTime = ts => new Date(ts).toLocaleString("en-GB", {day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit", hour12:false});
 const colorFor = p => p>=80?"var(--ok)":p>=60?"var(--accent)":p>=40?"var(--med)":p>=20?"var(--high)":"var(--crit)";
 const solidColor = p => p>=80?"#2b8a3e":p>=60?"#3b5bdb":p>=40?"#b58500":p>=20?"#d9480f":"#c92a2a";
 const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let DATA = null, RAW = false, FILTER = "all", running = false, ENTRY = null;
+const RANK = {critical: 0, high: 1, medium: 2, low: 3};
+const SEV = {critical: "Critical", high: "High", medium: "Medium", low: "Low"};
+let DATA = null, RAW = false, running = false, ENTRY = null, STAGE = null, SHOT_FOR = "", ISSUES = [];
+let OPEN = new Set(), DONE = new Set();
 
 /* ---------- small motion helpers ---------- */
 function toast(msg, icon){
@@ -718,10 +586,6 @@ function tween(dur, fn, done){
     if(p < 1) requestAnimationFrame(step); else done && done();
   })(t0);
 }
-function countUp(el, to, dur = 900){
-  const dec = Number(el.dataset.dec || 0), suffix = el.dataset.suffix || "";
-  tween(dur, p => { el.textContent = (to * p).toLocaleString("en-US", {minimumFractionDigits: dec, maximumFractionDigits: dec}) + suffix; });
-}
 function burst(x, y, n = 48){
   if(REDUCED) return;
   const box = document.createElement("div"); box.className = "confetti";
@@ -734,19 +598,6 @@ function burst(x, y, n = 48){
   document.body.appendChild(box); setTimeout(() => box.remove(), 2400);
 }
 function burstAt(el, n){ if(!el) return; const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, n); }
-
-/* reveal on scroll: fades cards in, runs count-ups and bar fills when they come into view */
-const io = "IntersectionObserver" in window ? new IntersectionObserver(entries => entries.forEach(e => {
-  if(!e.isIntersecting) return;
-  const el = e.target; el.classList.add("in"); io.unobserve(el);
-  [el, ...el.querySelectorAll("[data-count]")].filter(x => x.dataset && x.dataset.count != null && !x.dataset.done).forEach(x => { x.dataset.done = 1; countUp(x, Number(x.dataset.count)); });
-}), {threshold: .08, rootMargin: "0px 0px -5% 0px"}) : null;
-function watch(){ $$(".reveal:not(.in)").forEach(el => io ? io.observe(el) : el.classList.add("in")); }
-
-document.addEventListener("pointermove", e => {
-  const s = e.target.closest && e.target.closest(".spot");
-  if(s){ const r = s.getBoundingClientRect(); s.style.setProperty("--mx", (e.clientX - r.left) + "px"); s.style.setProperty("--my", (e.clientY - r.top) + "px"); }
-});
 
 /* ---------- mascot ---------- */
 const BOT_SVG = `<svg viewBox="0 0 96 96" aria-hidden="true">
@@ -796,6 +647,13 @@ const EXAMPLES = ["yoursite.com", "anthropic.com", "stripe.com", "your-shop.co.i
   setTimeout(typePlaceholder, wait);
 })();
 
+/* ---------- open and close (one pattern for rows, groups and panels) ---------- */
+function setAcc(acc, open){
+  acc.classList.toggle("open", open);
+  acc.querySelectorAll(":scope > [data-acc], :scope > .ih > [data-acc]").forEach(b => b.setAttribute("aria-expanded", String(open)));
+  const fi = acc.querySelector(":scope > .fold > .foldin"); if(fi) fi.inert = !open;
+}
+
 /* ---------- history (saved in this browser) ---------- */
 const HKEY = "aiSiteScan.history.v1", HMAX = 30, DKEY = "aiSiteScan.done.v1";
 function loadHistory(){ try { return JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch { return []; } }
@@ -819,36 +677,37 @@ function addToHistory(d){
 }
 const olderEntry = entry => loadHistory().find(h => h.host === entry.host && h.ts < entry.ts) || null;
 function updateCount(){ const n = loadHistory().length; $("#hcount").textContent = n; $("#hcount").classList.toggle("hide", n === 0); }
-function sparkSvg(vals, w = 104, h = 30){
+function sparkSvg(vals, w = 84, h = 26){
   if(vals.length < 2) return "";
   const lo = Math.min(...vals), hi = Math.max(...vals), span = Math.max(hi - lo, 10);
   const pts = vals.map((v, i) => [3 + i * (w - 8) / (vals.length - 1), h - 4 - (v - lo) / span * (h - 8)]);
   const last = pts[pts.length - 1];
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}"/><circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="3.5"/></svg>`;
 }
-const trendFor = (host, ts, max = 8) => loadHistory().filter(h => h.host === host && h.ts <= ts).slice(0, max).reverse().map(h => h.score).filter(v => v != null);
+function loadDone(host){ try { return new Set(JSON.parse(localStorage.getItem(DKEY) || "{}")[host] || []); } catch { return new Set(); } }
+function saveDone(host, set){ try { const all = JSON.parse(localStorage.getItem(DKEY) || "{}"); all[host] = [...set]; localStorage.setItem(DKEY, JSON.stringify(all)); } catch {} }
+function resetDone(host){ saveDone(host, new Set()); return new Set(); }
 
 function renderHistory(){
   const list = loadHistory();
   $("#clearHistory").classList.toggle("hide", !list.length);
   if(!list.length){
-    $("#hlist").innerHTML = `<div class="empty"><div data-bot data-mood="idle"></div><b>No scans yet</b>Your scans show here, so you can open them again and track your progress.<br><br><button class="primary" type="button" id="emptyStart">Start a scan</button></div>`;
+    $("#hlist").innerHTML = `<div class="empty"><div data-bot data-mood="idle"></div><b>No scans yet</b>Your scans show here, so you can open them again.<br><br><button class="primary" type="button" id="emptyStart">Start a scan</button></div>`;
     mountBots(); $("#emptyStart").onclick = newScan;
     return;
   }
   $("#hlist").innerHTML = list.map((h, i) => {
     const prev = list.slice(i+1).find(x => x.host === h.host);
     const dl = prev && prev.score != null && h.score != null ? h.score - prev.score : null;
-    const dTag = dl == null ? "" : `<span class="delta ${dl>0?"up":dl<0?"down":"same"}">${dl>0?"+":dl===0?"±":""}${dl}</span>`;
-    const tr = sparkSvg(list.slice(i).filter(x => x.host === h.host).slice(0, 8).reverse().map(x => x.score).filter(v => v != null), 84, 26);
-    return `<div class="hitem reveal lift" style="--i:${Math.min(i, 8)}" data-id="${h.id}" tabindex="0" role="button" aria-label="Open scan of ${esc(h.host)}">
+    const dTag = dl ? `<span class="delta ${dl>0?"up":"down"}">${dl>0?"+":""}${dl}</span>` : "";
+    const tr = sparkSvg(list.slice(i).filter(x => x.host === h.host).slice(0, 8).reverse().map(x => x.score).filter(v => v != null));
+    return `<div class="hitem" style="--i:${Math.min(i, 8)}" data-id="${h.id}" tabindex="0" role="button" aria-label="Open scan of ${esc(h.host)}">
       <div class="hscore" style="background:${solidColor(h.score||0)}">${h.score ?? "–"}</div>
-      <div><div class="host">${esc(h.host)}${dTag}</div><div class="sub2">${esc(h.title || h.url)}</div><div class="sub2">${fmtTime(h.ts)}</div></div>
+      <div><div class="host">${esc(h.host)}${dTag}</div><div class="sub2">${fmtTime(h.ts)}</div></div>
       <div class="hs">${tr}</div>
       <div class="acts"><button class="small" data-act="rescan" title="Scan again" aria-label="Scan again">↻</button><button class="small ghost" data-act="del" title="Delete" aria-label="Delete">🗑</button></div>
     </div>`;
   }).join("");
-  watch();
 }
 $("#hlist").addEventListener("click", e => {
   const item = e.target.closest(".hitem"); if(!item) return;
@@ -872,7 +731,7 @@ function openSaved(h){
   setUrlParam(null);
 }
 
-/* ---------- views ---------- */
+/* ---------- views and the address bar ---------- */
 function moveInd(){
   const sel = $("#nav button[aria-selected=true]"), ind = $("#navInd"); if(!sel) return;
   ind.style.width = sel.offsetWidth + "px"; ind.style.transform = `translateX(${sel.offsetLeft}px)`;
@@ -902,7 +761,7 @@ function updateGo(){
   btn.querySelector(".gi").innerHTML = same ? ICON_REFRESH : ICON_SCAN;
   const hint = $("#barHint"), compactNow = $("#hero").classList.contains("compact");
   hint.classList.toggle("hide", !(DATA && compactNow));
-  if(DATA) hint.textContent = same ? "Fixed something? Press Rescan to see your new score. To check another site, type its address." : v.trim() ? "Press Scan to check " + hostOf(v) + ". This report stays in your History." : "Type the address of the site you want to scan.";
+  if(DATA) hint.textContent = same ? "Fixed something? Press Rescan." : v.trim() ? "Press Scan to check " + hostOf(v) + "." : "Type the address of the site to scan.";
   if(!same) btn.classList.remove("nudge");
 }
 function setBusy(b){
@@ -915,7 +774,7 @@ function focusBar(){
 }
 function newScan(){
   if(running) return;
-  showView("scan"); DATA = null; ENTRY = null;
+  showView("scan"); DATA = null; ENTRY = null; STAGE = null;
   $("#out").classList.add("hide"); $("#err").classList.add("hide"); $("#progress").classList.add("hide");
   setCompact(false); $("#u").value = ""; toggleClear(); updateGo(); setUrlParam(null);
   mood($("#heroBot"), "idle");
@@ -939,15 +798,15 @@ $("#u").addEventListener("mouseup", e => { if(barJustFocused){ e.preventDefault(
 $$(".chip[data-ex]").forEach(b => b.onclick = () => { $("#u").value = b.dataset.ex; toggleClear(); run(b.dataset.ex); });
 document.addEventListener("keydown", e => {
   if(e.key === "/" && !/^(input|textarea|select)$/i.test(document.activeElement?.tagName || "")){ e.preventDefault(); showView("scan"); focusBar(); }
+  if(e.key === "Escape") closeMenu();
 });
 const toTop = $("#toTop");
 addEventListener("scroll", () => toTop.classList.toggle("show", scrollY > 700), {passive: true});
 toTop.onclick = () => scrollTo({top: 0, behavior: REDUCED ? "auto" : "smooth"});
 
 /* ---------- scan ---------- */
-const STEPS = ["Open the page", "Read robots.txt and the sitemap", "Look for llms.txt", "Check structured data", "Check content and meta tags", "Knock as 14 AI bots", "Build the AI view", "Rank the fixes"];
 const QUIPS = ["Waking up the robots…", "Knocking on robots.txt…", "Asking ClaudeBot nicely…", "Reading with JavaScript switched off…", "Hunting for hidden text…", "Counting your H1s…", "Checking the sitemap is not a 404…", "Teaching a crawler to read…", "Almost there, grading the homework…"];
-function setProg(done){ $("#pfill").style.width = Math.round(100 * done / STEPS.length) + "%"; }
+function setProg(pct){ $("#pfill").style.width = Math.round(pct) + "%"; }
 function showErr(msg){
   const err = $("#err");
   err.innerHTML = `<div data-bot data-mood="sad"></div><div><b>Hmm, that did not work</b>${esc(msg)}<br><button type="button" class="small" id="errRetry">Try again</button></div>`;
@@ -957,25 +816,21 @@ function showErr(msg){
 async function run(raw, opts = {}){
   const url = String(raw || "").trim(); if(!url || running) return;
   const fresh = !!opts.fresh || (!!DATA && sameTarget(url, DATA.url));  /* a rescan must never show an old answer */
-  running = true; DATA = null; ENTRY = null;
+  running = true; DATA = null; ENTRY = null; STAGE = null;
   $("#err").classList.add("hide"); $("#out").classList.add("hide");
   setCompact(true); setBusy(true); mood($("#heroBot"), "read");
   $("#progTitle").textContent = "Scanning " + hostOf(url) + "…";
-  $("#steps").innerHTML = STEPS.map(s => `<li><span class="ic"></span>${esc(s)}</li>`).join("");
   $("#progress").classList.remove("hide"); mood($("#progress .bot"), "read");
-  const lis = $$("#steps li"); let i = 0; lis[0].classList.add("active"); setProg(0);
+  let pct = 4; setProg(pct);
   const quip = $("#quip"); let q = 0; quip.textContent = QUIPS[0];
-  const t1 = setInterval(() => { if(i < lis.length - 1){ lis[i].classList.replace("active", "done"); i++; lis[i].classList.add("active"); setProg(i); } }, 600);
+  const t1 = setInterval(() => { pct += (92 - pct) * .07; setProg(pct); }, 300);
   const t2 = setInterval(() => { q = (q + 1) % QUIPS.length; quip.textContent = QUIPS[q]; }, 1600);
   try{
     const r = await fetch("/api/scan?url=" + encodeURIComponent(url) + (fresh ? "&fresh=1" : ""));
     let d; try { d = await r.json(); } catch { throw new Error(r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners. Please try again." : "Something went wrong on our side (error " + r.status + "). Please try again."); }
     if(!r.ok) throw new Error(d.error || ("Error " + r.status));
-    clearInterval(t1);
-    for(let k = 0; k < lis.length; k++){
-      if(!lis[k].classList.contains("done")){ lis[k].classList.remove("active"); lis[k].classList.add("done"); setProg(k + 1); await sleep(REDUCED ? 0 : 80); }
-    }
-    quip.textContent = "Done!"; await sleep(REDUCED ? 0 : 260);
+    clearInterval(t1); setProg(100);
+    quip.textContent = "Done!"; await sleep(REDUCED ? 0 : 320);
     DATA = d; ENTRY = addToHistory(d);
     render(d, {entry: ENTRY});
     setUrlParam(d.url);
@@ -990,20 +845,20 @@ async function run(raw, opts = {}){
 $("#f").addEventListener("submit", e => { e.preventDefault(); $("#u").blur(); run($("#u").value); });
 
 /* ---------- plain-language verdict ---------- */
-function firstSentence(t){ const m = String(t||"").split(/(?<=\.)\s/)[0]; return m.length > 180 ? m.slice(0,177) + "…" : m; }
+function firstSentence(t, max = 150){ const m = String(t||"").split(/(?<=\.)\s/)[0]; return m.length > max ? m.slice(0, max - 3) + "…" : m; }
 function verdictFor(d){
   const ai = d.ai_view || {}, s = d.score ?? 0, acts = d.actions || [];
   const st = acts.find(a => a.category === "status");
-  if(st) return [st.label, firstSentence(st.items[0])];
-  if(acts.some(a => a.category === "access" && a.label === "The site blocked the scan")) return ["AI tools are blocked from this site", "The server refuses requests from cloud servers, where AI crawlers run. Until that is fixed, AI tools cannot read or cite the site."];
-  if(acts.some(a => a.category === "access" && a.priority === "critical")) return ["Many AI bots are blocked", "Your server refuses several AI crawlers, so AI tools may not be able to read or cite this site. See the bot list below."];
-  if(ai.js_risk === "high") return ["AI tools see an almost empty page", "The content is built by JavaScript, and most AI tools do not run JavaScript. They only see the title and description."];
-  if(acts.some(a => a.category === "thin")) return ["There is almost no text for AI to read", "The page has very little text. AI tools can only quote what is written in the page."];
-  if(s >= 40 && acts.some(a => a.category === "location" && a.priority === "critical")) return ["AI can read this page, but cannot tell where the business is", "The page never says where you are. AI tools may skip you for local questions, or put you in the wrong area. Fix this first."];
-  if(s >= 80) return ["AI tools can read this site well", "The basics are in place. The fixes below are fine-tuning."];
-  if(s >= 60) return ["AI tools can read this site, with some gaps", "The content is readable. Adding the missing signals below helps AI tools understand and trust it."];
-  if(s >= 40) return ["AI tools can read this site, but miss key signals", "The main gaps are listed below. Most are quick to fix."];
-  return ["AI tools struggle with this site", "Start with the top fixes below. They have the biggest effect."];
+  if(st) return [st.label, firstSentence(st.lead || st.items[0], 110)];
+  if(acts.some(a => a.category === "access" && a.label === "The site blocked the scan")) return ["AI tools are blocked", "Your server refuses cloud servers, where AI crawlers run."];
+  if(acts.some(a => a.category === "access" && a.priority === "critical")) return ["Many AI bots are blocked", "Your server refuses several AI crawlers."];
+  if(ai.js_risk === "high") return ["AI sees an almost empty page", "The content needs JavaScript, which most AI tools skip."];
+  if(acts.some(a => a.category === "thin")) return ["Almost no text for AI to read", "The page has very little text to quote."];
+  if(s >= 40 && acts.some(a => a.category === "location" && a.priority === "critical")) return ["AI can't tell where the business is", "It can read the page, but the text never names a place."];
+  if(s >= 80) return ["AI reads this site well", "The rest is fine-tuning."];
+  if(s >= 60) return ["AI reads this site, with gaps", "Close the gaps below so AI can trust it."];
+  if(s >= 40) return ["AI misses key signals", "Most fixes below are quick."];
+  return ["AI struggles with this site", "Start with the first fixes below."];
 }
 const WHY = {
   status: "A scan needs a real page. Fix the address first, then scan again.",
@@ -1034,250 +889,221 @@ const WHY = {
   location: "AI tools answer \"where\" questions from the page text. A business that never says where it is can be skipped for local questions, or placed in the wrong city or country.",
 };
 
-/* ---------- render a report ---------- */
+/* ---------- one list of issues: what the AI saw, and how to fix it ---------- */
 const akey = a => a.category + "|" + a.label;
-const locAlert = d => (d.actions || []).find(a => a.category === "location" && (a.priority === "critical" || a.priority === "high"));
+const MAXSTEPS = 3;
+const plain = s => String(s || "").replace(/https?:\/\/\S+/g, "").replace(/\s+([:;.,])/g, "$1").replace(/[:;,]\s*$/, "").replace(/\s{2,}/g, " ").trim();
 const BAND = {critical: "🚨 Critical", foundation: "🌱 Foundation", good: "👍 Good", excellent: "🏆 Excellent"};
-function bubbleFor(d, s){
-  if((d.actions || []).some(a => a.category === "status")) return "Hmm, nothing to read here.";
-  if((d.actions || []).some(a => a.category === "access" && a.priority === "critical")) return "The door is locked. I cannot get in!";
-  if(locAlert(d)?.priority === "critical") return "Where is this place? I cannot tell!";
-  return s >= 80 ? "I can read this like a book!" : s >= 60 ? "I can read this, mostly." : s >= 40 ? "I understand some of it…" : "I am lost here. Help me!";
+const FIX_FOR = {no_answer: "status", not_found: "status", server_error: "status", site_blocked: "access", bots_refused: "access", robots_block: "robots", crawl_delay: "robots", noindex: "meta", noai: "meta", slow: "performance", huge_page: "performance", js_only: "rendering", little_text: "rendering", thin: "thin", nosnippet: "google_ai", images: "other", video: "other", cookie: "cookie", bot_page: "bot_content", no_title: "meta", no_description: "meta", no_canonical: "meta", no_og: "meta", no_h1: "content", no_sections: "content", short: "content", no_facts: "content", buried: "content", no_schema: "schema", no_org: "schema", no_website: "schema", broken_schema: "schema", schema_fields: "schema", faq: "schema", no_lang: "signals", wrong_lang: "language", brand: "brand_entity", location: "location", geo_empty: "location", no_author: "google_ai", no_date: "google_ai", no_profiles: "brand_entity", few_profiles: "brand_entity", no_contact: "brand_entity", no_about: "brand_entity", no_https: "trust", links: "google_ai", sitemap: "sitemap", no_sitemap: "robots", nofollow: "crawl"};
+function buildIssues(d){
+  const acts = d.actions || [], m = d.missed || {}, issues = [], byCat = new Map();
+  acts.forEach(a => {
+    const it = {key: akey(a), cat: a.category, label: a.label, sev: a.priority, gain: a.gain || 0, steps: a.items || [], lead: a.lead || "", note: a.note || "", hints: [], why: WHY[a.category] || "", saw: [], stages: new Set(), order: issues.length};
+    issues.push(it); if(!byCat.has(a.category)) byCat.set(a.category, it);
+  });
+  (m.items || []).forEach(x => {
+    const cat = "fix" in x ? x.fix : FIX_FOR[x.id], host = cat && byCat.get(cat);  /* old saved reports have no "fix" */
+    if(host){ host.saw.push(x); host.stages.add(x.stage); if(RANK[x.impact] < RANK[host.sev]) host.sev = x.impact; }
+    else issues.push({key: "m|" + x.id, cat: "m_" + x.id, label: x.title, sev: x.impact, gain: 0, steps: [], lead: "", note: "", hints: x.hint ? [x.hint] : [], why: "", saw: [x], stages: new Set([x.stage]), order: issues.length});
+  });
+  return issues.sort((a, b) => RANK[a.sev] - RANK[b.sev] || (b.cat === "location") - (a.cat === "location") || b.gain - a.gain || a.order - b.order);
 }
-function render(d, opts){
-  const ai = d.ai_view || {}, acts = d.actions || [], s = d.score ?? 0;
-  const entry = opts.entry || {ts: Date.now(), host: hostOf(d.url)};
-  const host = hostOf(d.url), ts = entry.ts;
-  $$("#out .reveal").forEach(el => { el.classList.remove("in"); delete el.dataset.done; });
-  $("#out").classList.remove("hide");
+function issueHtml(it, i){
+  const open = OPEN.has(it.key), done = DONE.has(it.key);
+  const raw = it.saw[0]?.detail || it.lead || firstSentence(it.steps[0]) || "", first = plain(raw).length > 12 ? plain(raw) : raw;
+  const saw = it.saw.length ? it.saw.map(x => x.detail) : it.lead ? [it.lead] : [];
+  const steps = it.steps.length ? it.steps : it.hints;
+  const sawBlock = saw.length ? `<h4>What the AI saw</h4><ul>${saw.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+  const extra = steps.length - MAXSTEPS;
+  const fixBlock = steps.length ? `<h4>${saw.length ? "How to fix" : "What to do"}</h4><ol>${steps.map((x, k) => `<li${k >= MAXSTEPS ? ' class="xs hide"' : ""}>${linkify(x)}</li>`).join("")}</ol>${extra > 0 ? `<button type="button" class="small steps-btn" data-act="steps" data-n="${extra}">Show ${extra} more step${extra > 1 ? "s" : ""}</button>` : ""}` : "";
+  return `<article class="issue acc sev-${it.sev}${open ? " open" : ""}${done ? " done" : ""}" data-k="${esc(it.key)}" style="--i:${Math.min(i, 10)}">
+    <div class="ih">
+      <button class="chk" type="button" role="checkbox" aria-checked="${done}" aria-label="Mark as done: ${esc(it.label)}"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 5"/></svg></button>
+      <button class="it" type="button" data-acc aria-expanded="${open}">
+        <span class="tt"><span class="pill p-${it.sev}">${SEV[it.sev]}</span><b>${esc(it.label)}</b>${it.gain ? `<span class="gain">+${it.gain} pts</span>` : ""}</span>
+        <span class="sm">${esc(first)}</span><span class="chev">›</span>
+      </button>
+    </div>
+    <div class="fold"><div class="foldin"${open ? "" : " inert"}><div class="ib">${sawBlock}${it.why ? `<p class="why">${esc(it.why)}</p>` : ""}${fixBlock}${it.note ? `<p class="inote">${esc(it.note)}</p>` : ""}</div></div></div>
+  </article>`;
+}
+function renderIssues(){
+  const list = STAGE ? ISSUES.filter(i => i.stages.has(STAGE)) : ISSUES;
+  const severe = list.filter(i => RANK[i.sev] <= 1), more = list.filter(i => RANK[i.sev] >= 2);
+  const stageLabel = STAGE ? (DATA?.missed?.stages || []).find(s => s.key === STAGE)?.label : "";
+  $("#filterNote").classList.toggle("hide", !STAGE);
+  if(STAGE) $("#filterNote").innerHTML = `<span>Showing issues in <b>${esc(stageLabel)}</b></span><button type="button" class="small" data-act="clearstage">Show all</button>`;
+  $("#sevCount").textContent = severe.length ? severe.length : "0";
+  $("#sevCount").classList.toggle("zero", !severe.length);
+  $("#severe").innerHTML = severe.length ? severe.map(issueHtml).join("")
+    : `<div class="okrow">${ISSUES.length ? (STAGE ? "No severe issues in this step." : "✅ No severe issues. Nice work.") : "🎉 No issues found. This site is in good shape for AI."}</div>`;
+  $("#more").innerHTML = more.map((it, i) => issueHtml(it, i)).join("");
+  $("#moreAcc").classList.toggle("hide", !more.length);
+  $("#moreN").textContent = more.length;
+  $("#moreSub").textContent = more.length ? [["medium", "medium"], ["low", "low"]].map(([k, l]) => [more.filter(i => i.sev === k).length, l]).filter(x => x[0]).map(x => x[0] + " " + x[1]).join(" · ") : "";
+  if(!severe.length && more.length && !STAGE) setAcc($("#moreAcc"), true);  /* nothing severe: show the next issues right away */
+  $("#fixCta").classList.toggle("hide", !ISSUES.length);
+  updateProg();
+}
+function updateProg(){
+  const n = ISSUES.filter(i => DONE.has(i.key)).length, total = ISSUES.length;
+  $("#gprog").textContent = total ? `${n} of ${total} done` : "";
+  $("#doneBar").classList.toggle("hide", !(total > 0 && n === total));
+}
 
-  /* summary */
+/* ---------- render a report ---------- */
+function renderTop(d, entry, opts){
+  const s = d.score ?? 0, host = hostOf(d.url), ts = entry.ts;
+  const cnt = {critical: 0, high: 0, medium: 0, low: 0}; ISSUES.forEach(i => cnt[i.sev]++);
+  const locCrit = ISSUES.some(i => i.cat === "location" && i.sev === "critical");
   const ring = $("#ring"), num = $("#score"), band = $("#band");
   ring.classList.remove("done"); ring.style.setProperty("--p", 0); num.textContent = "0";
-  band.className = "band " + (d.band || ""); band.textContent = BAND[d.band] || (d.band ? d.band[0].toUpperCase() + d.band.slice(1) : "");
-  const la = locAlert(d), locCrit = la?.priority === "critical";
-  const sb = $("#sumBot"); mood(sb, locCrit ? (s >= 40 ? "idle" : "sad") : s >= 80 ? "happy" : s >= 40 ? "idle" : "sad"); $("#bubble").textContent = bubbleFor(d, s);
-  tween(1150, p => { const v = s * p; ring.style.setProperty("--p", v); ring.style.setProperty("--c", colorFor(v)); num.textContent = Math.round(v); }, () => {
+  band.className = "band " + (d.band || ""); band.textContent = BAND[d.band] || (d.band ? cap(d.band) : "");
+  mood($("#sumBot"), locCrit ? (s >= 40 ? "idle" : "sad") : s >= 80 ? "happy" : s >= 40 ? "idle" : "sad");
+  tween(1100, p => { const v = s * p; ring.style.setProperty("--p", v); ring.style.setProperty("--c", colorFor(v)); num.textContent = Math.round(v); }, () => {
     ring.classList.add("done"); band.classList.add("in");
-    if(s >= 80 && !opts.saved && !locCrit) burstAt(ring, 64);  /* no confetti while AI cannot place the business */
+    if(s >= 80 && !opts.saved && !cnt.critical && !locCrit) burstAt(ring, 56);  /* no confetti while a critical issue stands */
   });
   if(d.band == null) band.classList.add("in");
-
   const prev = olderEntry(entry), dl = prev && prev.score != null && d.score != null ? d.score - prev.score : null;
-  $("#siteLine").innerHTML = `<b>${esc(host)}</b> · <span class="nowrap">${fmtTime(ts)}</span>${d.cached ? ` <span class="muted">(cached${d.cached_age_s != null ? ", " + (d.cached_age_s < 60 ? "just now" : Math.round(d.cached_age_s / 60) + " min ago") : ""})</span>` : ""}${dl == null ? "" : ` <span class="delta ${dl>0?"up":dl<0?"down":"same"}">${dl>0?"+":dl===0?"±":""}${dl} since last scan</span>`}`;
-  const chips = [];
-  if(prev && prev.data?.actions){
-    const before = new Map(prev.data.actions.map(a => [akey(a), a.label])), now = new Map(acts.map(a => [akey(a), a.label]));
-    const fixed = [...before].filter(([k]) => !now.has(k)).map(([, l]) => l), fresh = [...now].filter(([k]) => !before.has(k)).map(([, l]) => l);
-    if(fixed.length) chips.push(`<span class="delta up" title="${esc(fixed.join(", "))}">🎉 ${fixed.length} fixed since last scan</span>`);
-    if(fresh.length) chips.push(`<span class="delta same" title="${esc(fresh.join(", "))}">${fresh.length} new</span>`);
-  }
-  if(d.missed){
-    const m = d.missed;
-    chips.unshift(`<a class="delta ${m.usable && !m.count ? "up" : "down"}" href="#secMissed">${!m.usable ? "⚠ The AI could not read this page" : m.count ? `⚠ ${m.count} ${m.count === 1 ? "thing" : "things"} the AI missed` : "✨ Nothing missed"}</a>`);
-  }
-  $("#chips").innerHTML = chips.join(""); $("#chips").classList.toggle("hide", !chips.length);
+  $("#siteLine").innerHTML = `<b>${esc(host)}</b> · <span class="nowrap">${shortTime(ts)}</span>${d.cached ? ` · <span class="muted" title="${d.cached_age_s != null ? "Scanned " + (d.cached_age_s < 60 ? "just now" : Math.round(d.cached_age_s / 60) + " min ago") + ". Press Rescan for a fresh scan." : "A recent scan. Press Rescan for a fresh one."}">cached</span>` : ""}${dl ? ` <span class="delta ${dl>0?"up":"down"}">${dl>0?"+":""}${dl} since last scan</span>` : ""}`;
   const [v, vs] = verdictFor(d);
   $("#verdict").textContent = v; $("#verdictSub").textContent = vs;
-  const al = $("#alertBar"); al.classList.toggle("hide", !la);
-  if(la){
-    al.classList.toggle("high", la.priority !== "critical");
-    $("#alertT").textContent = la.priority === "critical" ? "Critical: AI cannot tell where this business is" : "Important: AI may not know where this business is";
-    $("#alertS").textContent = d.missed?.items?.find(i => i.id === "location")?.detail || firstSentence(la.items[0]);
-  }
-  const top = acts.filter(a => a.priority !== "low").slice(0, 3);
-  const pot = Math.min(100, s + top.reduce((n, a) => n + (a.gain || 0), 0));
-  $("#potential").innerHTML = pot > s + 1 ? `<div class="t">Fix ${top.filter(a => a.gain).length === 1 ? "the top fix" : "the top " + top.filter(a => a.gain).length} and you could reach about <b>${pot}</b>.</div><div class="ptrack"><i class="g" data-w="${pot}"></i><i class="n" data-w="${s}"></i></div>` : "";
-  requestAnimationFrame(() => requestAnimationFrame(() => $$("#potential i").forEach(i => i.style.width = i.dataset.w + "%")));
-  const tr = trendFor(host, ts); $("#spark").innerHTML = tr.length > 1 ? `<span>Trend</span>${sparkSvg(tr)}<span>${tr[0]} → ${tr[tr.length - 1]}</span>` : "";
+  const pills = [["critical", "crit", "Critical", "severe"], ["high", "high", "High", "severe"], ["medium", "med", "Medium", "more"], ["low", "low", "Low", "more"]]
+    .filter(([k]) => cnt[k]).map(([k, c, l, j]) => `<button type="button" class="sev ${c}" data-jump="${j}"><i></i><b>${cnt[k]}</b> ${l}</button>`);
+  if(!cnt.critical && !cnt.high) pills.unshift(`<span class="sev good">✓ No severe issues</span>`);
+  $("#sevRow").innerHTML = pills.join("");
+  const pot = d.missed?.usable && d.missed.potential != null && d.missed.potential > s + 1 ? d.missed.potential : null;
+  $("#potential").classList.toggle("hide", !pot);
+  if(pot) $("#potential").innerHTML = `Fix everything and you could reach <b>${pot}</b>.`;
+  $("#fixCta").innerHTML = `<span>Ready-to-paste fixes for every issue</span><button class="primary" type="button" data-act="guide">⬇ Fix guide</button>`;
+  const on = $("#oldNotice");
   if(opts.saved){
-    $("#oldNotice").innerHTML = `This is a saved report from ${fmtTime(ts)}. <a href="#" id="rescanLink">Rescan</a> to see the site as it is now.`;
-    $("#oldNotice").classList.remove("hide");
+    on.innerHTML = `Saved report from ${fmtTime(ts)}. <a href="#" id="rescanLink">Rescan</a> to see the site now.`;
+    on.classList.remove("hide");
     $("#rescanLink").onclick = e => { e.preventDefault(); run(d.url, {fresh: true}); };
-  } else $("#oldNotice").classList.add("hide");
+  } else on.classList.add("hide");
+}
+const STAGE_MARK = {ok: "✓", warn: "!", fail: "✕", skipped: "–"};
+function renderJourney(d){
+  const m = d.missed, box = $("#journey");
+  const has = !!(m && m.stages && m.stages.length);
+  box.classList.toggle("hide", !has); $("#jcap").classList.toggle("hide", !has);
+  if(!has) return;
+  box.innerHTML = m.stages.map(st => `<li><button type="button" class="${st.status}" data-stage="${st.key}" aria-pressed="false"><span class="dot">${STAGE_MARK[st.status]}</span><span class="lbl">${esc(st.label)}</span><span class="ct">${st.status === "skipped" ? "skipped" : st.count ? st.count + " missed" : "all good"}</span></button></li>`).join("");
+}
+function renderWins(d){
+  const wins = d.wins || [], m = d.missed || {};
+  $("#worksAcc").classList.toggle("hide", !wins.length);
+  $("#worksN").textContent = wins.length;
+  $("#wins").innerHTML = wins.map(w => `<li>${esc(w)}</li>`).join("");
+  const opt = m.optional || [], box = $("#optional");
+  box.classList.toggle("hide", !opt.length);
+  box.innerHTML = opt.length ? `<span>Optional extras not found:</span>${opt.map(o => `<span class="ochip" title="${esc(o.detail)}">${esc(o.title)}</span>`).join("")}` : "";
+}
+function render(d, opts){
+  const entry = opts.entry || {ts: Date.now(), host: hostOf(d.url)}, host = hostOf(d.url), ai = d.ai_view || {};
+  STAGE = null; RAW = false; SHOT_FOR = "";
+  DONE = opts.saved ? loadDone(host) : resetDone(host);
+  ISSUES = buildIssues(d);
+  OPEN = new Set(); const firstCrit = ISSUES.find(i => i.sev === "critical"); if(firstCrit) OPEN.add(firstCrit.key);  /* the worst issue opens by itself */
+  $("#out").classList.remove("hide");
+  ["moreAcc", "worksAcc", "pView", "pBots", "pPlat", "pFacts", "pScores"].forEach(id => setAcc($("#" + id), false));
+  renderTop(d, entry, opts);
+  renderJourney(d);
+  renderIssues();
+  renderWins(d);
+  renderView(d, ai); renderBots(ai, d); renderPlats(d.platforms || []); renderFacts(d, ai); renderScores(d);
+  $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${((d.duration_ms||0)/1000).toFixed(1)} s.${d.app_version ? ` Extra checks by AI Site Scan v${esc(d.app_version)} do not change the score.` : ""}`;
+  updateGo();
+  window.scrollTo({top: 0, behavior: REDUCED ? "auto" : "smooth"});
+}
 
-  /* stats */
-  const rows = botRows(ai), botOk = rows.filter(r => r.verdict === "ok").length, wins = d.wins || [];
-  const stats = [];
-  if(d.wins) stats.push(["✅", wins.length, "", "working", wins.length ? "good" : ""]);
-  stats.push(["🛠", acts.length, "", "to fix", acts.some(a => a.priority === "critical") ? "bad" : acts.length ? "warn" : "good"]);
-  if(rows.length && !acts.some(a => a.category === "status")) stats.push(["🤖", botOk, " / " + rows.length, "bots got in", botOk === rows.length ? "good" : botOk >= rows.length * .6 ? "warn" : "bad"]);
-  else stats.push(["📝", ai.word_count ?? 0, "", "words AI can read", ""]);
-  stats.push(["⚡", d.duration_ms ? d.duration_ms / 1000 : 0, " s", "scan time", ""]);
-  $("#stats").innerHTML = stats.map(([ico, n, suf, lbl, cls]) => `<div class="stat ${cls}"><div class="ico">${ico}</div><div><b data-count="${n}" data-dec="${lbl === "scan time" ? 1 : 0}" data-suffix="${suf}">0${suf}</b><span>${lbl}</span></div></div>`).join("");
-  $$("#stats [data-count]").forEach(el => { el.dataset.done = 1; countUp(el, Number(el.dataset.count), 1100); });
+/* clicks inside the report: open and close, tick, filter, jump, actions */
+function closeMenu(){ $("#moreMenu").classList.add("hide"); $("#moreBtn").setAttribute("aria-expanded", "false"); }
+$("#moreBtn").onclick = e => {
+  e.stopPropagation();
+  const m = $("#moreMenu"), open = m.classList.contains("hide");
+  m.classList.toggle("hide", !open); $("#moreBtn").setAttribute("aria-expanded", String(open));
+};
+document.addEventListener("click", e => { if(!e.target.closest(".menuwrap")) closeMenu(); });
+async function doShare(){
+  const link = location.origin + "/?url=" + encodeURIComponent(DATA.url);
+  if(navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
+    try { await navigator.share({title: "AI Site Scan: " + hostOf(DATA.url), url: link}); } catch {}
+    return;
+  }
+  try { await navigator.clipboard.writeText(link); toast("Link copied. Opening it runs a fresh scan.", "🔗"); } catch { prompt("Copy this link:", link); }
+}
+function doGuide(btn){
+  download(buildFixGuide(DATA), "ai-fix-guide-" + hostOf(DATA.url) + ".md", "text/markdown");
+  toast("Fix guide downloaded", "⬇"); burstAt(btn, 18);
+}
+$("#exportBtn").onclick = e => doGuide(e.currentTarget);
+$("#doneRescan").onclick = () => DATA && run(DATA.url, {fresh: true});
+$("#moreMenu").addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if(!b || !DATA) return;
+  closeMenu();
+  if(b.dataset.act === "share") await doShare();
+  else if(b.dataset.act === "copy"){ try { await navigator.clipboard.writeText(summaryMarkdown(DATA)); toast("Summary copied", "📋"); } catch { toast("Copy failed"); } }
+  else if(b.dataset.act === "json") download(JSON.stringify(DATA, null, 2), "ai-site-scan-" + hostOf(DATA.url) + ".json", "application/json");
+});
+$("#out").addEventListener("click", e => {
+  const chk = e.target.closest(".chk");
+  if(chk){
+    const row = chk.closest(".issue"), k = row.dataset.k, host = hostOf(DATA.url);
+    const was = DONE.has(k); was ? DONE.delete(k) : DONE.add(k); saveDone(host, DONE);
+    row.classList.toggle("done", !was); chk.setAttribute("aria-checked", String(!was)); updateProg();
+    if(!was && ISSUES.length && ISSUES.every(i => DONE.has(i.key))){ burstAt($("#doneBar"), 70); toast("All done! Rescan to see your new score.", "🎉"); }
+    return;
+  }
+  const trig = e.target.closest("[data-acc]");
+  if(trig){
+    const acc = trig.closest(".acc"); if(!acc) return;
+    const open = !acc.classList.contains("open"); setAcc(acc, open);
+    if(acc.classList.contains("issue")){ const k = acc.dataset.k; open ? OPEN.add(k) : OPEN.delete(k); }
+    if(acc.id === "pView" && open) openView();
+    return;
+  }
+  const st = e.target.closest("[data-stage]");
+  if(st){
+    if(st.classList.contains("skipped")) return;
+    STAGE = STAGE === st.dataset.stage ? null : st.dataset.stage;
+    $$("#journey button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.stage === STAGE)));
+    renderIssues(); return;
+  }
+  const jp = e.target.closest("[data-jump]");
+  if(jp){
+    if(jp.dataset.jump === "more"){ setAcc($("#moreAcc"), true); $("#moreAcc").scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block: "start"}); }
+    else $("#issues").scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block: "start"});
+    return;
+  }
+  const act = e.target.closest("[data-act]")?.dataset.act;
+  if(act === "guide") doGuide(e.target.closest("[data-act]"));
+  else if(act === "steps"){
+    const b = e.target.closest("[data-act]"), ib = b.closest(".ib"), hidden = ib.querySelector(".xs.hide") != null;
+    ib.querySelectorAll(".xs").forEach(li => li.classList.toggle("hide", !hidden));
+    b.textContent = hidden ? "Show fewer steps" : `Show ${b.dataset.n} more step${b.dataset.n > 1 ? "s" : ""}`;
+  }
+  else if(act === "clearstage"){ STAGE = null; $$("#journey button").forEach(b => b.setAttribute("aria-pressed", "false")); renderIssues(); }
+});
 
-  /* top fixes */
-  $("#top3").innerHTML = top.length ? top.map((a, i) => `<div class="t p-${a.priority} spot lift reveal" style="--i:${i}"><span class="num">${i + 1}</span><div><span class="pill p-${a.priority}">${cap(a.priority)}</span> ${a.gain ? `<span class="gain">+${a.gain} pts</span>` : ""}</div><b>${esc(a.label)}</b><p>${esc(firstSentence(a.items[0]))}</p></div>`).join("")
-    : `<div class="okbox"><span style="font-size:28px">🎉</span>No important fixes. This site is in good shape for AI tools.</div>`;
-
-  /* wins */
-  const hasWins = wins.length > 0;
-  $("#secWins").classList.toggle("hide", !hasWins); $("#navWins").classList.toggle("hide", !hasWins);
-  $("#wins").innerHTML = wins.map((w, i) => `<div class="win reveal" style="--i:${i}"><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 5"/></svg></span><span>${esc(w)}</span></div>`).join("");
-
-  /* fixes */
-  const counts = {all: acts.length}; acts.forEach(a => counts[a.priority] = (counts[a.priority]||0) + 1);
-  FILTER = "all"; OPEN = new Set(acts.length ? [akey(acts[0])] : []); DONE = opts.saved ? loadDone(host) : resetDone(host);
-  $("#filters").innerHTML = ["all","critical","high","medium","low"].filter(k => counts[k]).map(k => `<button type="button" data-f="${k}" aria-pressed="${k==="all"}">${k[0].toUpperCase()+k.slice(1)} (${counts[k]})</button>`).join("");
-  drawActions();
-
-  /* view, bots, platforms, facts, scores */
-  const target = ai.final_url || d.url; $("#openSite").href = target; loadShot(target);
+/* ---------- details: how AI sees the page ---------- */
+function renderView(d, ai){
+  const target = ai.final_url || d.url; $("#openSite").href = target;
   $("#facts").innerHTML = ai.ok ? [
     ["title", ai.title], ["description", ai.description], ["lang", ai.lang], ["canonical", ai.canonical],
     ["json-ld", (ai.jsonld_types||[]).join(", ")], ["text", (ai.markdown_chars||0).toLocaleString("en-US") + " characters · HTTP " + ai.status + " · " + kb(ai.html_bytes)]
   ].map(([k,val]) => `${k.padEnd(12," ")}<b>${esc(val || "(missing)")}</b>`).join("<br>") : "";
-  RAW = false; $("#rawToggle").textContent = "Show raw"; drawTerm();
-  setViewTab("both");
-  renderBots(ai, d);
-  renderPlats(d.platforms || []);
-  renderFacts(d, ai);
-  renderScores(d);
-  $("#engine").innerHTML = `Engine: <a href="${esc(d.engine?.repo)}" target="_blank" rel="noopener">${esc(d.engine?.name)}</a> v${esc(d.engine?.version)}. Scan took ${((d.duration_ms||0)/1000).toFixed(1)} s.${d.app_version ? ` Extra checks by AI Site Scan v${esc(d.app_version)} do not change the score.` : ""}`;
-  renderMissed(d);
-  updateGo();
-  requestAnimationFrame(() => requestAnimationFrame(watch));
-  window.scrollTo({top: 0, behavior: REDUCED ? "auto" : "smooth"});
+  RAW = false; $("#rawToggle").textContent = "Show raw"; drawTerm(); setViewTab("both");
+  const img = $("#shot"); img.classList.remove("ready"); img.removeAttribute("src"); img.onload = img.onerror = null;
+  $("#shotMsg").className = "shotmsg"; $("#shotMsg").innerHTML = `<div class="laser"></div><span class="spin"></span><span>Opening the page in a real browser…</span>`;
+  $("#tView").textContent = d.missed && d.missed.usable === false ? "The AI could not open the page" : ai.ok ? `${(ai.word_count || 0).toLocaleString("en-US")} words AI can read${ai.js_risk === "high" ? " · needs JavaScript" : ""}` : "Could not build the AI view";
 }
-
-/* what the AI agent missed */
-const STAGE_ICON = {reach: "🚪", read: "👀", understand: "🧠", trust: "🤝", discover: "🧭"};
-const STAGE_MARK = {ok: "✓", warn: "!", fail: "✕", skipped: "–"};
-function renderMissed(d){
-  const m = d.missed, sec = $("#secMissed"), nav = $("#navMissed");
-  sec.classList.toggle("hide", !m); nav.classList.toggle("hide", !m);
-  if(!m) return;
-  const host = hostOf(d.url), clear = m.usable && m.count === 0;
-  sec.classList.toggle("clear", clear);
-  mood($("#missBot"), clear ? "happy" : "sad");
-  $("#missTitle").textContent = !m.usable ? "The AI agent could not read " + host : clear ? "The AI agent found everything it looks for" : "What the AI agent missed on " + host;
-  $("#missSub").textContent = !m.usable ? "It never got past the front door, so nothing else could be checked." : clear ? "No blind spots found on this page. Keep it that way." : "We read your page the way an AI agent does. These are the things it could not find, read, understand or trust.";
-  const cnt = $("#missCount"), num = cnt.querySelector("b");
-  num.dataset.count = m.count; delete num.dataset.done; num.textContent = "0";
-  cnt.querySelector("span").textContent = m.count === 1 ? "thing missed" : "things missed";
-  $("#journey").innerHTML = m.stages.map((st, i) => `<li class="${st.status}" style="--i:${i}"><span class="dot">${STAGE_MARK[st.status]}</span><div class="lbl">${esc(st.label)}</div><div class="jsub">${st.status === "skipped" ? "not reached" : st.count ? st.count + " missed" : "all good"}</div></li>`).join("");
-  const by = {}; m.items.forEach(it => (by[it.stage] = by[it.stage] || []).push(it));
-  $("#missList").innerHTML = m.stages.filter(st => by[st.key]).map(st => `<div class="mgroup"><h3><span>${STAGE_ICON[st.key]}</span>${esc(st.label)}<span class="n">${by[st.key].length}</span></h3><div class="mgrid">${by[st.key].map((it, k) => `<div class="mi p-${it.impact} spot lift reveal" style="--i:${k % 6}"><span class="x">✕</span><div><div class="top"><b>${esc(it.title)}</b><span class="pill p-${it.impact}">${cap(it.impact)}</span></div><p>${esc(it.detail)}</p></div></div>`).join("")}</div></div>`).join("");
-  const opt = $("#missOpt"); opt.classList.toggle("hide", !(m.optional || []).length);
-  opt.innerHTML = (m.optional || []).length ? `<span>Optional extras the AI did not find:</span>${m.optional.map(o => `<span class="ochip" title="${esc(o.detail)}">${esc(o.title)}</span>`).join("")}` : "";
-  $("#missCta").classList.toggle("hide", clear);
-  $("#missCtaText").textContent = !m.usable ? `Step-by-step help to let AI crawlers in, written for ${host}.` : `Step-by-step fixes with ready-to-paste code for ${m.count === 1 ? "the item" : "every item"} above, written for ${host}.`;
-  const pot = $("#missPot"), show = m.usable && m.potential != null && d.score != null && m.potential > d.score + 1;
-  pot.classList.toggle("hide", !show); pot.innerHTML = show ? `Fix them all and your score could reach up to <b>${m.potential}</b>.` : "";
+function openView(){  /* the screenshot takes 5 to 20 seconds, so it only loads when the panel is opened */
+  const t = DATA?.ai_view?.final_url || DATA?.url;
+  if(t && SHOT_FOR !== t){ SHOT_FOR = t; loadShot(t); }
 }
-function showDone(on){
-  $("#doneBanner").classList.toggle("hide", !on);
-  const go = $("#go"); go.classList.toggle("nudge", on && go.dataset.mode === "rescan");
-}
-
-/* bots */
-const ROLE = {training: "Training", search: "AI search", user: "On request"};
-const SERVER = {ok: ["p-ok", "Got the page"], blocked: ["p-critical", "Refused"], challenge: ["p-critical", "Bot check page"], error: ["p-critical", "No answer"], different: ["p-medium", "Different page"]};
-function botRows(ai){
-  return Object.entries(ai.bot_access || {}).map(([name, v]) => ({name, ...v, verdict: v.verdict || (v.status ? (v.status < 400 ? "ok" : "blocked") : "error")}));
-}
-function renderBots(ai, d){
-  const rows = botRows(ai), sec = $("#secBots");
-  sec.classList.toggle("hide", !rows.length); $("#secnav a[href='#secBots']").classList.toggle("hide", !rows.length);
-  if(!rows.length) return;
-  const robots = d.audit?.checks?.robots_txt?.details || {};
-  const allowed = new Set(robots.bots_allowed || []), blocked = new Set(robots.bots_blocked || []);
-  const n = rows.length, ok = rows.filter(r => r.verdict === "ok").length, diff = rows.filter(r => r.verdict === "different").length, bad = n - ok - diff;
-  $("#botsum").innerHTML = `<div><b>${ok} of ${n}</b> bots got the page${bad ? ` · <span style="color:var(--crit);font-weight:600">${bad} refused</span>` : ""}${diff ? ` · <span style="color:var(--med);font-weight:600">${diff} got a different page</span>` : ""}</div><div class="botmeter" aria-hidden="true"><i class="a" style="--w:${100*ok/n}%"></i><i class="c" style="--w:${100*diff/n}%"></i><i class="b" style="--w:${100*bad/n}%"></i></div>`;
-  $("#bots").innerHTML = rows.map((r, i) => {
-    const [cls, lbl] = SERVER[r.verdict] || SERVER.error;
-    const detail = r.verdict === "ok" ? (r.ms ? ` · ${r.ms} ms` : "") : r.verdict === "blocked" && r.status ? ` (HTTP ${r.status})` : r.verdict === "different" && r.ratio != null ? ` (${Math.round(r.ratio * 100)}% size)` : "";
-    const rb = blocked.has(r.name) ? `<span class="pill p-critical">robots.txt: blocked</span>` : allowed.has(r.name) ? `<span class="pill p-ok">robots.txt: allowed</span>` : `<span class="pill p-low">robots.txt: not listed</span>`;
-    return `<div class="botcard spot lift reveal ${r.verdict === "ok" ? "" : r.verdict === "different" ? "warn" : "bad"}" style="--i:${i % 8}"><div class="top"><b>${esc(r.name)}</b>${ROLE[r.role] ? `<span class="role">${ROLE[r.role]}</span>` : ""}</div>${r.vendor ? `<div class="vendor">${esc(r.vendor)}</div>` : ""}<div class="pills"><span class="pill ${cls}">${lbl}${detail}</span>${rb}</div></div>`;
-  }).join("");
-  const ipBots = rows.filter(r => ["Googlebot", "Bingbot", "Applebot"].includes(r.name) && r.verdict !== "ok");
-  $("#botnote").textContent = "We copy each bot's name from a cloud server. Sites that check bot IP addresses (many do for Googlebot, Bingbot and Applebot) may refuse our copy and still let the real bot in." + (ipBots.length ? " That is probably what happened to " + ipBots.map(b => b.name).join(", ") + "." : "");
-}
-
-/* platforms */
-function renderPlats(list){
-  const has = list.length > 0;
-  $("#secPlat").classList.toggle("hide", !has); $("#navPlat").classList.toggle("hide", !has);
-  $("#plats").innerHTML = list.map((p, i) => `<div class="plat spot lift reveal" style="--i:${i}"><div class="ph"><b>${esc(p.label)}</b><span class="ps" data-count="${p.score}" style="color:${solidColor(p.score)}">0</span></div><div class="track"><i style="--w:${p.score}%;background:${colorFor(p.score)}"></i></div><ul>${(p.strengths || []).slice(0, 4).map(x => `<li class="ok">${esc(x)}</li>`).join("")}${(p.tips || []).map(x => `<li class="tip">${esc(x)}</li>`).join("")}</ul></div>`).join("");
-}
-
-/* key facts */
-function renderFacts(d, ai){
-  $("#siteTitle").textContent = ai.title ? "Page title: " + ai.title : d.url;
-  const risk = ai.js_risk || "unknown", riskCls = {high:"p-critical", medium:"p-high", low:"p-ok"}[risk] || "p-low";
-  const sm = ai.sitemap, h = ai.headings, im = ai.images, ms = ai.response_ms;
-  const num = (n, dec = 0) => `<span data-count="${n}" data-dec="${dec}">0</span>`;
-  const tiles = [
-    ["Words AI can read", ai.ok ? num(ai.word_count ?? 0) : "n/a", ai.has_main ? "Has a &lt;main&gt; element" : "No &lt;main&gt; element"],
-    ["Needs JavaScript?", `<span class="pill ${riskCls}">${esc({high:"High risk",medium:"Some risk",low:"Low risk"}[risk] || "Unknown")}</span>`, ai.thin ? "Very little text, not JavaScript" : ai.framework ? "Built with " + esc(ai.framework) : (ai.ok ? `${ai.script_count} script tags` : "")],
-    ["Structured data", ai.jsonld_types?.length ? num(ai.jsonld_types.length) + " type" + (ai.jsonld_types.length>1?"s":"") : "None", esc((ai.jsonld_types||[]).slice(0,3).join(", ") || "No JSON-LD found") + (ai.jsonld_invalid ? ` · ${ai.jsonld_invalid} invalid` : "")],
-    ["Page size", ai.ok ? kb(ai.html_bytes) : "n/a", ai.lang ? "Language: " + esc(ai.lang) : "No lang attribute"],
-    ["Server speed", ms != null ? num((ms / 1000), 1) + " s" : "n/a", ms != null ? (ms <= 1200 ? "Fast" : ms <= 2500 ? "OK" : "Slow") + ", median of " + (ai.bots_probed ? ai.bots_probed + 1 : "a few") + " requests" : ""],
-    ["Sitemap", sm ? (sm.ok ? num(sm.urls || sm.children) + (sm.kind === "index" ? " sitemaps" : " URLs") : "Not found") : "n/a", sm ? (sm.ok ? (sm.declared ? "Listed in robots.txt" : "Not listed in robots.txt") : esc(sm.error || "")) : ""],
-    ["Headings", h ? num(h.total) : "n/a", h ? `${h.h1_count} H1${h.skip_count ? " · levels skip" : ""}` : ""],
-    ["Images", im ? num(im.total) : "n/a", im ? `${im.missing_alt} without alt text` : ""],
-  ];
-  $("#tiles").innerHTML = tiles.map(([k, v, s], i) => `<div class="tile spot lift reveal" style="--i:${i % 4}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
-}
-
-/* scores + trust */
-function renderScores(d){
-  $("#bars").innerHTML = (d.categories||[]).map((c, i) => {
-    const p = c.max ? Math.round(100*(c.score||0)/c.max) : 0;
-    return `<div class="bar"><span>${esc(c.label)}</span><div class="track"><i style="--w:${p}%;--i:${i};background:${colorFor(p)}"></i></div><span class="n">${c.score ?? 0} / ${c.max}</span></div>`;
-  }).join("") + (d.penalty ? `<div class="bar"><span>Penalties</span><div class="track"></div><span class="n">${d.penalty}</span></div>` : "");
-  const t = d.trust;
-  $("#trust").innerHTML = t ? `<h3 class="sub">Trust signals <span class="grade">${esc(t.grade || "")}</span></h3><p class="lnote">An extra view from the engine. It does not change the score above.</p><div class="bars">${t.layers.map((L, i) => {
-    const p = L.max ? Math.round(100 * L.score / L.max) : 0;
-    return `<div class="bar"><span>${esc(L.label)}</span><div class="track"><i style="--w:${p}%;--i:${i};background:${colorFor(p)}"></i></div><span class="n">${L.score} / ${L.max}</span></div>${L.missing?.length ? `<div class="lnote" style="margin:-6px 0 4px">Missing: ${esc(L.missing.slice(0, 3).join("; "))}</div>` : ""}`;
-  }).join("")}</div>` : "";
-}
-
-/* fixes: accordion, tick-off list, progress */
-let OPEN = new Set(), DONE = new Set();
-function loadDone(host){ try { return new Set(JSON.parse(localStorage.getItem(DKEY) || "{}")[host] || []); } catch { return new Set(); } }
-function saveDone(host, set){ try { const all = JSON.parse(localStorage.getItem(DKEY) || "{}"); all[host] = [...set]; localStorage.setItem(DKEY, JSON.stringify(all)); } catch {} }
-function resetDone(host){ saveDone(host, new Set()); return new Set(); }
-function drawActions(){
-  const all = DATA?.actions || [], acts = all.filter(a => FILTER === "all" || a.priority === FILTER);
-  $("#actions").innerHTML = acts.length ? acts.map(a => {
-    const k = akey(a), open = OPEN.has(k), done = DONE.has(k);
-    return `<div class="action${open ? " open" : ""}${done ? " done" : ""}" data-k="${esc(k)}">
-      <div class="a-head">
-        <button class="chk" type="button" role="checkbox" aria-checked="${done}" aria-label="Mark as done: ${esc(a.label)}"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 5"/></svg></button>
-        <h3 class="a-h"><button class="a-toggle" type="button" aria-expanded="${open}"><span class="pill p-${a.priority}">${cap(a.priority)}</span><span class="lbl">${esc(a.label)}</span>${a.gain ? `<span class="gain">+${a.gain} pts</span>` : a.source === "extra" ? `<span class="tag" title="An extra check by AI Site Scan. It is not part of the score.">extra check</span>` : ""}<span class="chev">›</span></button></h3>
-      </div>
-      <div class="a-body"><div class="a-inner"><div class="a-pad">${WHY[a.category] ? `<p class="why">${esc(WHY[a.category])}</p>` : ""}<ul>${a.items.map(x => `<li>${linkify(x)}</li>`).join("")}</ul></div></div></div>
-    </div>`;
-  }).join("") : `<p class="muted">No fixes in this group.</p>`;
-  $$("#filters button").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === FILTER));
-  updateProg();
-}
-function updateProg(){
-  const all = DATA?.actions || [], n = all.filter(a => DONE.has(akey(a))).length;
-  $("#fprog").classList.toggle("hide", !all.length);
-  $("#fprogTxt").textContent = `${n} of ${all.length} done`;
-  $("#fprogBar").style.width = (all.length ? 100 * n / all.length : 0) + "%";
-  showDone(all.length > 0 && n === all.length);
-}
-$("#filters").addEventListener("click", e => { const b = e.target.closest("button[data-f]"); if(!b) return; FILTER = b.dataset.f; drawActions(); });
-$("#actions").addEventListener("click", e => {
-  const row = e.target.closest(".action"); if(!row) return;
-  const k = row.dataset.k, host = hostOf(DATA.url);
-  if(e.target.closest(".chk")){
-    const was = DONE.has(k); was ? DONE.delete(k) : DONE.add(k); saveDone(host, DONE);
-    row.classList.toggle("done", !was); row.querySelector(".chk").setAttribute("aria-checked", !was); updateProg();
-    if(!was && (DATA.actions || []).every(a => DONE.has(akey(a)))){ burstAt($("#fprogBar"), 70); toast("All fixes done! Rescan to see your new score.", "🎉"); }
-    return;
-  }
-  if(e.target.closest(".a-toggle")){
-    const open = !row.classList.contains("open"); row.classList.toggle("open", open);
-    row.querySelector(".a-toggle").setAttribute("aria-expanded", open); open ? OPEN.add(k) : OPEN.delete(k);
-  }
-});
-
-/* AI view */
 function drawTerm(){
   const ai = DATA?.ai_view || {};
   if(!ai.ok){ $("#term").innerHTML = `<span class="w">Could not build the AI view: ${esc(ai.error || "unknown error")}</span>`; return; }
@@ -1298,7 +1124,6 @@ $("#rawToggle").onclick = () => { RAW = !RAW; $("#rawToggle").textContent = RAW 
 function setViewTab(v){
   $$(".tabs button").forEach(x => x.setAttribute("aria-selected", x.dataset.v === v));
   $("#paneHuman").classList.toggle("hide", v === "ai"); $("#paneAi").classList.toggle("hide", v === "human");
-  $("#views").classList.toggle("one", v !== "both");
 }
 $$(".tabs button").forEach(b => b.onclick = () => setViewTab(b.dataset.v));
 function loadShot(url){
@@ -1310,23 +1135,68 @@ function loadShot(url){
   img.src = "/api/shot?url=" + encodeURIComponent(url);
 }
 
-/* ---------- buttons ---------- */
-$("#doneRescan").onclick = () => DATA && run(DATA.url, {fresh: true});
-$("#seeFull").onclick = () => $("#secFixes").scrollIntoView({behavior: REDUCED ? "auto" : "smooth"});
-$("#shareBtn").onclick = async () => {
-  const link = location.origin + "/?url=" + encodeURIComponent(DATA.url);
-  if(navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
-    try { await navigator.share({title: "AI Site Scan: " + hostOf(DATA.url), url: link}); } catch {}
-    return;
-  }
-  try { await navigator.clipboard.writeText(link); toast("Link copied. Opening it runs a fresh scan.", "🔗"); } catch { prompt("Copy this link:", link); }
-};
-$("#copyMd").onclick = async () => { try { await navigator.clipboard.writeText(summaryMarkdown(DATA)); toast("Summary copied", "📋"); } catch { toast("Copy failed"); } };
-$("#dlJson").onclick = () => download(JSON.stringify(DATA, null, 2), "ai-site-scan-" + hostOf(DATA.url) + ".json", "application/json");
-$("#exportBtn").onclick = $("#exportBtn2").onclick = e => {
-  download(buildFixGuide(DATA), "ai-fix-guide-" + hostOf(DATA.url) + ".md", "text/markdown");
-  toast("Fix guide downloaded", "⬇"); burstAt(e.currentTarget, 18);
-};
+/* ---------- details: bots, platforms, facts, scores ---------- */
+const ROLE = {training: "Training", search: "AI search", user: "On request"};
+const SERVER = {ok: ["p-ok", "Got the page"], blocked: ["p-critical", "Refused"], challenge: ["p-critical", "Bot check page"], error: ["p-critical", "No answer"], different: ["p-medium", "Different page"]};
+function botRows(ai){
+  return Object.entries(ai.bot_access || {}).map(([name, v]) => ({name, ...v, verdict: v.verdict || (v.status ? (v.status < 400 ? "ok" : "blocked") : "error")}));
+}
+function renderBots(ai, d){
+  const rows = botRows(ai), p = $("#pBots");
+  p.classList.toggle("hide", !rows.length);
+  if(!rows.length) return;
+  const robots = d.audit?.checks?.robots_txt?.details || {};
+  const allowed = new Set(robots.bots_allowed || []), blocked = new Set(robots.bots_blocked || []);
+  const n = rows.length, ok = rows.filter(r => r.verdict === "ok").length, diff = rows.filter(r => r.verdict === "different").length, bad = n - ok - diff;
+  $("#tBots").textContent = `${ok} of ${n} got the page${bad ? ` · ${bad} refused` : ""}${diff ? ` · ${diff} got a different page` : ""}`;
+  $("#botsum").innerHTML = `<div class="botmeter" aria-hidden="true"><i class="a" style="--w:${100*ok/n}%"></i><i class="c" style="--w:${100*diff/n}%"></i><i class="b" style="--w:${100*bad/n}%"></i></div>`;
+  $("#bots").innerHTML = rows.map(r => {
+    const [cls, lbl] = SERVER[r.verdict] || SERVER.error;
+    const detail = r.verdict === "ok" ? (r.ms ? ` · ${r.ms} ms` : "") : r.verdict === "blocked" && r.status ? ` (HTTP ${r.status})` : r.verdict === "different" && r.ratio != null ? ` (${Math.round(r.ratio * 100)}% size)` : "";
+    const rb = blocked.has(r.name) ? `<span class="pill p-critical">robots.txt: blocked</span>` : allowed.has(r.name) ? `<span class="pill p-ok">robots.txt: allowed</span>` : `<span class="pill p-low">robots.txt: not listed</span>`;
+    return `<div class="botrow ${r.verdict === "ok" ? "" : r.verdict === "different" ? "warn" : "bad"}"><div><b>${esc(r.name)}</b>${ROLE[r.role] ? `<span class="role">${ROLE[r.role]}</span>` : ""}</div><div class="pills"><span class="pill ${cls}">${lbl}${detail}</span>${rb}</div>${r.vendor ? `<div class="v">${esc(r.vendor)}</div>` : ""}</div>`;
+  }).join("");
+  const ipBots = rows.filter(r => ["Googlebot", "Bingbot", "Applebot"].includes(r.name) && r.verdict !== "ok");
+  $("#botnote").textContent = "We copy each bot's name from a cloud server. Sites that check bot IP addresses (many do for Googlebot, Bingbot and Applebot) may refuse our copy and still let the real bot in." + (ipBots.length ? " That is probably what happened to " + ipBots.map(b => b.name).join(", ") + "." : "");
+}
+function renderPlats(list){
+  const has = list.length > 0;
+  $("#pPlat").classList.toggle("hide", !has);
+  $("#tPlat").textContent = list.slice(0, 3).map(p => `${p.label} ${p.score}`).join(" · ");
+  $("#plats").innerHTML = list.map(p => `<div class="plat"><div class="ph2"><b>${esc(p.label)}</b><span class="ps" style="color:${solidColor(p.score)}">${p.score}</span></div><div class="track"><i style="--w:${p.score}%;background:${colorFor(p.score)}"></i></div><ul>${(p.strengths || []).slice(0, 4).map(x => `<li class="ok">${esc(x)}</li>`).join("")}${(p.tips || []).map(x => `<li class="tip">${esc(x)}</li>`).join("")}</ul></div>`).join("");
+}
+function renderFacts(d, ai){
+  const risk = ai.js_risk || "unknown", riskCls = {high:"p-critical", medium:"p-high", low:"p-ok"}[risk] || "p-low";
+  const sm = ai.sitemap, h = ai.headings, im = ai.images, ms = ai.response_ms;
+  const num = (n, dec = 0) => Number(n).toLocaleString("en-US", {minimumFractionDigits: dec, maximumFractionDigits: dec});
+  const tiles = [
+    ["Words AI can read", ai.ok ? num(ai.word_count ?? 0) : "n/a", ai.has_main ? "Has a &lt;main&gt; element" : "No &lt;main&gt; element"],
+    ["Needs JavaScript?", `<span class="pill ${riskCls}">${esc({high:"High risk",medium:"Some risk",low:"Low risk"}[risk] || "Unknown")}</span>`, ai.thin ? "Very little text, not JavaScript" : ai.framework ? "Built with " + esc(ai.framework) : (ai.ok ? `${ai.script_count} script tags` : "")],
+    ["Structured data", ai.jsonld_types?.length ? num(ai.jsonld_types.length) + " type" + (ai.jsonld_types.length>1?"s":"") : "None", esc((ai.jsonld_types||[]).slice(0,3).join(", ") || "No JSON-LD found") + (ai.jsonld_invalid ? ` · ${ai.jsonld_invalid} invalid` : "")],
+    ["Page size", ai.ok ? kb(ai.html_bytes) : "n/a", ai.lang ? "Language: " + esc(ai.lang) : "No lang attribute"],
+    ["Server speed", ms != null ? num(ms / 1000, 1) + " s" : "n/a", ms != null ? (ms <= 1200 ? "Fast" : ms <= 2500 ? "OK" : "Slow") + ", median of " + (ai.bots_probed ? ai.bots_probed + 1 : "a few") + " requests" : ""],
+    ["Sitemap", sm ? (sm.ok ? num(sm.urls || sm.children) + (sm.kind === "index" ? " sitemaps" : " URLs") : "Not found") : "n/a", sm ? (sm.ok ? (sm.declared ? "Listed in robots.txt" : "Not listed in robots.txt") : esc(sm.error || "")) : ""],
+    ["Headings", h ? num(h.total) : "n/a", h ? `${h.h1_count} H1${h.skip_count ? " · levels skip" : ""}` : ""],
+    ["Images", im ? num(im.total) : "n/a", im ? `${im.missing_alt} without alt text` : ""],
+  ];
+  $("#tFacts").textContent = ai.title ? ai.title : d.url;
+  $("#tiles").innerHTML = tiles.map(([k, v, s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+}
+function renderScores(d){
+  const cats = d.categories || [];
+  $("#tScores").textContent = cats.length ? `${cats.length} areas${d.trust?.grade ? " · trust grade " + d.trust.grade : ""}` : "";
+  $("#bars").innerHTML = cats.map(c => {
+    const p = c.max ? Math.round(100*(c.score||0)/c.max) : 0;
+    return `<div class="bar"><span>${esc(c.label)}</span><span class="n">${c.score ?? 0} / ${c.max}</span><div class="track"><i style="--w:${p}%;background:${colorFor(p)}"></i></div></div>`;
+  }).join("") + (d.penalty ? `<div class="bar"><span>Penalties</span><span class="n">${d.penalty}</span></div>` : "");
+  const t = d.trust;
+  $("#trust").innerHTML = t ? `<h3 class="sub">Trust signals <span class="grade">${esc(t.grade || "")}</span></h3><p class="lnote">An extra view from the engine. It does not change the score.</p><div class="bars">${t.layers.map(L => {
+    const p = L.max ? Math.round(100 * L.score / L.max) : 0;
+    return `<div class="bar"><span>${esc(L.label)}</span><span class="n">${L.score} / ${L.max}</span><div class="track"><i style="--w:${p}%;background:${colorFor(p)}"></i></div></div>${L.missing?.length ? `<div class="lnote" style="margin:-6px 0 4px">Missing: ${esc(L.missing.slice(0, 3).join("; "))}</div>` : ""}`;
+  }).join("")}</div>` : "";
+}
+
+/* ---------- download, copy ---------- */
 function download(text, name, type){
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([text], {type: type + ";charset=utf-8"}));
@@ -1350,7 +1220,7 @@ function buildFixGuide(d){
   const name = cleanName(ai.og_title || ai.title || host);
   const desc = ai.description || ai.og_description || "";
   const lang = ai.lang || "en";
-  const allText = acts.flatMap(a => a.items).join("\n").toLowerCase();
+  const allText = acts.filter(a => a.category !== "location").flatMap(a => a.items).join("\n").toLowerCase();  /* the location step has its own text */
   const has = re => re.test(allText);
   const cats = new Set(acts.map(a => a.category));
   const links = internalLinks(ai.markdown || "", origin).slice(0, 12);
@@ -1551,13 +1421,9 @@ function internalLinks(md, origin){
   return out;
 }
 
-/* ---------- scroll spy + start ---------- */
-const spy = new IntersectionObserver(es => es.forEach(e => {
-  if(e.isIntersecting) $$("#secnav a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
-}), {rootMargin: "-30% 0px -60% 0px"});
-["secMissed", "secTop", "secWins", "secView", "secBots", "secPlat", "secFixes", "secFacts", "secScores"].forEach(id => spy.observe($("#" + id)));
+/* ---------- start ---------- */
 $("#appv").textContent = "v" + APP_VERSION;
-mountBots(); updateCount(); watch();
+mountBots(); updateCount();
 document.fonts?.ready.then(moveInd); moveInd();
 const q = new URLSearchParams(location.search).get("url");
 if(q){ $("#u").value = q; toggleClear(); run(q); } else { $("#u").focus({preventScroll: true}); }
