@@ -1,6 +1,6 @@
 # AI Site Scan: overview
 
-Last updated: 26 Nov 2026, 00:10 (Asia/Jerusalem). App version 2.3.0
+Last updated: 25 Nov 2026, 23:35 (Asia/Jerusalem). App version 2.4.0
 Owner: Daniel Rojansky
 
 ## What it is
@@ -31,12 +31,14 @@ AI Site Scan is a free web app. You enter a website address. The app tells you h
 8. **Score by area:** 9 areas from the engine, plus trust signals.
 9. **Fix guide (.md) export:** a step-by-step Markdown guide for a developer or an AI coding tool, with ready-to-paste code filled in for the site.
 10. **History tab:** last 30 scans, saved in the browser. Open, rescan, delete, and see score changes.
-11. **Other:** one Scan/Rescan button in the address bar (see below), Share link (opens a scan), Copy summary, JSON download.
+11. **Agent readiness (v2.4):** a closed Details panel with 23 checks of the standards AI agents look for (the ones isitagentready.com tests), a level from 0 to 5, and for each check what we asked, why it matters and how to fix it. It does not change the score.
+12. **Other:** one Scan/Rescan button in the address bar (see below), Share link (opens a scan), Copy summary, JSON download.
 
 ## Status (25 Nov 2026)
 
 - Live and public. No login.
 - Auto-deploy: each push to `main` deploys to production. Other branches get a preview URL.
+- Version 2.4.0: Agent readiness panel. All the checks of isitagentready.com, as a level from 0 to 5 and 23 rows, loaded after the scan from a new function.
 - Version 2.3.0: new interface. One narrow column, one list of issues (severe first), everything else collapsed.
 - Version 2.2.0: the "Say where your business is" check for local businesses (critical when the page text never says where the business is), a red alert under the score, and an optional Content Signals extra.
 - Version 2.1.0: "What the AI agent missed" section, one smart Scan/Rescan button (Rescan always bypasses the cache). Version 2.0.0 brought the playful interface, the parallel scan engine (about 4 to 6 times faster), the 14-bot test and the extra checks.

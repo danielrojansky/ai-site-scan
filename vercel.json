@@ -7,6 +7,15 @@
       "maxDuration": 60,
       "memory": 1024
     },
+    "api/agent.py": {
+      "maxDuration": 40,
+      "memory": 1024
+    },
+    "api/webmcp.js": {
+      "maxDuration": 40,
+      "memory": 2048,
+      "includeFiles": "node_modules/@sparticuz/chromium/bin/**"
+    },
     "api/shot.js": {
       "maxDuration": 45,
       "memory": 2048,

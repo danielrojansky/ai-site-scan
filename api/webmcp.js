@@ -1,0 +1,139 @@
+// WebMCP API: GET /api/webmcp?url=https://example.com
+// Opens the page in headless Chrome with a small stand-in for the WebMCP API (document.modelContext and
+// navigator.modelContext) and reports the tools the page registers. Forms with a toolname attribute count too.
+// Real browsers do not offer WebMCP yet, so a page can only be asked by pretending to be one that does.
+// It only loads public addresses (same idea as the SSRF protection in scan.py).
+const dns = require("node:dns").promises;
+const net = require("node:net");
+const MAX_URL = 2048;
+const MAX_TOOLS = 50;
+
+function isPrivateIp(ip) {
+  if (net.isIPv4(ip)) {
+    const [a, b] = ip.split(".").map(Number);
+    return (
+      a === 0 || a === 10 || a === 127 || a >= 224 ||
+      (a === 100 && b >= 64 && b <= 127) ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168) ||
+      (a === 198 && (b === 18 || b === 19))
+    );
+  }
+  const v = ip.toLowerCase();
+  if (v.startsWith("::ffff:")) return isPrivateIp(v.slice(7));
+  return v === "::" || v === "::1" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80");
+}
+async function isPublicHost(hostname) {
+  const host = hostname.replace(/^\[|\]$/g, "");
+  if (!host || host === "localhost" || host.endsWith(".localhost") || host.endsWith(".internal")) return false;
+  if (net.isIP(host)) return !isPrivateIp(host);
+  try {
+    const addrs = await dns.lookup(host, { all: true });
+    return addrs.length > 0 && addrs.every((a) => !isPrivateIp(a.address));
+  } catch {
+    return false;
+  }
+}
+function send(res, code, body, headers = {}) {
+  res.statusCode = code;
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
+  if (!headers["Cache-Control"]) res.setHeader("Cache-Control", "no-store");
+  res.end(JSON.stringify(body));
+}
+
+// Runs before any script of the page. It records every tool a page registers and answers like the real API would.
+const STAND_IN = `(() => {
+  const found = [], via = [];
+  const note = (t, where) => {
+    try {
+      if (t && typeof t.name === "string" && !found.some((x) => x.name === t.name)) {
+        found.push({ name: t.name, title: typeof t.title === "string" ? t.title : undefined,
+                     description: typeof t.description === "string" ? t.description : undefined, hasSchema: !!t.inputSchema });
+        if (!via.includes(where)) via.push(where);
+      }
+    } catch (e) {}
+  };
+  const make = (where) => ({
+    registerTool(t) { note(t, where); return Promise.resolve(); },
+    unregisterTool() { return Promise.resolve(); },
+    provideContext(c) { try { ((c && c.tools) || []).forEach((t) => note(t, where)); } catch (e) {} return Promise.resolve(); },
+    clearContext() { return Promise.resolve(); },
+    addEventListener() {}, removeEventListener() {},
+  });
+  const put = (o, where) => { try { if (!o.modelContext) Object.defineProperty(o, "modelContext", { value: make(where), configurable: true }); } catch (e) {} };
+  put(document, "document.modelContext");
+  put(navigator, "navigator.modelContext");
+  window.__webmcp = { found, via };
+})();`;
+
+module.exports = async function handler(req, res) {
+  let target;
+  try {
+    const q = new URL(req.url, "http://x").searchParams.get("url") || "";
+    if (!q || q.length > MAX_URL) return send(res, 400, { error: "Missing url" });
+    target = new URL(/^https?:\/\//i.test(q) ? q : "https://" + q);
+    if (!["http:", "https:"].includes(target.protocol)) return send(res, 400, { error: "Only http and https" });
+  } catch {
+    return send(res, 400, { error: "Invalid url" });
+  }
+  if (!(await isPublicHost(target.hostname))) return send(res, 400, { error: "URL not allowed" });
+  let browser;
+  try {
+    const chromium = (await import("@sparticuz/chromium")).default;
+    const puppeteer = (await import("puppeteer-core")).default;
+    const local = !!process.env.CHROME_PATH;  // a test on a developer machine uses its own Chrome
+    browser = await puppeteer.launch({
+      args: local ? ["--no-sandbox"] : chromium.args,
+      defaultViewport: { width: 1280, height: 900 },
+      executablePath: process.env.CHROME_PATH || (await chromium.executablePath()),
+      headless: true,
+    });
+    const page = await browser.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36 AISiteScan/1.0"
+    );
+    await page.evaluateOnNewDocument(STAND_IN);
+    // Block requests to private addresses (redirects, iframes, scripts) and heavy media.
+    const hostOk = new Map();
+    await page.setRequestInterception(true);
+    page.on("request", async (r) => {
+      try {
+        const u = new URL(r.url());
+        if (u.protocol === "data:" || u.protocol === "blob:") return r.continue();
+        if (!["http:", "https:"].includes(u.protocol)) return r.abort();
+        if (["media", "image", "font", "websocket", "eventsource"].includes(r.resourceType())) return r.abort();
+        if (!hostOk.has(u.hostname)) hostOk.set(u.hostname, isPublicHost(u.hostname));
+        return (await hostOk.get(u.hostname)) ? r.continue() : r.abort();
+      } catch {
+        try { r.abort(); } catch {}
+      }
+    });
+    try {
+      await page.goto(target.href, { waitUntil: "networkidle2", timeout: 20000 });
+    } catch {
+      // Slow pages: use what has loaded so far.
+    }
+    await new Promise((r) => setTimeout(r, 1500));
+    const seen = await page.evaluate(() => {
+      const w = window.__webmcp || { found: [], via: [] };
+      const forms = [...document.querySelectorAll("form[toolname]")].map((f) => ({
+        name: f.getAttribute("toolname") || "",
+        description: f.getAttribute("tooldescription") || undefined,
+        hasSchema: true,
+      })).filter((t) => t.name);
+      return { imperative: w.found, via: w.via, declarative: forms };
+    });
+    const names = new Set(seen.imperative.map((t) => t.name));
+    const tools = [...seen.imperative, ...seen.declarative.filter((t) => !names.has(t.name))].slice(0, MAX_TOOLS);
+    const method = seen.imperative.length && seen.declarative.length ? "both" : seen.imperative.length ? "imperative_api" : seen.declarative.length ? "declarative_html" : null;
+    return send(res, 200, { toolCount: tools.length, tools, detectionMethod: method, via: seen.via[0] || (seen.declarative.length ? "form attributes" : null) },
+      { "Cache-Control": "public, max-age=300, s-maxage=600" });
+  } catch (e) {
+    console.error("webmcp failed", e && e.message);
+    return send(res, 502, { error: "Could not check WebMCP: " + String((e && e.message) || e).slice(0, 300) });
+  } finally {
+    if (browser) await browser.close().catch(() => {});
+  }
+};
