@@ -865,11 +865,11 @@ def check_location(loc: dict | None) -> dict | None:
         pl = ", ".join(vis.get("places") or [])
         items.append((f"A place is only mentioned in passing ({pl}), " if pl else "The location is only shown on a map, ")
                      + "and the page never says plainly where the business is. Print the full address in the footer or a contact block.")
-    items.append("Print the full address (street, number, city, postal code) as plain text in the footer or a contact block, on every page. "
-                 "Add one sentence that names the area you serve, for example \"We are in [city] and deliver across [region]\". "
-                 "Put the city in the title, the H1 and the meta description of the pages that sell locally.")
+    items.append("Print the full address (street, number, city, postal code) as plain text in the footer or a contact block, on every page.")
+    items.append("Add one sentence that names the area you serve, for example \"We are in [city] and deliver across [region]\".")
+    items.append("Put the city in the title, the H1 and the meta description of the pages that sell locally.")
     if vis.get("contact_link") and status in ("none", "hidden"):
-        items.append("The page links to a contact or about page, but AI tools read one page at a time. The address must be on this page too.")
+        items.append("Do not rely on the contact page: AI tools read one page at a time, so the address must be on this page too.")
     if status == "hidden" or sch.get("local_type") or sch.get("found"):
         items.append("Keep the LocalBusiness structured data (JSON-LD) in step with the page: same address, a map pin (latitude and longitude), "
                      "opening hours and the cities or regions you serve.")
@@ -880,9 +880,11 @@ def check_location(loc: dict | None) -> dict | None:
         items.append("The map pin (geo) in your structured data has no latitude and longitude, so it points nowhere. Fill it in or remove it.")
     if sch.get("area_country_only") and status != "area":
         items.append(f"Your structured data lists only a country as the area served ({', '.join(sch.get('area_served') or [])}). Name the cities or regions you serve.")
+    action = _action("location", "Say where your business is", prio, items[1:])
+    action["lead"] = items[0]  # what is wrong, in one sentence; the steps follow in items
     if what:
-        items.append(f"We treat this as a local business because the page shows: {what}.")
-    return _action("location", "Say where your business is", prio, items)
+        action["note"] = f"We treat this as a local business because the page shows: {what}."
+    return action
 
 
 def trust_summary(ts: dict | None) -> dict | None:
@@ -949,8 +951,43 @@ STAGES = (("reach", "Get in"), ("read", "Read"), ("understand", "Understand"), (
 _STAGE_ORDER = {k: i for i, (k, _) in enumerate(STAGES)}
 
 
+# Which fix (the action category) holds the how-to for each thing the AI missed.
+# The report joins the two, so every issue shows once: what the AI saw, and how to fix it.
+FIX_FOR = {
+    "no_answer": "status", "not_found": "status", "server_error": "status", "site_blocked": "access",
+    "bots_refused": "access", "robots_block": "robots", "crawl_delay": "robots", "noindex": "meta", "noai": "meta",
+    "slow": "performance", "huge_page": "performance",
+    "js_only": "rendering", "little_text": "rendering", "thin": "thin", "nosnippet": "google_ai", "images": "other",
+    "video": "other", "cookie": "cookie", "bot_page": "bot_content",
+    "no_title": "meta", "no_description": "meta", "no_canonical": "meta", "no_og": "meta",
+    "no_h1": "content", "no_sections": "content", "short": "content", "no_facts": "content", "buried": "content",
+    "no_schema": "schema", "no_org": "schema", "no_website": "schema", "broken_schema": "schema", "schema_fields": "schema", "faq": "schema",
+    "no_lang": "signals", "wrong_lang": "language", "brand": "brand_entity", "location": "location", "geo_empty": "location",
+    "no_author": "google_ai", "no_date": "google_ai", "no_profiles": "brand_entity", "few_profiles": "brand_entity",
+    "no_contact": "brand_entity", "no_about": "brand_entity", "no_https": "trust",
+    "links": "google_ai", "sitemap": "sitemap", "no_sitemap": "robots", "nofollow": "crawl",
+}
+
+
+# One-line how-to for the things that may have no fix row of their own (the report shows it when no action matches).
+HINTS = {
+    "no_answer": "Check that the address is right and the site is online, then scan again.",
+    "robots_block": "Open robots.txt and remove the Disallow rules for the AI crawlers you want to allow. If the block is on purpose, no action is needed.",
+    "crawl_delay": "Lower or remove the Crawl-delay line in robots.txt.",
+    "no_sitemap": "Create a sitemap.xml that lists your main pages, then add the line Sitemap: https://your-site/sitemap.xml to robots.txt.",
+    "noindex": "Remove the noindex tag or header, unless you want this page hidden from search and AI.",
+    "noai": "Remove the noai tag, unless you do not want AI tools to use this page.",
+    "images": "Add short alt text to images that carry meaning. Decorative images can have empty alt text.",
+    "video": "Add captions or a transcript next to the video.",
+}
+
+
 def _it(stage: str, id_: str, impact: str, title: str, detail: str, optional: bool = False) -> dict:
-    return {"id": id_, "stage": stage, "impact": impact, "title": title, "detail": detail, "optional": optional}
+    out = {"id": id_, "stage": stage, "impact": impact, "title": title, "detail": detail, "optional": optional,
+           "fix": None if optional else FIX_FOR.get(id_)}
+    if id_ in HINTS and not optional:
+        out["hint"] = HINTS[id_]
+    return out
 
 
 def _few(names, n: int = 4) -> str:

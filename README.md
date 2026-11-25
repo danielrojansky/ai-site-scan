@@ -1,15 +1,12 @@
 # AI Site Scan
 
-A small web app. Enter a URL and get:
+A small web app. Enter a URL and get a score and a to-do list in seconds. The report is built in layers, and only the first is open:
 
-1. An **AI readiness score** (0 to 100) with a score per category, and a mascot that reacts to it.
-2. **What the AI agent missed**, right after the score: the page read as an AI agent reads it, as a journey (get in, read, understand, trust, find more) with a card for every blind spot. It is the free teaser for the full report and the fix guide.
-3. A **ranked list of fixes**, with the points each category can still gain. Tick fixes off as you do them.
-4. A **simulated AI view**: the page HTML before JavaScript runs, turned into text. This is what most AI crawlers and fetch tools get. It is shown next to a screenshot of the real page.
-5. A **bot access test**: robots.txt rules plus the real HTTP answer the server gives to 14 crawlers and AI assistants (GPTBot, ClaudeBot, PerplexityBot, Googlebot and more), all tested at once.
-6. **What already works**, a per-platform view (ChatGPT, Perplexity, Google AI) and trust signals.
+1. **The score card**: an AI readiness score (0 to 100), a one-line verdict, how many issues are critical, high, medium or low, and the main button for the fix guide. Under it, the AI agent's journey in five steps (get in, read, understand, trust, find more). Tap a step to see only its issues.
+2. **One list of issues**, severe first. Each issue shows once: what the AI saw, why it matters and how to fix it. Tick issues off as you fix them. This is the free teaser for the full report and the fix guide.
+3. **Details, closed until you open them**: how AI sees your page (the page without JavaScript next to a screenshot), the bot access test (14 crawlers and AI assistants tested at once), AI platforms, key facts and the score breakdown.
 
-Current version: **2.2.0** (shown in the page footer).
+Current version: **2.3.0** (shown in the page footer).
 
 ## Documentation
 
@@ -20,9 +17,9 @@ Full docs are in [`docs/`](docs/): overview, architecture, operations, decisions
 - **One scan button** in the address bar. It says **Rescan** when the address is the report on screen (always a fresh scan, never a cached one) and **Scan** for any other address. It changes as you type.
 - **History** tab: the last 30 scans are saved in the browser (localStorage). Open any old report, rescan it, or delete it. Score changes and "fixed since last scan" are shown.
 - **Fix guide (.md)**: a Markdown file with each fix, why it matters, ready-to-paste code filled in for the site (JSON-LD, llms.txt, robots.txt, head tags, SSR advice), how to check each fix, and a prompt for AI coding tools.
-- Plain-language verdict, top 3 fixes, filters by priority, share link, copy summary.
+- Plain-language verdict, severity counts, share link, copy summary. The AI journey strip filters the issue list.
 - **Where is the business?** A shop, clinic, restaurant or delivery business must say where it is in the page text. If the address is missing, or only in hidden structured data, the report shows a red alert under the score, a critical fix at the top and a ready-to-paste fix (an address block and LocalBusiness JSON-LD filled from the site's own data). Software and media sites are never flagged.
-- Animated, playful interface: scan stage, count-up score ring, confetti for good scores, reveal on scroll. It respects "reduce motion".
+- Calm, playful interface: a small mascot, a count-up score ring, smooth open and close, confetti only for a great score with no critical issue. It respects "reduce motion".
 
 ## How it works
 
