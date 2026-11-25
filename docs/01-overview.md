@@ -1,6 +1,6 @@
 # AI Site Scan: overview
 
-Last updated: 25 Nov 2026, 01:07 (Asia/Jerusalem). App version 2.1.0
+Last updated: 25 Nov 2026, 22:40 (Asia/Jerusalem). App version 2.2.0
 Owner: Daniel Rojansky
 
 ## What it is
@@ -37,6 +37,7 @@ AI Site Scan is a free web app. You enter a website address. The app tells you h
 
 - Live and public. No login.
 - Auto-deploy: each push to `main` deploys to production. Other branches get a preview URL.
+- Version 2.2.0: the "Say where your business is" check for local businesses (critical when the page text never says where the business is), a red alert under the score, and an optional Content Signals extra.
 - Version 2.1.0: "What the AI agent missed" section, one smart Scan/Rescan button (Rescan always bypasses the cache). Version 2.0.0 brought the playful interface, the parallel scan engine (about 4 to 6 times faster), the 14-bot test and the extra checks.
 - Tested on: anthropic.com (57), react.dev (63), excalidraw.com (50, JavaScript-only), stripe.com (86), duet121.com (45, JavaScript-only), paulgraham.com (35, little text, no JavaScript), wikipedia.org (69), nytimes.com (blocks all cloud traffic), cnn.com (refuses AI bots with HTTP 451), a fake domain, and a private address (refused). Scores match the old one-by-one engine on every site compared.
 

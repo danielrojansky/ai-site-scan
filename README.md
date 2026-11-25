@@ -9,7 +9,7 @@ A small web app. Enter a URL and get:
 5. A **bot access test**: robots.txt rules plus the real HTTP answer the server gives to 14 crawlers and AI assistants (GPTBot, ClaudeBot, PerplexityBot, Googlebot and more), all tested at once.
 6. **What already works**, a per-platform view (ChatGPT, Perplexity, Google AI) and trust signals.
 
-Current version: **2.1.0** (shown in the page footer).
+Current version: **2.2.0** (shown in the page footer).
 
 ## Documentation
 
@@ -21,6 +21,7 @@ Full docs are in [`docs/`](docs/): overview, architecture, operations, decisions
 - **History** tab: the last 30 scans are saved in the browser (localStorage). Open any old report, rescan it, or delete it. Score changes and "fixed since last scan" are shown.
 - **Fix guide (.md)**: a Markdown file with each fix, why it matters, ready-to-paste code filled in for the site (JSON-LD, llms.txt, robots.txt, head tags, SSR advice), how to check each fix, and a prompt for AI coding tools.
 - Plain-language verdict, top 3 fixes, filters by priority, share link, copy summary.
+- **Where is the business?** A shop, clinic, restaurant or delivery business must say where it is in the page text. If the address is missing, or only in hidden structured data, the report shows a red alert under the score, a critical fix at the top and a ready-to-paste fix (an address block and LocalBusiness JSON-LD filled from the site's own data). Software and media sites are never flagged.
 - Animated, playful interface: scan stage, count-up score ring, confetti for good scores, reveal on scroll. It respects "reduce motion".
 
 ## How it works
@@ -31,6 +32,7 @@ Full docs are in [`docs/`](docs/): overview, architecture, operations, decisions
   - At the same time it probes the site as 14 bots, reads robots.txt and the sitemap, and builds the AI view. Everything runs in parallel, so a scan takes about 1 to 3 seconds (it took 3 to 10 before).
   - The engine's one-by-one CDN check is fed from our parallel probes (same rules), so the score is unchanged and nothing is fetched twice.
   - `api/_checks.py` holds our own checks (pure functions, tested offline): bot access, server speed and size, heading structure, link text, language, sitemap, soft 404 and more.
+  - `api/_location.py` decides whether the page says where the business is (visible text and structured data) and whether the business depends on a place.
   - Uses the engine's SSRF protection (public addresses only, DNS pinning, every redirect checked).
   - Basic rate limit (10 scans per IP per 10 minutes, per function instance) and a 10 minute result cache.
 - `api/shot.js`: a Node function that opens the page in headless Chrome (`@sparticuz/chromium` + `puppeteer-core`) and returns a JPEG. It blocks private addresses and caches each image at the Vercel edge for 10 minutes.
@@ -52,6 +54,7 @@ python -m unittest discover -s tests
 
 - It scans one page (the URL you enter), plus site files like robots.txt, llms.txt and sitemap.
 - The AI view does not run JavaScript. Google and some agents do run it, so their view can be richer.
+- The location check knows Israeli towns and about 230 big cities worldwide. A place that is not on the list is still found when the page prints a street address, an "Address:" label or an `<address>` block. It reads the page you scan, not the whole site.
 - The bot test copies each bot's name from a cloud server. Sites that check bot IP addresses (many do for Googlebot, Bingbot and Applebot) can refuse the copy and still let the real bot in.
 - The rate limit is in memory. For heavy public use, add a Vercel Firewall rule or a KV store.
 

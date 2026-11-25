@@ -214,6 +214,14 @@ a.delta{text-decoration:none}a.delta:hover{filter:brightness(.96)}
 .potential{margin:0 0 14px;max-width:520px}
 .potential .t{font-size:14px;color:var(--muted);margin-bottom:6px}
 .potential .t b{color:var(--ink)}
+.alert{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--crit-soft);border:1px solid #f3b6b6;border-left:5px solid var(--crit);border-radius:12px;padding:12px 14px;margin:0 0 14px;max-width:640px;animation:alertin .55s var(--spring) both}
+.alert .ai{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#fff;font-size:19px;line-height:1;animation:pillpulse 2.6s ease-out infinite}
+.alert b{display:block;color:var(--crit);font-size:15px;line-height:1.3}
+.alert span.s{display:block;font-size:14px;color:#5a2a2a;margin-top:2px}
+.alert a{display:inline-block;margin-top:6px;font-weight:700;font-size:14px;color:var(--crit)}
+.alert.high{background:var(--high-soft);border-color:#f6c9a8;border-left-color:var(--high)}
+.alert.high b,.alert.high a{color:var(--high)}.alert.high span.s{color:#5f3516}
+@keyframes alertin{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
 .ptrack{height:10px;background:var(--line);border-radius:99px;position:relative;overflow:hidden}
 .ptrack .g,.ptrack .n{position:absolute;left:0;top:0;bottom:0;border-radius:99px;width:0;transition:width 1.2s var(--ease) .5s}
 .ptrack .g{background:repeating-linear-gradient(-45deg,#c7d2fe,#c7d2fe 6px,#dbe4ff 6px,#dbe4ff 12px)}
@@ -534,6 +542,7 @@ form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
             <div class="chips" id="chips"></div>
             <div class="verdict" id="verdict"></div>
             <p class="verdict-sub" id="verdictSub"></p>
+            <div class="alert hide" id="alertBar" role="alert"><span class="ai" aria-hidden="true">📍</span><div><b id="alertT"></b><span class="s" id="alertS"></span><a href="#secTop" id="alertGo">See how to fix it ↓</a></div></div>
             <div class="potential" id="potential"></div>
             <div class="btnrow">
               <button id="shareBtn" type="button">🔗 Share link</button>
@@ -671,14 +680,14 @@ form.scan button.primary.nudge{animation:nudge 1.7s ease-out infinite}
     <div class="hlist" id="hlist"></div>
   </div>
 
-  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.<span class="ver" id="appv">v2.1.0</span></footer>
+  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI tools can reach and understand your site more easily. It does not promise that AI tools will cite you.<span class="ver" id="appv">v2.2.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
-const APP_VERSION = "2.1.0"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "2.2.0"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -990,6 +999,7 @@ function verdictFor(d){
   if(acts.some(a => a.category === "access" && a.priority === "critical")) return ["Many AI bots are blocked", "Your server refuses several AI crawlers, so AI tools may not be able to read or cite this site. See the bot list below."];
   if(ai.js_risk === "high") return ["AI tools see an almost empty page", "The content is built by JavaScript, and most AI tools do not run JavaScript. They only see the title and description."];
   if(acts.some(a => a.category === "thin")) return ["There is almost no text for AI to read", "The page has very little text. AI tools can only quote what is written in the page."];
+  if(s >= 40 && acts.some(a => a.category === "location" && a.priority === "critical")) return ["AI can read this page, but cannot tell where the business is", "The page never says where you are. AI tools may skip you for local questions, or put you in the wrong area. Fix this first."];
   if(s >= 80) return ["AI tools can read this site well", "The basics are in place. The fixes below are fine-tuning."];
   if(s >= 60) return ["AI tools can read this site, with some gaps", "The content is readable. Adding the missing signals below helps AI tools understand and trust it."];
   if(s >= 40) return ["AI tools can read this site, but miss key signals", "The main gaps are listed below. Most are quick to fix."];
@@ -1021,14 +1031,17 @@ const WHY = {
   sitemap: "A sitemap is the list of pages you want found. Crawlers use it to discover your content.",
   bot_content: "If bots get a different page than visitors, AI may quote text your visitors never see.",
   trust: "Browsers and AI tools trust secure pages more.",
+  location: "AI tools answer \"where\" questions from the page text. A business that never says where it is can be skipped for local questions, or placed in the wrong city or country.",
 };
 
 /* ---------- render a report ---------- */
 const akey = a => a.category + "|" + a.label;
+const locAlert = d => (d.actions || []).find(a => a.category === "location" && (a.priority === "critical" || a.priority === "high"));
 const BAND = {critical: "🚨 Critical", foundation: "🌱 Foundation", good: "👍 Good", excellent: "🏆 Excellent"};
 function bubbleFor(d, s){
   if((d.actions || []).some(a => a.category === "status")) return "Hmm, nothing to read here.";
   if((d.actions || []).some(a => a.category === "access" && a.priority === "critical")) return "The door is locked. I cannot get in!";
+  if(locAlert(d)?.priority === "critical") return "Where is this place? I cannot tell!";
   return s >= 80 ? "I can read this like a book!" : s >= 60 ? "I can read this, mostly." : s >= 40 ? "I understand some of it…" : "I am lost here. Help me!";
 }
 function render(d, opts){
@@ -1042,10 +1055,11 @@ function render(d, opts){
   const ring = $("#ring"), num = $("#score"), band = $("#band");
   ring.classList.remove("done"); ring.style.setProperty("--p", 0); num.textContent = "0";
   band.className = "band " + (d.band || ""); band.textContent = BAND[d.band] || (d.band ? d.band[0].toUpperCase() + d.band.slice(1) : "");
-  const sb = $("#sumBot"); mood(sb, s >= 80 ? "happy" : s >= 40 ? "idle" : "sad"); $("#bubble").textContent = bubbleFor(d, s);
+  const la = locAlert(d), locCrit = la?.priority === "critical";
+  const sb = $("#sumBot"); mood(sb, locCrit ? (s >= 40 ? "idle" : "sad") : s >= 80 ? "happy" : s >= 40 ? "idle" : "sad"); $("#bubble").textContent = bubbleFor(d, s);
   tween(1150, p => { const v = s * p; ring.style.setProperty("--p", v); ring.style.setProperty("--c", colorFor(v)); num.textContent = Math.round(v); }, () => {
     ring.classList.add("done"); band.classList.add("in");
-    if(s >= 80 && !opts.saved) burstAt(ring, 64);
+    if(s >= 80 && !opts.saved && !locCrit) burstAt(ring, 64);  /* no confetti while AI cannot place the business */
   });
   if(d.band == null) band.classList.add("in");
 
@@ -1065,6 +1079,12 @@ function render(d, opts){
   $("#chips").innerHTML = chips.join(""); $("#chips").classList.toggle("hide", !chips.length);
   const [v, vs] = verdictFor(d);
   $("#verdict").textContent = v; $("#verdictSub").textContent = vs;
+  const al = $("#alertBar"); al.classList.toggle("hide", !la);
+  if(la){
+    al.classList.toggle("high", la.priority !== "critical");
+    $("#alertT").textContent = la.priority === "critical" ? "Critical: AI cannot tell where this business is" : "Important: AI may not know where this business is";
+    $("#alertS").textContent = d.missed?.items?.find(i => i.id === "location")?.detail || firstSentence(la.items[0]);
+  }
   const top = acts.filter(a => a.priority !== "low").slice(0, 3);
   const pot = Math.min(100, s + top.reduce((n, a) => n + (a.gain || 0), 0));
   $("#potential").innerHTML = pot > s + 1 ? `<div class="t">Fix ${top.filter(a => a.gain).length === 1 ? "the top fix" : "the top " + top.filter(a => a.gain).length} and you could reach about <b>${pot}</b>.</div><div class="ptrack"><i class="g" data-w="${pot}"></i><i class="n" data-w="${s}"></i></div>` : "";
@@ -1367,6 +1387,34 @@ function buildFixGuide(d){
     P(...body, "");
     if(verify) P(`**Check:** ${verify}`, "");
   };
+
+  if(cats.has("location")){
+    const loc = ai.location || {}, sc = loc.schema || {}, he = /^(he|iw)/i.test(lang);
+    const biz = sc.name || name, phone = sc.phone || "TODO: phone number", digits = sc.phone ? sc.phone.replace(/[^\d+]/g, "") : "TODO";
+    const addrLine = [sc.street || "TODO: street and number", [sc.city || sc.region || "TODO: city", sc.postal].filter(Boolean).join(" ")].join(", ");
+    const T = he ? {tel: "טלפון", open: "שעות פעילות", sentence: `אנחנו ${biz}, ממוקמים ב${sc.city || "[עיר]"} ומגיעים ל[אזורי השירות שלכם].`}
+      : {tel: "Phone", open: "Opening hours", sentence: `We are ${biz}, based in ${sc.city || "[city]"}. We serve [the areas you serve].`};
+    const ld = {"@context": "https://schema.org", "@type": sc.type && sc.type !== "Organization" ? sc.type : "LocalBusiness", "@id": origin + "/#localbusiness", "name": biz, "url": origin + "/",
+      "telephone": sc.phone || "TODO: phone number",
+      "address": {"@type": "PostalAddress", "streetAddress": sc.street || "TODO: street and number", "addressLocality": sc.city || "TODO: city", "postalCode": sc.postal || "TODO: postal code", "addressCountry": sc.country || "TODO: two-letter country code, for example IL"},
+      "geo": {"@type": "GeoCoordinates", "latitude": "TODO: latitude", "longitude": "TODO: longitude"},
+      "openingHours": "TODO: for example Mo-Fr 09:00-17:00",
+      "areaServed": [{"@type": "City", "name": "TODO: a city or region you serve"}]};
+    const titleBase = (ai.title || "Your page title").split(" | ")[0];
+    step("Say where your business is", WHY.location, [
+      loc.visible?.status === "hidden" ? `Now: the page text never names a place. Only the hidden structured data says where you are (${addrLine}). Most AI tools read only the visible text and never see it.`
+        : "Now: the page text names no address, city or service area, so AI tools cannot place the business.", "",
+      "**1. Print the address as plain text on every page.** Put it in the footer, and on the Contact page. Replace the TODO values:", "",
+      F + "html", "<footer>", "  <address>", `    <strong>${biz}</strong><br>`, `    ${addrLine}<br>`, `    ${T.tel}: <a href="tel:${digits}">${phone}</a>`, "  </address>", `  <p>${T.open}: TODO</p>`, "</footer>", F, "",
+      "**2. Say where you are, and who you serve, in one sentence near the top of the page.** For example:", "", F + "text", T.sentence, F, "",
+      `**3. Put the city in the title, the main heading and the meta description** of the pages that sell locally. Example title: \`${titleBase} | ${sc.city || "City"}\`.`, "",
+      "**4. Add LocalBusiness structured data** to the `<head>`, with the same address as the page. Fill every TODO:", "",
+      F + "html", '<script type="application/ld+json">', JSON.stringify(ld, null, 2), "<\/script>", F, "",
+      ...(sc.geo === "empty" ? ["Your current structured data has a map pin (`geo`) with no latitude and longitude. Fill them in: in Google Maps, right-click your location and copy the two numbers.", ""] : []),
+      ...(sc.area_country_only ? [`Your current structured data lists only a country as the area served (${(sc.area_served || []).join(", ")}). Name the cities or regions you serve in \`areaServed\`.`, ""] : []),
+      "**5. Use the same name, address and phone number everywhere:** your Google Business Profile, Facebook, Instagram and business directories. AI tools and search engines cross-check them.",
+    ], `view the page source and search for the city name. It must appear in the visible text, not only inside the JSON-LD block. A few days after you deploy, ask an AI assistant: "Where is ${biz} located?"`);
+  }
 
   if(cats.has("access")){
     const a = acts.find(x => x.category === "access");

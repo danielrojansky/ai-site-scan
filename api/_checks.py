@@ -18,6 +18,8 @@ from bs4.dammit import UnicodeDammit
 from geo_optimizer.core.audit_cdn import classify_block_pattern
 from geo_optimizer.models.results import CdnAiCrawlerResult
 
+import _location as LOC  # where the page says the business is (same folder)
+
 # ---------------------------------------------------------------------------
 # Bots we imitate
 # ---------------------------------------------------------------------------
@@ -469,10 +471,13 @@ def analyze_html(html: str, final_url: str) -> dict:
     inline_js_bytes = sum(len(s.string or "") for s in scripts
                           if not s.get("src") and (s.get("type") or "").lower() not in ("application/ld+json", "application/json"))
     jsonld_types: list[str] = []
+    ld_nodes: list[dict] = []
     jsonld_invalid = 0
     for s in soup.find_all("script", type=lambda t: t and "ld+json" in t.lower()):
         try:
-            _jsonld_types(json.loads(s.get_text() or ""), jsonld_types)
+            data = json.loads(s.get_text() or "")
+            _jsonld_types(data, jsonld_types)
+            LOC.collect_nodes(data, ld_nodes)
         except Exception:
             jsonld_invalid += 1
 
@@ -492,6 +497,11 @@ def analyze_html(html: str, final_url: str) -> dict:
     body = soup.body or soup
     main = soup.find("main") or soup.find("article") or soup.find(attrs={"role": "main"})
     md = to_markdown(body)  # keeps <noscript> text: a fetcher without JavaScript does read it
+    head_text = " ".join(x for x in (title, meta(name="description"), meta(prop="og:title"), meta(prop="og:description")) if x)
+    try:
+        location = LOC.location_facts(soup, md, head_text, ld_nodes)  # before scripts are removed
+    except Exception:  # a new check must never break the report
+        location = None
     for t in body.find_all(["script", "style", "template", "noscript"]):
         t.decompose()
     visible_text = _clean(body.get_text(" "))
@@ -532,6 +542,7 @@ def analyze_html(html: str, final_url: str) -> dict:
         "links": link_facts(body, host),
         "images": image_facts(soup),
         "lang_note": language_mismatch(lang, visible_text),
+        "location": location,
         "markdown": md[:MAX_MD_CHARS],
         "markdown_truncated": len(md) > MAX_MD_CHARS,
         "markdown_chars": len(md),
@@ -574,6 +585,11 @@ def parse_sitemap(url: str, status: int | None, content: bytes, error: str | Non
 
 def sitemap_lines(robots_text: str) -> list[str]:
     return [m.group(1).strip() for m in re.finditer(r"^\s*sitemap:\s*(\S+)", robots_text or "", re.I | re.M)][:3]
+
+
+def has_content_signal(robots_text: str) -> bool:
+    """A Content-Signal line (contentsignals.org) tells AI how it may use the content: train, search, answer."""
+    return bool(re.search(r"^\s*content-signal\s*:", robots_text or "", re.I | re.M))
 
 
 # ---------------------------------------------------------------------------
@@ -802,6 +818,71 @@ def check_https(final_url: str) -> dict | None:
     return None
 
 
+def location_impact(loc: dict | None) -> str | None:
+    """How serious is it that the page does not say where the business is? None when it is fine, or does not matter.
+
+    Only a business that depends on a place or a delivery area counts (shop, clinic, restaurant, local service).
+    A software or media site is never flagged."""
+    if not loc:
+        return None
+    level = (loc.get("local") or {}).get("level")
+    status = (loc.get("visible") or {}).get("status")
+    if level not in ("strong", "likely") or status == "ok":
+        return None
+    if status in ("none", "hidden"):
+        return "critical" if level == "strong" else "high"
+    return "medium" if level == "strong" else None  # names a country, an area or a place in passing, but not where it is
+
+
+def _addr_line(s: dict) -> str:
+    parts = [s.get("street"), s.get("city") or s.get("region")]
+    return ", ".join(p for p in parts if p)
+
+
+def check_location(loc: dict | None) -> dict | None:
+    """The page must say where the business is. A local business that does not is told so, loudly."""
+    prio = location_impact(loc)
+    if not prio:
+        return None
+    vis, sch, local = loc.get("visible") or {}, loc.get("schema") or {}, loc.get("local") or {}
+    status = vis.get("status")
+    what = ", ".join(local.get("signals") or [])
+    items: list[str] = []
+    if status == "hidden":
+        items.append(f"The page text never says where the business is. Only the hidden structured data does ({_addr_line(sch)}). "
+                     "Many AI tools read just the visible text and skip hidden code, so they never learn where you are. "
+                     "An AI tool that cannot place a business may skip it for local questions, or put it in the wrong area.")
+    elif status == "none":
+        items.append("The page text never says where the business is. We found no address, city, map or service area in the text AI tools read, "
+                     "and no address in the structured data either. An AI tool that cannot place a business may skip it for local questions, "
+                     "or put it in the wrong area.")
+    elif status == "area":
+        items.append(f"The page names the area it serves ({', '.join(vis.get('area') or [])}), but not where the business is. "
+                     "Add the city or the full address as plain text, so AI tools know where the shop or office is.")
+    else:
+        pl = ", ".join(vis.get("places") or [])
+        items.append((f"A place is only mentioned in passing ({pl}), " if pl else "The location is only shown on a map, ")
+                     + "and the page never says plainly where the business is. Print the full address in the footer or a contact block.")
+    items.append("Print the full address (street, number, city, postal code) as plain text in the footer or a contact block, on every page. "
+                 "Add one sentence that names the area you serve, for example \"We are in [city] and deliver across [region]\". "
+                 "Put the city in the title, the H1 and the meta description of the pages that sell locally.")
+    if vis.get("contact_link") and status in ("none", "hidden"):
+        items.append("The page links to a contact or about page, but AI tools read one page at a time. The address must be on this page too.")
+    if status == "hidden" or sch.get("local_type") or sch.get("found"):
+        items.append("Keep the LocalBusiness structured data (JSON-LD) in step with the page: same address, a map pin (latitude and longitude), "
+                     "opening hours and the cities or regions you serve.")
+    else:
+        items.append("Add LocalBusiness structured data (JSON-LD) with the same address, a map pin (latitude and longitude), opening hours "
+                     "and the cities or regions you serve.")
+    if sch.get("geo") == "empty":
+        items.append("The map pin (geo) in your structured data has no latitude and longitude, so it points nowhere. Fill it in or remove it.")
+    if sch.get("area_country_only") and status != "area":
+        items.append(f"Your structured data lists only a country as the area served ({', '.join(sch.get('area_served') or [])}). Name the cities or regions you serve.")
+    if what:
+        items.append(f"We treat this as a local business because the page shows: {what}.")
+    return _action("location", "Say where your business is", prio, items)
+
+
 def trust_summary(ts: dict | None) -> dict | None:
     if not ts or not ts.get("checked"):
         return None
@@ -831,6 +912,10 @@ def build_wins(ai: dict, audit: dict, rows: dict[str, dict], sitemap: dict | Non
         wins.append(f"AI crawlers can fetch the page ({n} of {len(rows)} bots tested got it).")
     if ai.get("js_risk") == "low" and (ai.get("word_count") or 0) >= 120:
         wins.append(f"The content is in the HTML: {ai['word_count']:,} words are readable without JavaScript.")
+    loc = ai.get("location") or {}
+    if (loc.get("local") or {}).get("level") in ("strong", "likely") and (loc.get("visible") or {}).get("status") == "ok":
+        place = ((loc["visible"].get("places") or [])[:1] or [""])[0]
+        wins.append("The page says where the business is" + (f" ({place})" if place else "") + ".")
     rb = (checks.get("robots_txt") or {}).get("details") or {}
     if rb.get("found") and rb.get("citation_bots_ok") and not rb.get("bots_blocked"):
         wins.append("robots.txt lets AI crawlers in.")
@@ -1033,6 +1118,27 @@ def build_missed(ai: dict, audit: dict, rows: dict, files: dict, score, actions:
         add(_it("understand", "no_lang", "medium", "Did not know your language", "The page does not say which language it is written in."))
     elif ai.get("lang_note"):
         add(_it("understand", "wrong_lang", "medium", "Was told the wrong language", ai["lang_note"].split(". AI tools")[0] + "."))
+    loc = ai.get("location") or {}
+    loc_impact = location_impact(loc)
+    if loc_impact:
+        st, sch = (loc.get("visible") or {}).get("status"), loc.get("schema") or {}
+        if st == "hidden":
+            add(_it("understand", "location", loc_impact, "Could not tell where you are",
+                    f"Your address ({_addr_line(sch)}) is only in hidden code. Many AI tools read just the visible page text, "
+                    "so they never learn where you are and may skip you for local questions."))
+        elif st == "none":
+            add(_it("understand", "location", loc_impact, "Could not tell where you are",
+                    "The page text names no address, city or service area, so the AI cannot place the business. "
+                    "It may skip you for local questions or put you in the wrong area."))
+        elif st == "area":
+            add(_it("understand", "location", loc_impact, "Found the area you serve, not where you are",
+                    "The page names where you deliver, but not where the business is. The AI cannot tell which city or address is yours."))
+        else:
+            add(_it("understand", "location", loc_impact, "Found only a passing mention of a place",
+                    "A place is mentioned in passing, or only shown on a map, but the page never says plainly where the business is."))
+    if (loc.get("local") or {}).get("level") in ("strong", "likely") and (loc.get("schema") or {}).get("geo") == "empty":
+        add(_it("understand", "geo_empty", "low", "The map pin in your data is empty",
+                "Your structured data has a map pin (geo) with no latitude and longitude, so it points nowhere."))
     if meta and not (meta.get("has_og_title") and meta.get("has_og_description")):
         add(_it("understand", "no_og", "low", "Found no preview card", "The page has no Open Graph tags (title, description, image) for AI and link previews."))
     if brand and brand.get("brand_name_consistent") is False and len(brand.get("names_found") or []) >= 2:
@@ -1089,4 +1195,6 @@ def build_missed(ai: dict, audit: dict, rows: dict, files: dict, score, actions:
         add(_it("discover", "feed", "low", "News feed", "No RSS or Atom feed to announce new content.", True))
     if discovery and not discovery.get("has_well_known_ai") and not discovery.get("has_summary"):
         add(_it("discover", "ai_files", "low", "AI files", "No /.well-known/ai.txt or /ai/summary.json. These are new, unofficial conventions.", True))
+    if files.get("content_signal") is False:
+        add(_it("discover", "content_signal", "low", "Content Signals", "robots.txt has no Content-Signal line that says how AI may use your content (train, search, answer). It is a new convention from Cloudflare.", True))
     return _pack(items, True, score, potential)

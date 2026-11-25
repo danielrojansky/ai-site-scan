@@ -58,7 +58,7 @@ from geo_optimizer.models.results import CdnAiCrawlerResult  # noqa: E402
 from geo_optimizer.utils.http_async import fetch_url_async  # noqa: E402
 from geo_optimizer.utils.validators import normalize_url_scheme, validate_public_url  # noqa: E402
 
-APP_VERSION = "2.1.0"  # keep in step with the footer in index.html
+APP_VERSION = "2.2.0"  # keep in step with the footer in index.html
 ENGINE = "geo-optimizer-skill"
 try:
     from importlib.metadata import version as _v
@@ -142,13 +142,16 @@ async def probe_files(origin: str) -> dict:
     sem = asyncio.Semaphore(1)
     robots = await _get(origin + "/robots.txt", C.BROWSER_HEADERS, timeout=8, max_size=1_000_000, sem=sem)
     declared: list[str] = []
+    signal = None  # None: no robots.txt to look at
     if robots["status"] == 200:
-        declared = [urljoin(origin + "/", u) for u in C.sitemap_lines(C.decode_body(robots["content"]))]
+        text = C.decode_body(robots["content"])
+        declared = [urljoin(origin + "/", u) for u in C.sitemap_lines(text)]
+        signal = C.has_content_signal(text)
     target = declared[0] if declared else origin + "/sitemap.xml"
     sm = await _get(target, C.BROWSER_HEADERS, timeout=8, max_size=8_000_000, sem=sem)
     parsed = C.parse_sitemap(target, sm["status"], sm["content"], sm["error"])
     parsed["declared"] = bool(declared)
-    return {"declared": declared, "sitemap": parsed}
+    return {"declared": declared, "sitemap": parsed, "content_signal": signal}
 
 
 async def inspect_site(url: str, cdn_future: concurrent.futures.Future) -> dict:
@@ -287,6 +290,7 @@ def build_actions(audit: dict, ai: dict, site: dict | None) -> list[dict]:
         files = (site or {}).get("files") or {}
         sitemap_action = C.check_sitemap(files.get("sitemap"), files.get("declared") or [])
         extra = [
+            C.check_location(ai.get("location")),
             C.check_https(ai.get("final_url") or ""),
             C.check_bot_content(rows),
             C.check_performance((site or {}).get("ms") or [], ai.get("html_bytes", 0), ai.get("content_encoding")),
@@ -328,7 +332,8 @@ def build_actions(audit: dict, ai: dict, site: dict | None) -> list[dict]:
 
     actions += [a for a in extra if a]
     order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
-    actions.sort(key=lambda a: (order[a["priority"]], -(a.get("gain") or 0)))
+    # same priority: "where are you" first (a local business that AI cannot place is lost), then the biggest score gain
+    actions.sort(key=lambda a: (order[a["priority"]], a["category"] != "location", -(a.get("gain") or 0)))
     return actions
 
 

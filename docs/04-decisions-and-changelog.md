@@ -18,6 +18,7 @@
 | Interface (v2) | Playful motion and a mascot in plain CSS and JS | Animation library; separate asset files | Keeps one file with no build step. Motion is off for "reduce motion" |
 | One scan button (v2.1) | One address-bar button: Rescan for the same site, Scan for another; Rescan skips the cache; no separate New scan or second Rescan | Keep both buttons and rename them; keep a New scan button in the top bar | Two primary buttons and three ways to rescan confused people. One control that names what it will do needs no explaining |
 | What the AI missed (v2.1) | Free section right after the score, from measured data only; optional conventions kept apart | Show best-practice lists; lock the details now | It shows owners what they are missing in the agent's own words. Payment is not built; the section is the teaser for it |
+| Local business location (v2.2) | A check that flags a local business whose page text never says where it is. Critical when the page clearly depends on a place (local business data, opening hours, or 5 signals), high for a shop or delivery business, medium when only a country or area is named. Not in the score. Software and media sites are never flagged | A score penalty; flag every site without an address; ask an AI model | The score stays the engine's. A flag on every site would be a false alarm, so it applies only to a business that depends on a place. Found on a real site: the address was only in hidden JSON-LD, so most AI tools never saw it |
 
 ## Changelog
 
@@ -59,6 +60,18 @@ All times Asia/Jerusalem.
 | 01:07 | One smart Scan/Rescan button in the address bar. The top-bar New scan button and the second Rescan button are gone. Rescan always asks for a fresh scan (`fresh=1`), because a cached answer made a rescan look like it did nothing |
 | 01:07 | Cache age shown ("cached, 3 min ago"); an "all fixes ticked" banner with Rescan now; clicking the address selects it all |
 | 01:07 | Wording: slow servers and big pages are described with hedged claims, not unverified numbers. 12 new tests (60 in all) |
+
+### 25 Nov 2026, version 2.2.0
+
+All times Asia/Jerusalem.
+
+| Time | Change |
+|---|---|
+| 22:40 | New check "Say where your business is" (`api/_location.py`). Found on a Hebrew chocolate workshop page: the address was only in hidden JSON-LD, the page text named no place, and the engine scored the page 80 with no hint. Now it is a critical fix, first in "Start here", with a card "Could not tell where you are" in the Understand stage |
+| 22:40 | Red alert under the score, a new verdict ("AI can read this page, but cannot tell where the business is"), a mascot line, no confetti while the problem stands |
+| 22:40 | The fix guide gets a first step with a visible address block, a one-sentence template in Hebrew or English and LocalBusiness JSON-LD filled from the site's own data |
+| 22:40 | Extras: empty map pin (`geo` with no latitude and longitude), Content Signals line in robots.txt (optional, never counted). 14 new tests (74 in all) |
+| 22:40 | Checked on about 60 real pages: only the page above got a critical flag. Software, media and documentation sites were never flagged. Three national brands got a medium flag (they name only the country) |
 
 ## Test results at launch
 

@@ -1,6 +1,7 @@
 """Offline tests for api/_checks.py. Run: python -m unittest discover -s tests"""
 
 import gzip
+import json
 import os
 import sys
 import unittest
@@ -411,6 +412,164 @@ class Missed(unittest.TestCase):
         for i in m["items"] + m["optional"]:
             self.assertNotIn("\u2014", i["title"] + i["detail"])
 
+
+
+# ---------------------------------------------------------------------------
+# Where is the business? (a local business must say it in the page text)
+# ---------------------------------------------------------------------------
+import _location as LOC  # noqa: E402
+
+HE_SCHEMA = json.dumps({"@context": "https://schema.org", "@graph": [
+    {"@type": "WebSite", "url": "https://shop.test/", "name": "שוקולד של קוביות"},
+    {"@type": "Store", "name": "שוקולד של קוביות", "telephone": "+972-52-4305080",
+     "address": {"@type": "PostalAddress", "streetAddress": "נחלה 6", "addressLocality": "פרדס חנה כרכור", "postalCode": "3750203", "addressCountry": "IL"},
+     "geo": {"@type": "GeoCoordinates", "addressCountry": "IL"},
+     "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Sunday"], "opens": "08:30", "closes": "16:30"}],
+     "areaServed": {"@type": "Country", "name": "Israel"}}]}, ensure_ascii=False)
+
+
+def he_page(footer="צרו קשר kubiot@example.com", extra="", schema=HE_SCHEMA, head_extra=""):
+    ld = f'<script type="application/ld+json">{schema}</script>' if schema else ""
+    return (f'<html lang="he-IL" dir="rtl"><head><title>סדנאות שוקולד ליום הולדת | שוקולד של קוביות</title>'
+            f'<meta name="description" content="סדנת שוקולד אקטיבית לימי הולדת">{ld}{head_extra}</head><body>'
+            '<header><nav><a href="/contact">צרו קשר</a></nav></header><main><h1>סדנאות שוקולד ליום הולדת</h1>'
+            '<p>סדנת שוקולד ליום הולדת הינה חוויה להורים ולילדים יחד. משלוח חינם מעל 300 שח.</p>' + extra +
+            f'</main><footer>{footer}<a href="tel:0524305080">052-4305080</a></footer></body></html>')
+
+
+def loc_of(html):
+    return C.analyze_html(html, "https://shop.test/p")["location"]
+
+
+class Location(unittest.TestCase):
+    def missed(self, loc):
+        return C.build_missed({**PAGE_OK, "location": loc}, audit(), {}, GOOD_SITEMAP["files"], 80, [])
+
+    def test_address_only_in_hidden_code_is_critical(self):  # the real case: shokolad
+        loc = loc_of(he_page())
+        self.assertEqual(loc["local"]["level"], "strong")
+        self.assertEqual(loc["visible"]["status"], "hidden")
+        self.assertEqual((loc["schema"]["street"], loc["schema"]["city"], loc["schema"]["postal"]), ("נחלה 6", "פרדס חנה כרכור", "3750203"))
+        self.assertEqual(loc["schema"]["geo"], "empty")
+        self.assertTrue(loc["schema"]["area_country_only"])
+        self.assertEqual(C.location_impact(loc), "critical")
+        a = C.check_location(loc)
+        self.assertEqual((a["category"], a["priority"], a["label"]), ("location", "critical", "Say where your business is"))
+        self.assertIn("נחלה 6", a["items"][0])
+        self.assertTrue(any("map pin" in i for i in a["items"]) and any("only a country" in i for i in a["items"]))
+        m = self.missed(loc)
+        it = [i for i in m["items"] if i["id"] == "location"][0]
+        self.assertEqual((it["stage"], it["impact"], it["title"]), ("understand", "critical", "Could not tell where you are"))
+        self.assertIn("only in hidden code", it["detail"])
+        self.assertIn("geo_empty", ids(m))
+        self.assertEqual([s["status"] for s in m["stages"] if s["key"] == "understand"], ["fail"])
+
+    def test_address_in_the_footer_is_fine(self):
+        for footer in ("כתובת: נחלה 6, פרדס חנה כרכור | 052-4305080", "אנחנו בפרדס חנה", "רחוב הרצל 12", "ת.ד. 123"):
+            loc = loc_of(he_page(footer=footer))
+            self.assertEqual(loc["visible"]["status"], "ok", footer)
+            self.assertIsNone(C.location_impact(loc))
+            self.assertIsNone(C.check_location(loc))
+            self.assertNotIn("location", ids(self.missed(loc)))
+        wins = C.build_wins({**PAGE_OK, "location": loc_of(he_page(footer="כתובת: נחלה 6, פרדס חנה כרכור"))}, audit(), {}, None, [])
+        self.assertTrue(any(w.startswith("The page says where the business is") for w in wins))
+
+    def test_local_shop_without_any_address(self):
+        loc = loc_of(he_page(schema=None, extra="<button>הוסף לסל</button><p>משלוחים מהירים</p>"))
+        self.assertEqual((loc["local"]["level"], loc["visible"]["status"]), ("likely", "none"))
+        self.assertEqual(C.location_impact(loc), "high")
+        self.assertIn("no address in the structured data", C.check_location(loc)["items"][0])
+
+    def test_restaurant_with_hours_and_no_address_is_critical(self):
+        html = ('<html lang="en"><head><title>Luigi</title></head><body><h1>Luigi\'s Pizza</h1><p>Wood fired pizza, made fresh every day.</p>'
+                '<p>Opening hours: Mon-Fri 11:00-22:00. Reserve a table or call (212) 555-0100.</p></body></html>')
+        loc = loc_of(html)
+        self.assertEqual((loc["local"]["level"], loc["visible"]["status"]), ("strong", "none"))
+        self.assertEqual(C.location_impact(loc), "critical")
+
+    def test_software_and_media_sites_are_never_flagged(self):
+        html = ('<html lang="en"><head><title>Acme API</title></head><body><h1>Build faster</h1><p>Our API delivers data to your app. '
+                'Contact sales: +1 415 555 0100. Pricing starts at $29. Read the docs, then deploy from your git branch.</p></body></html>')
+        loc = loc_of(html)
+        self.assertEqual(loc["local"]["level"], "none")
+        self.assertIsNone(C.location_impact(loc))
+        self.assertIsNone(C.check_location(loc))
+        self.assertIsNone(C.location_impact(None))
+        self.assertIsNone(C.location_impact({}))
+        online = {"@type": "OnlineStore", "name": "x"}
+        self.assertFalse(LOC.schema_facts([online])["local_type"])  # online shops are not tied to a place
+
+    def test_english_addresses(self):
+        for text in ("Visit us at 12 Main Street, Springfield", "Address: 5 Rothschild Blvd, Tel Aviv", "Herzl Street 5", "Austin, TX 78701",
+                     "P.O. Box 1234", "10 Downing Street", "Torstraße 12", "12 rue de la Paix"):
+            html = f'<html lang="en"><body><h1>Shop</h1><p>Opening hours daily. Call 212-555-0100. Add to cart.</p><footer>{text}</footer></body></html>'
+            self.assertEqual(loc_of(html)["visible"]["status"], "ok", text)
+        html = '<html lang="en"><body><h1>Shop</h1><p>Opening hours daily. Call 212-555-0100.</p><address>Unit 4, The Old Mill</address></body></html>'
+        self.assertEqual(loc_of(html)["visible"]["status"], "ok")
+
+    def test_place_names_with_hebrew_prefixes_and_lookalikes(self):
+        self.assertEqual(LOC.places("הגענו לחיפה ובתל-אביב ובפרדס חנה")[:3], ["חיפה", "תל אביב", "פרדס חנה"])
+        self.assertEqual(LOC.places("Open in Tel Aviv and Jerusalem")[:2], ["Tel Aviv", "Jerusalem"])
+        for word_text in ("עוגה שחורה וטעימה", "25 מעלות", "אזור התעשייה", "קדימה, תזמינו", "קוראים לי אפרת", "Cork stoppers and Lima beans"):
+            self.assertEqual(LOC.places(word_text), [], word_text)
+
+    def test_country_or_delivery_area_only(self):
+        loc = loc_of(he_page(schema=None, extra="<p>משלוחים לכל הארץ</p><button>הוסף לסל</button>"))
+        self.assertEqual(loc["visible"]["status"], "area")
+        self.assertIsNone(C.location_impact(loc))  # a shop with a weak signal set is not nagged
+        strong = loc_of(he_page(extra="<p>משלוחים לכל הארץ</p>", schema=HE_SCHEMA))
+        self.assertEqual(strong["visible"]["status"], "area")
+        self.assertEqual(C.location_impact(strong), "medium")
+        self.assertIn("not where the business is", C.check_location(strong)["items"][0])
+
+    def test_email_label_and_form_labels_are_not_addresses(self):
+        loc = loc_of(he_page(footer="כתובת אימייל: a@b.co", schema=None, extra="<p>הוסף לסל</p>"))
+        self.assertEqual(loc["visible"]["status"], "none")
+        html = he_page(footer="Address: Phone: Email:", schema=None, extra="<p>הוסף לסל</p>")
+        self.assertEqual(loc_of(html)["visible"]["status"], "none")
+
+    def test_a_map_alone_is_not_an_address(self):
+        html = he_page(footer='<iframe src="https://www.google.com/maps/embed?pb=1"></iframe>', schema=HE_SCHEMA)
+        loc = loc_of(html)
+        self.assertEqual(loc["visible"]["status"], "mention")
+        self.assertEqual(loc["visible"]["map"], "embed")
+        self.assertEqual(C.location_impact(loc), "medium")
+
+    def test_schema_facts(self):
+        s = LOC.schema_facts([{"@type": "Person", "name": "Ann", "address": {"streetAddress": "1 Elm St"}}])
+        self.assertFalse(s["has_address"])  # a person's address is not the business
+        s = LOC.schema_facts([{"@type": ["LocalBusiness", "Bakery"], "name": "B", "address": "5 Oak Road, Leeds", "geo": {"latitude": "53.8", "longitude": "-1.55"},
+                               "areaServed": [{"@type": "City", "name": "Leeds"}, "Bradford"], "openingHours": "Mo-Fr 09:00-17:00"}])
+        self.assertEqual((s["has_address"], s["geo"], s["hours"], s["local_type"]), (True, "ok", True, True))
+        self.assertEqual((s["area_served"], s["area_country_only"]), (["Leeds", "Bradford"], False))
+        s = LOC.schema_facts([{"@type": "Organization", "location": {"@type": "Place", "address": {"addressLocality": "Haifa"}}}])
+        self.assertEqual((s["has_address"], s["city"]), (True, "Haifa"))
+        self.assertEqual(LOC.schema_facts([])["geo"], "none")
+
+    def test_the_check_never_breaks_a_page(self):
+        bad = he_page(schema='{"@type": "Store", "address": 7, "geo": "x", "areaServed": [1, {"name": 5}]}')
+        self.assertIn(loc_of(bad)["schema"]["found"], (True, False))
+        ai = C.analyze_html("<html><body></body></html>", "https://a.test/")
+        self.assertIsNotNone(ai["location"])
+        self.assertEqual(ai["location"]["visible"]["status"], "none")
+
+    def test_content_signal_is_an_optional_extra(self):
+        self.assertTrue(C.has_content_signal("User-agent: *\nContent-Signal: ai-train=no, search=yes"))
+        self.assertFalse(C.has_content_signal("User-agent: *\nDisallow: /x"))
+        files = {**GOOD_SITEMAP["files"], "content_signal": False}
+        m = C.build_missed(PAGE_OK, audit(), {}, files, 80, [])
+        self.assertEqual(m["count"], 0)  # optional items are never counted
+        self.assertIn("content_signal", [i["id"] for i in m["optional"]])
+        files["content_signal"] = None  # no robots.txt: nothing to say
+        self.assertNotIn("content_signal", [i["id"] for i in C.build_missed(PAGE_OK, audit(), {}, files, 80, [])["optional"]])
+
+    def test_copy_has_no_long_dashes(self):
+        for loc in (loc_of(he_page()), loc_of(he_page(schema=None, extra="<button>הוסף לסל</button>")),
+                    loc_of(he_page(extra="<p>משלוחים לכל הארץ</p>")), loc_of(he_page(footer='<iframe src="https://www.google.com/maps/embed"></iframe>'))):
+            a = C.check_location(loc)
+            self.assertIsNotNone(a)
+            for t in a["items"] + [i["title"] + i["detail"] for i in self.missed(loc)["items"]]:
+                self.assertNotIn("—", t)
 
 if __name__ == "__main__":
     unittest.main()
