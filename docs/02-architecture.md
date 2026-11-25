@@ -25,8 +25,9 @@ All hosting is on Vercel. There is no database.
 | `index.html` | Whole frontend: HTML, CSS and JavaScript in one file |
 | `api/scan.py` | Scan API (Python 3.12 on Vercel): handler, rate limit, cache, parallel scan, action ranking |
 | `api/_checks.py` | Our checks as pure functions (no network): bot judging, page analysis, findings. The underscore keeps Vercel from making it an endpoint |
+| `api/_location.py` | The local-business check as pure functions: does the page say where the business is, and does the business depend on a place? Place lists in Hebrew and English. Imported by `_checks.py` |
 | `api/shot.js` | Screenshot API (Node 24), CommonJS handler with dynamic `import()` |
-| `tests/test_checks.py` | Offline tests for `_checks.py` (`python -m unittest discover -s tests`) |
+| `tests/test_checks.py` | Offline tests for `_checks.py` and `_location.py` (`python -m unittest discover -s tests`) |
 | `requirements.txt` | `geo-optimizer-skill[async]==4.28.0` (the async extra adds httpx) |
 | `package.json` | `@sparticuz/chromium` 158.0.0, `puppeteer-core` 25.18.1, Node 24.x |
 | `vercel.json` | Framework pinned to Other (`null`), function limits, security headers |
@@ -83,6 +84,7 @@ Measured on 8 sites: scores identical, scan time 0.8 to 4.9 s (before: 3.2 to 10
 - Count visible words (no script, style, template, noscript). Detect empty SPA roots and "enable JavaScript" messages.
 - **JavaScript risk:** high if there is a "needs JavaScript" message, an empty SPA root with fewer than 200 words, or fewer than 50 words together with a script bundle and no real content. If there are fewer than 50 words but no script, or the page has an H1 or a full paragraph, the page is "thin" (little text, `thin: true`), not JavaScript-dependent. Medium below 120 words, else low.
 - Also: headings summary, link and image counts, language check, response time, compression, `browser_challenge`, sitemap result, and `bot_access` (see below).
+- Also: `location` (where the page says the business is, see the next section).
 
 ### Bot probes
 
@@ -94,15 +96,24 @@ Measured on 8 sites: scores identical, scan time 0.8 to 4.9 s (before: 3.2 to 10
 
 The browser request itself is checked too: a bot check page there (for example AWS WAF, HTTP 202) means the whole scan was blocked.
 
+### Where is the business (`ai_view.location`)
+
+Built in `api/_location.py` while the page is parsed, before scripts are removed. An AI tool that reads the page as text cannot place a business that never says where it is, so it may skip it for local questions or put it in the wrong area. Three groups of facts:
+- **`local`**: does the business depend on a place or a delivery area? Points: local business structured data 3, opening hours 2, a place to visit (branch, appointment, reservation) 1, delivery or pickup 1, phone number 1, online shop (cart words) 1, map 1. `strong` = local business data, or opening hours with 3 points, or 5 points. `likely` = 3 points. Otherwise `none`: the page is never flagged (software, media, documentation).
+- **`visible`**: what the page text says. `status` is `ok` (a street address, PO box, postal code, "Address:" label with a value, `<address>` block, "located in" phrase, or a known place in the title, headings, header or footer), `area` (only a country or a delivery area such as "all over Israel"), `mention` (a place in passing, or only a map), `hidden` (nothing visible, but the structured data has an address) or `none`.
+- **`schema`**: the business as the JSON-LD tells it (type, name, address, `geo` ok, empty or none, `areaServed`, phone, hours). A `Person` is ignored. `OnlineStore` is not a local type.
+
+Severity (`location_impact`): strong and status `none` or `hidden` is **critical**; likely and `none` or `hidden` is **high**; strong and `area` or `mention` is **medium**; everything else is not flagged. The check is not in the score. It also adds the optional extra "empty map pin" (`geo_empty`, low) and a win ("The page says where the business is").
+
 ### What the AI agent missed (`build_missed`)
 
 Built in `api/_checks.py` from the same data as the actions, told from the agent's side. Only measured facts are listed. Each item has a stage, an impact (critical, high, medium, low), a title in the agent's voice ("Could not tell who you are") and a plain detail.
 - **Get in:** page not found, server error or bot check page (then nothing else is listed, `usable` is false), AI crawlers refused, robots.txt blocks, long crawl delay, noindex or noai, slow server, huge page.
 - **Read:** almost empty page (JavaScript) or very little text, text blocked by `data-nosnippet`, images without alt text, video without captions, cookie notice first, bots get a different page.
-- **Understand:** no title, summary or H1, no sections, little text, no or broken or incomplete structured data (Organization, WebSite, FAQ), no canonical, language missing or wrong, no preview tags, different brand names, no numbers, key facts too late.
+- **Understand:** no title, summary or H1, no sections, little text, no or broken or incomplete structured data (Organization, WebSite, FAQ), no canonical, language missing or wrong, no preview tags, different brand names, no numbers, key facts too late, **could not tell where the business is** (local businesses only, critical when nothing says where), empty map pin.
 - **Trust:** no author (articles only), no date, no official profile links, no contact details, no About link, plain HTTP.
 - **Find more:** links that are not real links, sitemap missing, broken or not listed, nofollow.
-- **Optional (listed apart, never counted):** llms.txt, news feed, AI files. They are new, unproven conventions.
+- **Optional (listed apart, never counted):** llms.txt, news feed, AI files, Content Signals (a `Content-Signal` line in robots.txt). They are new, unproven conventions.
 
 The stage status is `fail` if any critical or high item is in it, `warn` for medium or low, `ok` for none. Google, Bing and Apple bots are never counted as missed (many sites refuse imitations of them on purpose). `potential` is the score plus every engine gain, at most 100.
 ### Actions (`build_actions`)
@@ -112,8 +123,8 @@ Own checks first, then the engine's recommendations by category, then more own c
 - `access`: the site blocked the scan (critical); or core AI bots refused: critical from 4 of 8, else high. Googlebot, Bingbot and Applebot are not reported as a problem (many sites refuse imitations of them on purpose). The bot cards show them.
 - `rendering` (critical or high) or `thin` (high); `structure` (no `<main>`, low).
 - Engine categories: `gain` = category max minus category score. Priority: high if gain 8 or more, medium if 3 to 7, low otherwise. Critical if the text mentions noindex or noai. The engine's "blockers" category is high. Clean-up: remove `[G-XXX]` codes and warning emoji, replace CLI hints with plain text, remove long dashes, drop duplicates of our own checks (JavaScript items, the CDN block note, "no Sitemap: directive").
-- Extra checks (no score, `source: "extra"`): `bot_content` (bots get a different page), `performance` (median answer time, HTML size, no compression), `language` (text script does not match `lang`), `headings` (empty H1, several H1, skipped levels), `links` (vague or empty links), `title_desc` (too long, or description too short), `crawl` (nofollow), `cookie` (a cookie banner is the first text), `sitemap` (declared but broken, or not declared), `trust` (page served over HTTP).
-- Sort: critical, high, medium, low, then by gain.
+- Extra checks (no score, `source: "extra"`): `bot_content` (bots get a different page), `performance` (median answer time, HTML size, no compression), `language` (text script does not match `lang`), `headings` (empty H1, several H1, skipped levels), `links` (vague or empty links), `title_desc` (too long, or description too short), `crawl` (nofollow), `cookie` (a cookie banner is the first text), `sitemap` (declared but broken, or not declared), `trust` (page served over HTTP), `location` (a local business whose page text does not say where it is: critical, high or medium, see above).
+- Sort: critical, high, medium, low. Inside one priority the `location` fix goes first, then the biggest gain.
 
 ## Screenshot API: `GET /api/shot?url=<address>`
 
@@ -131,6 +142,7 @@ Own checks first, then the engine's recommendations by category, then more own c
 - Scan flow: form, example chips, scan stage (page mock with a laser line, mascot, progress bar, funny status lines, checklist with cosmetic timing that finishes fast when the answer arrives), then the report.
 - Report sections: summary (count-up score ring, band badge, verdict, potential-score bar, mascot, trend sparkline, "fixed since last scan", 4 stat tiles, buttons), sticky section nav with scroll spy, **What the AI agent missed**, Start here (top 3), Already working, How AI sees your site (Compare, Visitor view, AI view with typed lines), Can the AI bots get in? (14 bot cards), How each AI platform sees you, All fixes (filters, accordion, tick-off list with progress), fix guide export card, Key facts (8 tiles), Score by area and trust signals.
 - Motion: reveal on scroll, count-ups, confetti for scores of 80 and up, spotlight on hover, mascot eyes follow the pointer. All of it is switched off for visitors who ask for reduced motion.
+- **Location alert:** when the `location` fix is critical (red) or high (orange), an alert sits under the verdict with the address problem in one sentence and a link to the fixes. The verdict and the mascot bubble change, and there is no confetti for a good score.
 - Ticked fixes are stored in `localStorage` key `aiSiteScan.done.v1` per site and reset on a fresh scan.
 - `?url=` in the address runs a scan on load. Share link uses this.
 - History: `localStorage` key `aiSiteScan.history.v1`, max 30 entries. Each entry stores the scan JSON without the large raw `audit` (only the robots lists are kept). If storage is full, the oldest entries are dropped.
@@ -146,6 +158,7 @@ Runs in the browser. It builds a Markdown file `ai-fix-guide-<host>.md` with:
    - Let AI crawlers reach the site (CDN and WAF steps, curl check).
    - Put content in the HTML (Next.js, Nuxt or generic advice, based on the detected framework).
    - JSON-LD Organization + WebSite, filled with name, URL, description and language. Adds `sameAs` and `contactPoint` only when the scan asks for them.
+   - Say where your business is (comes first when found): a visible address block, a one-sentence template in the page language (Hebrew or English), title and heading advice, LocalBusiness JSON-LD filled from the site's own structured data, and a Google Business Profile note.
    - `/llms.txt` template with the site's own internal links (from the AI view).
    - Head tags: canonical, viewport, Open Graph, description, RSS, modified time, author, `lang`.
    - robots.txt and sitemap with AI bots, plus the "search yes, training no" option and any sitemap findings.

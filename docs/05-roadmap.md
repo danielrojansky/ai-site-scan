@@ -10,6 +10,7 @@
 6. **Some sites block all cloud traffic.** Then the scan can only report the block.
 7. **Engine text is in English and sometimes technical.** We clean it, but some items keep engine wording.
 8. **The score is one tool's opinion.** It shows readiness, not a promise of AI citations.
+9. **The location check is per page and a heuristic.** It reads the page you scan, so a page can lack the address that the homepage has. It knows Israeli towns and about 230 big cities. A business in a place that is not on the list is still found through a street address, an "Address:" label or an `<address>` block.
 
 ## Next ideas (not started)
 
@@ -28,5 +29,19 @@
 | Optional "deep scan": check internal links for broken ones (engine supports it) | More issues found, more requests to the site | Low |
 | Paid full report and fix guide: keep "What the AI agent missed" free, put the detailed fixes and the Markdown guide behind checkout | The business model the new section is built for. Needs a payment provider, an account or receipt link, and a decision on what stays free | Medium to high |
 | PDF export of the report | Share with clients | Low |
+| Run a real AI agent on a task ("What does this site do, who is it for, where is it?") and show its notes | The closest test of what AI really understands. is-agentic.com does it | Medium, has cost and needs an API key |
+| "Copy prompt" button on each fix | One click to hand a fix to an AI coding tool. isitagentready.com and is-agentic.com have it | Low |
+| Location check across the homepage and the contact page | Tells "this page lacks the address" from "the whole site lacks it" | Medium |
+| Markdown content negotiation check (`Accept: text/markdown`) | A Cloudflare feature for agents. Optional extra | Low |
 | Own domain (for example aisitescan.com) | Branding, trust | Low |
 | Fix the Duet121 site (SSR or prerender) using its fix guide | Duet121 scored 45, 0 words visible to AI | Depends on its stack |
+
+## What other checkers do (reviewed 25 Nov 2026)
+
+| Tool | What it checks | Location or local business? |
+|---|---|---|
+| isitagentready.com (Cloudflare) | Five groups of agent standards: robots.txt, sitemap and Link headers; Markdown negotiation; AI bot rules, Content Signals, Web Bot Auth; MCP server card, Agent Skills, WebMCP, API catalog, OAuth; commerce protocols (x402, ACP, UCP). Levels, red or green cards with Goal, Issue, How to implement, Copy prompt and raw HTTP evidence | No. A small shop page scored 33, "Level 1", mostly for protocols it does not need |
+| is-agentic.com (Ora, Vercel) | Guesses the site type (docs, business, app, commerce) and weights checks for it: essential 80 points, recommended 20, bonus 5. Critical access first. Runs a real AI agent on a task and shows its notes. Copy fix prompt per gap | Only in structured data ("Organization schema complete with contactPoint and address") |
+| agnt.one site checker | A crawl preview ("the raw text an agent would use") and an agency upsell | In our test the button sent no scan request, so no result |
+
+What we took: apply a check only when the page shows it matters (is-agentic's site types, our local-business gate), and an optional Content Signals extra. Ideas not built are in the table above.
