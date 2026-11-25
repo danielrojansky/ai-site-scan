@@ -204,11 +204,12 @@ The level is the highest step whose conditions are met, counting from 1 without 
 
 ## WebMCP API: `GET /api/webmcp?url=<address>`
 
-WebMCP lets a page offer actions to a browser agent as tools. A page registers them by running its JavaScript, so reading files cannot see them. This function opens the page in headless Chrome (same packages as the screenshot function). Real browsers do not offer the WebMCP API yet, so a small script is installed before the page runs. It provides `document.modelContext` and `navigator.modelContext`, answers like the real API and records every `registerTool` and `provideContext` call. Forms with a `toolname` attribute count too.
+WebMCP lets a page offer actions to a browser agent as tools. A page registers them by running its JavaScript, so reading files cannot see them. This function opens the page in headless Chrome (same packages as the screenshot function). Real browsers do not offer the WebMCP API yet, so a small script is installed before the page runs. It provides `document.modelContext` and `navigator.modelContext`, answers like the real API, records every `registerTool` and `provideContext` call and sends each tool out of the page at once through a binding (`__webmcpReport`). Forms with a `toolname` attribute count too.
 
 - Same protection as the screenshot function: public addresses only, private redirects and subresources blocked, no media or websockets.
-- Waits for `networkidle2` (20 s at most) plus 1.5 s.
-- Answer: `toolCount`, `tools[]` (`name`, `title`, `description`, `hasSchema`, at most 50), `detectionMethod` (`imperative_api`, `declarative_html`, `both` or null) and `via`. `Cache-Control: public, max-age=300, s-maxage=600`.
+- Every wait is bounded, so the function answers in JSON before the 40 s limit: the first answer from the page 12 s, then the network-idle wait 6 s, a 1.5 s pause, reading the forms 4 s. A watchdog at 30 s answers with what it has and stops Chrome.
+- Tools are sent out the moment they are registered, so a heavy page that freezes its main thread afterwards (vercel.com does in our small Chrome on Vercel) still reports them. If the page never lets us read it and no tool came out, the answer has `partial: true` and the page shows the row as "unable".
+- Answer: `toolCount`, `tools[]` (`name`, `title`, `description`, `hasSchema`, at most 50), `detectionMethod` (`imperative_api`, `declarative_html`, `both` or null), `via` and, when the page could not be read, `partial`. A complete answer has `Cache-Control: public, max-age=300, s-maxage=600`. A partial one is not cached.
 - The page calls it once, when the Agent readiness panel opens and only if the row says `browser: true` (the static reading of the homepage did not find tools). The row shows "Checking in a real browser..." and then the browser result, and the counts are updated.
 
 ## Screenshot API: `GET /api/shot?url=<address>`

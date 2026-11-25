@@ -56,7 +56,8 @@ Notes for local tests:
 | Scan slow on blocked sites (old version) | The fetcher retried 429 and 5xx answers 3 times with backoff | The async fetcher does not retry. Only the page request retries once |
 | "Sitemap does not work" for a site that has one | The site refuses our cloud server (403, 429) or times out | Not reported: only 404 and non-sitemap answers are |
 | An agent readiness row says it could not check, or DNS-AID says the lookup failed | The site refused our cloud server for that path (403, 429, a timeout), or both DNS-over-HTTPS services failed | Expected now and then. The row is left out of the count. Rescan. Test the path with curl from another network |
-| The WebMCP row says "The browser check did not run" | The Chrome function timed out or failed (cold start, a heavy page) | The static result stays. Open the panel again after a rescan |
+| The WebMCP row says "The browser check did not run" | The Chrome function failed to start or crashed | The static result stays. Open the panel again after a rescan |
+| The WebMCP row says the page was too busy | A very heavy page froze in our small Chrome before it registered any tool (vercel.com did, before the fix that sends tools out as they register) | The row is left out of the count. Expected on the heaviest pages |
 | Googlebot, Bingbot or Applebot show "Refused" | The site checks bot IP addresses and refuses our imitation | Normal. Not reported as a problem. The note under the bot cards says so |
 
 ## Versioning and release

@@ -1311,8 +1311,9 @@ async function openAgent(){  /* WebMCP can only be seen by running the page, so 
     const j = await r.json(); if(!r.ok) throw new Error(j.error || ("Error " + r.status));
     if(DATA !== d) return;
     c.browser = false;
-    c.evidence = [{path: "the page, run in a real browser", status: j.toolCount ? "found " + j.toolCount + (j.toolCount === 1 ? " tool" : " tools") : "found no tools", note: ""}];
-    if(j.toolCount){ c.status = "pass"; c.message = `Found ${j.toolCount} tool${j.toolCount > 1 ? "s" : ""} via ${j.via}: ${j.tools.slice(0, 4).map(t => t.name).join(", ")}${j.toolCount > 4 ? " and " + (j.toolCount - 4) + " more" : ""}`; }
+    c.evidence = [{path: "the page, run in a real browser", status: j.partial ? "did not finish loading" : j.toolCount ? "found " + j.toolCount + (j.toolCount === 1 ? " tool" : " tools") : "found no tools", note: ""}];
+    if(j.partial){ c.status = "unable"; c.message = "The page was too busy for our browser to finish loading, so WebMCP could not be confirmed"; }
+    else if(j.toolCount){ c.status = "pass"; c.message = `Found ${j.toolCount} tool${j.toolCount > 1 ? "s" : ""} via ${j.via}: ${j.tools.slice(0, 4).map(t => t.name).join(", ")}${j.toolCount > 4 ? " and " + (j.toolCount - 4) + " more" : ""}`; }
     else { c.status = "fail"; c.message = "No WebMCP tools detected on page load (checked in a real browser)"; }
   }catch(e){
     if(DATA !== d) return;

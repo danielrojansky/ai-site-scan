@@ -11,7 +11,7 @@
 7. **Engine text is in English and sometimes technical.** We clean it, but some items keep engine wording.
 8. **The score is one tool's opinion.** It shows readiness, not a promise of AI citations.
 9. **The location check is per page and a heuristic.** It reads the page you scan, so a page can lack the address that the homepage has. It knows Israeli towns and about 230 big cities. A business in a place that is not on the list is still found through a street address, an "Address:" label or an `<address>` block.
-10. **Agent readiness is a reading of public standards.** A pass means the file or answer is there and valid. It does not mean any agent uses it. We do not call isitagentready.com. Differences from its website: a missing optional check shows a dash here and red with an "Optional" tag there; the Poppy and level 5 rules follow its public text and may differ at the edges; ap2 is not tested because no public rules exist; WebMCP is read from the homepage code first and then, when the panel opens, in a real browser. Each check adds about 25 requests to the scanned site.
+10. **Agent readiness is a reading of public standards.** A pass means the file or answer is there and valid. It does not mean any agent uses it. We do not call isitagentready.com. Differences from its website: a missing optional check shows a dash here and red with an "Optional" tag there; the Poppy and level 5 rules follow its public text and may differ at the edges; ap2 is not tested because no public rules exist; WebMCP is read from the homepage code first and then, when the panel opens, in a real browser (a page that freezes our small Chrome before it registers a tool shows as "unable"). Each check adds about 25 requests to the scanned site.
 
 ## Next ideas (not started)
 
