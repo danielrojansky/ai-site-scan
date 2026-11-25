@@ -7,6 +7,12 @@ const dns = require("node:dns").promises;
 const net = require("node:net");
 const MAX_URL = 2048;
 const MAX_TOOLS = 50;
+// Every wait is bounded, so the function always answers (in JSON) before the 40 s limit, even for a heavy page.
+const GOTO_MS = 12000;      // time for the first answer from the page
+const IDLE_MS = 6000;       // then wait for the network to go quiet, at most this long
+const SETTLE_MS = 1500;     // tools are registered when the page scripts run
+const EVAL_MS = 5000;       // reading the result must not hang on a busy page
+const WATCHDOG_MS = 32000;  // last resort: answer and stop Chrome
 
 function isPrivateIp(ip) {
   if (net.isIPv4(ip)) {
@@ -80,6 +86,17 @@ module.exports = async function handler(req, res) {
   }
   if (!(await isPublicHost(target.hostname))) return send(res, 400, { error: "URL not allowed" });
   let browser;
+  let answered = false;
+  const reply = (code, body, headers) => {
+    if (!answered) { answered = true; send(res, code, body, headers); }
+  };
+  const killChrome = () => {
+    try { const proc = browser && browser.process(); if (proc) proc.kill("SIGKILL"); } catch {}
+  };
+  const watchdog = setTimeout(() => {
+    reply(504, { error: "The page took too long to load in the browser." });
+    killChrome();
+  }, WATCHDOG_MS);
   try {
     const chromium = (await import("@sparticuz/chromium")).default;
     const puppeteer = (await import("puppeteer-core")).default;
@@ -111,29 +128,37 @@ module.exports = async function handler(req, res) {
       }
     });
     try {
-      await page.goto(target.href, { waitUntil: "networkidle2", timeout: 20000 });
+      await page.goto(target.href, { waitUntil: "domcontentloaded", timeout: GOTO_MS });
     } catch {
       // Slow pages: use what has loaded so far.
     }
-    await new Promise((r) => setTimeout(r, 1500));
-    const seen = await page.evaluate(() => {
-      const w = window.__webmcp || { found: [], via: [] };
-      const forms = [...document.querySelectorAll("form[toolname]")].map((f) => ({
-        name: f.getAttribute("toolname") || "",
-        description: f.getAttribute("tooldescription") || undefined,
-        hasSchema: true,
-      })).filter((t) => t.name);
-      return { imperative: w.found, via: w.via, declarative: forms };
-    });
+    await page.waitForNetworkIdle({ concurrency: 2, idleTime: 700, timeout: IDLE_MS }).catch(() => {});
+    await new Promise((r) => setTimeout(r, SETTLE_MS));
+    const seen = await Promise.race([
+      page.evaluate(() => {
+        const w = window.__webmcp || { found: [], via: [] };
+        const forms = [...document.querySelectorAll("form[toolname]")].map((f) => ({
+          name: f.getAttribute("toolname") || "",
+          description: f.getAttribute("tooldescription") || undefined,
+          hasSchema: true,
+        })).filter((t) => t.name);
+        return { imperative: w.found, via: w.via, declarative: forms };
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("The page did not answer")), EVAL_MS)),
+    ]);
     const names = new Set(seen.imperative.map((t) => t.name));
     const tools = [...seen.imperative, ...seen.declarative.filter((t) => !names.has(t.name))].slice(0, MAX_TOOLS);
     const method = seen.imperative.length && seen.declarative.length ? "both" : seen.imperative.length ? "imperative_api" : seen.declarative.length ? "declarative_html" : null;
-    return send(res, 200, { toolCount: tools.length, tools, detectionMethod: method, via: seen.via[0] || (seen.declarative.length ? "form attributes" : null) },
+    return reply(200, { toolCount: tools.length, tools, detectionMethod: method, via: seen.via[0] || (seen.declarative.length ? "form attributes" : null) },
       { "Cache-Control": "public, max-age=300, s-maxage=600" });
   } catch (e) {
     console.error("webmcp failed", e && e.message);
-    return send(res, 502, { error: "Could not check WebMCP: " + String((e && e.message) || e).slice(0, 300) });
+    return reply(502, { error: "Could not check WebMCP: " + String((e && e.message) || e).slice(0, 300) });
   } finally {
-    if (browser) await browser.close().catch(() => {});
+    clearTimeout(watchdog);
+    if (browser) {
+      await Promise.race([browser.close().catch(() => {}), new Promise((r) => setTimeout(r, 3000))]);
+      killChrome();
+    }
   }
 };
