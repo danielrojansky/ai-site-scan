@@ -836,7 +836,9 @@ def location_impact(loc: dict | None) -> str | None:
 
 def _addr_line(s: dict) -> str:
     parts = [s.get("street"), s.get("city") or s.get("region")]
-    return ", ".join(p for p in parts if p)
+    line = ", ".join(p for p in parts if p)
+    # an address in Hebrew or Arabic inside an English sentence would flip its brackets: isolate it
+    return f"⁨{line}⁩" if re.search(r"[֐-ۿ]", line) else line
 
 
 def check_location(loc: dict | None) -> dict | None:
