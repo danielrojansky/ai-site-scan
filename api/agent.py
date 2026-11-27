@@ -47,6 +47,8 @@ def _safe_getaddrinfo(*args, **kwargs):
 socket.getaddrinfo = _safe_getaddrinfo
 
 import _agentready as A  # noqa: E402
+from _posthog import capture_unhandled_exception  # noqa: E402
+from _posthog_logs import posthog_logs  # noqa: E402
 from geo_optimizer.utils.http_async import fetch_url_async  # noqa: E402
 from geo_optimizer.utils.validators import normalize_url_scheme, validate_public_url  # noqa: E402
 
@@ -224,6 +226,7 @@ class handler(BaseHTTPRequestHandler):
         except BaseException as e:  # never crash the function
             import traceback
 
+            capture_unhandled_exception(e)
             traceback.print_exc(file=sys.stderr)
             try:
                 return self._send(500, {"error": f"Check failed: {type(e).__name__}"})
@@ -263,6 +266,17 @@ class handler(BaseHTTPRequestHandler):
         except Exception as e:
             return self._send(500, {"error": f"Check failed: {type(e).__name__}: {str(e)[:200]}"})
         print(f"agent host={p.hostname} level={data['level']} passed={data['passed']}/{data['scored']} unable={data['unable']} ms={data['duration_ms']}", flush=True)
+        posthog_logs.info(
+            "agent_readiness_check_completed",
+            extra={
+                "level": data["level"],
+                "passed_count": data["passed"],
+                "scored_count": data["scored"],
+                "unable_count": data["unable"],
+                "duration_ms": data["duration_ms"],
+                "fresh_check": fresh,
+            },
+        )
         with _lock:
             _cache[key] = (time.time(), data)
             if len(_cache) > 200:

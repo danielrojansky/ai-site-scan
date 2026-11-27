@@ -51,6 +51,8 @@ def _safe_getaddrinfo(*args, **kwargs):
 socket.getaddrinfo = _safe_getaddrinfo
 
 import _checks as C  # noqa: E402
+from _posthog import capture_unhandled_exception  # noqa: E402
+from _posthog_logs import posthog_logs  # noqa: E402
 import geo_optimizer.core.audit as _engine_audit  # noqa: E402
 from geo_optimizer.cli.formatters import format_audit_json  # noqa: E402
 from geo_optimizer.core.audit import run_full_audit, run_full_audit_async  # noqa: E402
@@ -471,6 +473,7 @@ class handler(BaseHTTPRequestHandler):
         except BaseException as e:  # never crash the function
             import traceback
 
+            capture_unhandled_exception(e)
             traceback.print_exc(file=sys.stderr)
             try:
                 return self._send(500, {"error": f"Scan failed: {type(e).__name__}"})
@@ -517,6 +520,16 @@ class handler(BaseHTTPRequestHandler):
             return self._send(500, {"error": f"Scan failed: {type(e).__name__}: {str(e)[:200]}"})
         print(f"scan host={p.hostname} score={data.get('score')} total_ms={data['duration_ms']} "
               f"engine_ms={data['timings']['engine_ms']} actions={len(data['actions'])}", flush=True)
+        posthog_logs.info(
+            "scan_completed",
+            extra={
+                "score": data.get("score"),
+                "duration_ms": data["duration_ms"],
+                "engine_duration_ms": data["timings"]["engine_ms"],
+                "action_count": len(data["actions"]),
+                "fresh_scan": fresh,
+            },
+        )
         with _lock:
             _cache[key] = (time.time(), data)
             if len(_cache) > 200:

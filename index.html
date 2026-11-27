@@ -1432,6 +1432,7 @@ async function loadAgent(d, fresh){
     if(!r.ok) throw new Error(a.error || ("Error " + r.status));
     if(DATA !== d) return;
     d.agent_ready = a; persistAgent(); renderAgent(a);
+    track("agent_readiness_completed", {level: a.level, passed: a.passed, scored: a.scored, reachable: !!a.reachable, fresh});
     if($("#pAgent").classList.contains("open")) openAgent();
   }catch(e){
     if(DATA !== d) return;
