@@ -3,16 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Site Scan: can AI read your website?</title>
-<meta name="description" content="Free scan: see how ChatGPT, Claude and Perplexity read your website. Get an AI readiness score, a side-by-side AI view, and a fix guide you can hand to your developer.">
-<link rel="canonical" href="https://ai-site-scan.vercel.app/">
-<meta property="og:title" content="AI Site Scan: can AI read your website?">
-<meta property="og:description" content="See your site the way AI tools see it, and get a step-by-step fix guide.">
+<title>AI Site Scan | Can AI read your website?</title>
+<meta name="description" content="Free AI readiness check: see how ChatGPT, Claude and Perplexity read your website. Get a 0 to 100 score, a test of 14 AI bots and a ranked list of fixes.">
+<meta name="author" content="Daniel Rojansky">
+<link rel="canonical" href="https://getaisitescan.com/">
+<link rel="alternate" type="application/rss+xml" title="AI Site Scan changelog" href="/feed.xml">
+<meta property="og:site_name" content="AI Site Scan">
+<meta property="og:title" content="AI Site Scan | Can AI read your website?">
+<meta property="og:description" content="See your site the way AI tools see it, and get a ranked list of fixes.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://getaisitescan.com/">
+<meta property="og:image" content="https://getaisitescan.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="article:modified_time" content="2026-11-27T20:00:00+02:00">
 <meta name="theme-color" content="#3b5bdb">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%233b5bdb'/><circle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='3'/></svg>">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Site Scan","url":"https://ai-site-scan.vercel.app/","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Scan a website for AI readiness and see how AI reads it.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://getaisitescan.com/#org","name":"AI Site Scan","url":"https://getaisitescan.com/","email":"support@getaisitescan.com","logo":{"@type":"ImageObject","url":"https://getaisitescan.com/logo.png","width":512,"height":512},"sameAs":["https://github.com/danielrojansky/ai-site-scan"],"founder":{"@type":"Person","name":"Daniel Rojansky"},"address":{"@type":"PostalAddress","addressCountry":"IL"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"support@getaisitescan.com","availableLanguage":["English"]}},{"@type":"WebSite","@id":"https://getaisitescan.com/#website","name":"AI Site Scan","url":"https://getaisitescan.com/","inLanguage":"en","publisher":{"@id":"https://getaisitescan.com/#org"}},{"@type":"WebPage","@id":"https://getaisitescan.com/#page","url":"https://getaisitescan.com/","name":"AI Site Scan | Can AI read your website?","isPartOf":{"@id":"https://getaisitescan.com/#website"},"datePublished":"2026-11-24","dateModified":"2026-11-27","author":{"@type":"Person","name":"Daniel Rojansky"}},{"@type":"WebApplication","@id":"https://getaisitescan.com/#app","name":"AI Site Scan","url":"https://getaisitescan.com/","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Free AI readiness check: see how ChatGPT, Claude and Perplexity read your website. Get a 0 to 100 score, a test of 14 AI bots and a ranked list of fixes. Also: the page as AI reads it without JavaScript and 23 agent-readiness checks.","publisher":{"@id":"https://getaisitescan.com/#org"},"offers":[{"@type":"Offer","name":"Free AI readiness check","price":"0","priceCurrency":"USD","url":"https://getaisitescan.com/pricing"},{"@type":"Offer","name":"Full fix guide, 1 site (one-time payment)","price":"19","priceCurrency":"USD","url":"https://getaisitescan.com/pricing"},{"@type":"Offer","name":"Full fix guide, 10-site pack (one-time payment)","price":"49","priceCurrency":"USD","url":"https://getaisitescan.com/pricing"}]},{"@type":"FAQPage","@id":"https://getaisitescan.com/#faq","mainEntity":[{"@type":"Question","name":"Does a high score mean ChatGPT will cite my site?","acceptedAnswer":{"@type":"Answer","text":"No. The score shows how easy it is for AI tools to reach and understand your page. Whether they cite you also depends on your content and your reputation."}},{"@type":"Question","name":"Where does the score come from?","acceptedAnswer":{"@type":"Answer","text":"From the open-source geo-optimizer-skill engine (MIT license). It scores 9 areas for a total of 100 points. Our extra checks, such as the bot test and agent readiness, do not change the score."}},{"@type":"Question","name":"Do you store my results?","acceptedAnswer":{"@type":"Answer","text":"Your history stays in your own browser. Our server keeps a result for 10 minutes, so a repeat check is fast."}},{"@type":"Question","name":"What is in the full fix guide?","acceptedAnswer":{"@type":"Answer","text":"Every fix for your site, ranked, with the steps and ready-to-paste code filled in for your pages: JSON-LD, llms.txt, robots.txt and head tags. It is one Markdown file you can hand to a developer or an AI coding tool."}},{"@type":"Question","name":"How do I get the guide after I pay?","acceptedAnswer":{"@type":"Answer","text":"Right away. You pay on Polar's secure checkout and come back here. Your license key is applied and every fix opens on screen. Polar also emails you a receipt with a link to your key."}},{"@type":"Question","name":"Is it a subscription?","acceptedAnswer":{"@type":"Answer","text":"No. You pay once, in US dollars. Nothing renews, so there is nothing to cancel."}},{"@type":"Question","name":"Can I get a refund?","acceptedAnswer":{"@type":"Answer","text":"Yes. If the guide does not help, email us within 7 days of your purchase for a full refund. You do not need to give a reason."}}]}]}</script>
 <style>
 :root{
   --bg:#f5f6f8;--card:#fff;--ink:#14171c;--muted:#5d6673;--line:#e3e6eb;
@@ -146,7 +155,7 @@ form.scan.shake{animation:shake .45s}
 .laser{position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 14px 4px rgba(59,91,219,.4);animation:laser 1.7s ease-in-out infinite}
 .stage .bot{position:absolute;right:-18px;bottom:-10px;width:56px;height:56px}
 .sw{flex:1;min-width:0}
-.progress h3{font-size:18px;letter-spacing:-.01em;overflow-wrap:anywhere}
+.progress .ptitle{font-weight:700;font-size:18px;letter-spacing:-.01em;overflow-wrap:anywhere}
 .quip{margin-top:2px;color:var(--muted);min-height:24px;font-size:15px}
 .pbar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:12px}
 .pbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .45s var(--ease);position:relative;overflow:hidden}
@@ -380,7 +389,7 @@ form.scan.shake{animation:shake .45s}
 
 /* ---------- history ---------- */
 .hhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 4px;flex-wrap:wrap}
-.hhead h1{font-size:26px;letter-spacing:-.02em}
+.hhead h2{font-size:26px;letter-spacing:-.02em}
 .hlist{display:grid;gap:10px;margin-top:12px}
 .hitem{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer;animation:rowin .4s var(--ease) both;animation-delay:calc(var(--i,0)*40ms)}
 .hitem:hover{border-color:#cfd6f5}
@@ -408,6 +417,56 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important}
 }
+
+/* ---------- v2.5: brand line, about, paywall, email, cookie choice ---------- */
+.hero h1 .eyebrow{display:block;width:max-content;margin:0 auto 12px;padding:3px 12px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:14px;font-weight:700;letter-spacing:0}
+.about{margin:34px 0 0;padding:22px 22px 10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);text-align:left}
+.hero.compact ~ .about{display:none}
+.about h2{font-size:20px;letter-spacing:-.01em;margin:4px 0 8px}
+.about p{color:#2b3340}
+.about .checks{padding-left:18px;margin:10px 0 20px}
+.about .checks li{margin:6px 0;color:#2b3340}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:8px 0 20px}
+.tier{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fbfcfd}
+.tier.hl{border-color:#b9c4f7;background:linear-gradient(135deg,#eef2ff,#f3e8ff)}
+.tier h3{font-size:16px;margin:0;letter-spacing:0}
+.tier .price{display:block;color:var(--accent);font-weight:700;margin:2px 0 4px}
+.tier p{font-size:14.5px;color:var(--muted)}
+.about details{border-top:1px solid var(--line);padding:10px 0}
+.about summary{cursor:pointer;font-weight:600}
+.about details p{margin-top:8px;color:var(--muted)}
+.about .updated{font-size:13.5px;color:var(--muted);margin:14px 0 4px}
+.flinks{margin-bottom:8px}
+.fbiz{margin:0 0 8px;font-size:13px}
+.fbiz a{color:var(--muted)}
+.about .terms{list-style:none;padding:0;margin:-6px 0 20px;display:grid;gap:4px}
+.about .terms li{font-size:14.5px;color:#2b3340}
+.flinks a{color:var(--muted)}
+.locked{background:var(--accent-soft);border:1px dashed #b9c4f7;border-radius:12px;padding:10px 12px;margin-top:10px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.locked p{color:#2f3f8f;font-size:14.5px}
+.mailbox{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.mrow{display:flex;gap:8px;margin-top:8px}
+.mrow input{flex:1;min-width:0;font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:10px;min-height:40px;background:#fff;color:var(--ink)}
+.mchk{display:flex;gap:8px;align-items:center;font-size:14px;margin-top:8px;color:var(--muted)}
+.mnote,.kmsg,.mstat{font-size:13px;color:var(--muted);margin-top:6px}
+.mstat:empty,.kmsg:empty{display:none}
+.mstat button{margin-left:6px}
+.paydlg{border:none;border-radius:18px;padding:22px 22px 18px;max-width:460px;width:calc(100% - 32px);box-shadow:var(--shadow-lg);color:var(--ink)}
+.paydlg::backdrop{background:rgba(20,23,28,.45)}
+.paydlg .ptitle2{font-size:22px;font-weight:700;letter-spacing:-.015em;margin:0 34px 4px 0}
+.paydlg .pclose{position:absolute;top:10px;right:10px;margin:0}
+.paydlg .pclose button{min-height:34px;width:34px;padding:0;border-radius:50%;font-size:18px}
+.psub{color:var(--muted);margin-bottom:10px}
+.pinc{padding-left:18px;margin:0 0 14px}
+.pinc li{margin:4px 0}
+.pbuy{display:flex;gap:8px;flex-wrap:wrap}
+.pbuy button{flex:1;min-width:150px}
+.pnote2{font-size:13px;color:var(--muted);margin-top:8px}
+.pkey{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+.pkey a{display:inline-block;font-size:13.5px;margin-top:6px}
+.consent{position:fixed;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-lg);padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;z-index:60}
+.consent p{font-size:14px;color:var(--muted)}
+.consent div{display:flex;gap:8px}
 </style>
 </head>
 <body>
@@ -426,12 +485,12 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
   <div id="viewScan">
     <section class="hero" id="hero">
       <div class="bot" data-bot data-mood="idle" id="heroBot" aria-hidden="true"></div>
-      <h1 aria-label="Can AI read your website?">Can <span class="rot" id="rot" aria-hidden="true">ChatGPT</span> read your website?</h1>
-      <p class="lede">Free scan. See what AI sees, and what to fix first.</p>
-      <form class="scan" id="f" autocomplete="off">
+      <h1 aria-label="AI Site Scan: can AI read your website?"><span class="eyebrow">AI Site Scan</span> Can <span class="rot" id="rot" aria-hidden="true">ChatGPT</span> read your website?</h1>
+      <p class="lede">Free check, no login. See what AI sees, and what to fix first.</p>
+      <form class="scan" id="f" autocomplete="off" toolname="check_ai_readiness" tooldescription="Check how well AI tools such as ChatGPT can reach, read and understand a website. Returns a score from 0 to 100 and a ranked list of fixes.">
         <div class="inputwrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-          <input id="u" type="text" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="yoursite.com" aria-label="Website address" required>
+          <input id="u" name="url" type="text" toolparamdescription="The website address to check, for example example.com" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="yoursite.com" aria-label="Website address" required>
           <button type="button" id="clearInput" class="hide" aria-label="Clear address">×</button>
         </div>
         <button class="primary" id="go" type="submit" data-mode="scan"><span class="sp"></span><span class="gi" aria-hidden="true"></span><span id="goLbl">Scan</span></button>
@@ -445,13 +504,46 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
       <div id="err" class="err hide" role="alert"></div>
     </section>
 
+    <section class="about" id="about" aria-labelledby="aboutH">
+      <h2 id="aboutH">What AI Site Scan checks</h2>
+      <p>AI tools such as ChatGPT, Claude, Perplexity and Google's AI Overviews answer questions with text they fetch from websites. Most of them read the raw HTML and do not run JavaScript. If they cannot reach, read or understand your page, they skip it or describe it wrong. This tool tests your page the way they do, in 1 to 3 seconds, and tells you what to fix first.</p>
+      <ul class="checks">
+        <li><b>Get in.</b> 14 AI crawlers and assistants, from GPTBot and ClaudeBot to PerplexityBot, request your page. You see which ones get it and which ones your server or robots.txt turns away.</li>
+        <li><b>Read.</b> Your page without JavaScript, side by side with a real browser screenshot. If your text only appears after scripts run, AI sees an almost empty page.</li>
+        <li><b>Understand.</b> Titles, headings, structured data (JSON-LD), brand signals and, for local businesses, whether the page says where you are.</li>
+        <li><b>Trust and find more.</b> Contact details, dates, the sitemap, llms.txt and 23 agent-readiness standards, rated as a level from 0 to 5.</li>
+      </ul>
+      <h2 id="pricing">Pricing</h2>
+      <div class="tiers">
+        <div class="tier"><h3>Free check</h3><span class="price">$0</span><p>A score from 0 to 100, the AI view, the bot test, every issue with what the AI saw, and the top 3 fixes in full. No login.</p></div>
+        <div class="tier hl"><h3>Full fix guide</h3><span class="price">$19 one-time, 1 site</span><p>Every fix with steps and ready-to-paste code, filled in for your site. One Markdown file for your developer or your AI coding tool.</p></div>
+        <div class="tier"><h3>10-site pack</h3><span class="price">$49 one-time, 10 sites</span><p>The full fix guide for 10 sites, for freelancers and agencies who check client sites.</p></div>
+      </div>
+      <ul class="terms">
+        <li><b>One-time payment</b> in US dollars. No subscription, nothing renews.</li>
+        <li><b>Instant delivery.</b> After you pay, your license key is applied here and every fix opens. Polar emails your receipt and a link to your key.</li>
+        <li><b>Secure checkout by Polar</b>, our merchant of record. We never see your card details.</li>
+        <li><b>7-day refund</b>, no questions. <a href="/pricing">Pricing details</a> · <a href="/refund">Refunds and delivery</a></li>
+        <li><b>Self-serve.</b> The guide tells you or your developer what to change. We do not log in to your site.</li>
+      </ul>
+      <h2>Questions</h2>
+    <details><summary>Does a high score mean ChatGPT will cite my site?</summary><p>No. The score shows how easy it is for AI tools to reach and understand your page. Whether they cite you also depends on your content and your reputation.</p></details>
+    <details><summary>Where does the score come from?</summary><p>From the open-source geo-optimizer-skill engine (MIT license). It scores 9 areas for a total of 100 points. Our extra checks, such as the bot test and agent readiness, do not change the score.</p></details>
+    <details><summary>Do you store my results?</summary><p>Your history stays in your own browser. Our server keeps a result for 10 minutes, so a repeat check is fast.</p></details>
+    <details><summary>What is in the full fix guide?</summary><p>Every fix for your site, ranked, with the steps and ready-to-paste code filled in for your pages: JSON-LD, llms.txt, robots.txt and head tags. It is one Markdown file you can hand to a developer or an AI coding tool.</p></details>
+    <details><summary>How do I get the guide after I pay?</summary><p>Right away. You pay on Polar's secure checkout and come back here. Your license key is applied and every fix opens on screen. Polar also emails you a receipt with a link to your key.</p></details>
+    <details><summary>Is it a subscription?</summary><p>No. You pay once, in US dollars. Nothing renews, so there is nothing to cancel.</p></details>
+    <details><summary>Can I get a refund?</summary><p>Yes. If the guide does not help, email us within 7 days of your purchase for a full refund. You do not need to give a reason.</p></details>
+      <p class="updated">Made by <a href="/about">Daniel Rojansky</a> in Israel. Updated <time datetime="2026-11-27">Nov 27, 2026</time>. Also see the <a href="/llms-txt">llms.txt checker</a> and the <a href="/ai-robots-txt">AI robots.txt checker</a>.</p>
+    </section>
+
     <div id="progress" class="progress hide" aria-live="polite">
       <div class="stage" aria-hidden="true">
         <div class="mock"><i></i><i></i><i></i><i></i><i></i><i></i><div class="laser"></div></div>
         <div class="bot" data-bot data-mood="read"></div>
       </div>
       <div class="sw">
-        <h3 id="progTitle">Scanning…</h3>
+        <p class="ptitle" id="progTitle">Scanning…</p>
         <p class="quip" id="quip">Waking up the robots…</p>
         <div class="pbar"><i id="pfill"></i></div>
       </div>
@@ -466,7 +558,7 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
           </div>
           <div class="sc-main">
             <div class="site" id="siteLine"></div>
-            <h2 class="verdict" id="verdict"></h2>
+            <p class="verdict" id="verdict"></p>
             <p class="verdict-sub" id="verdictSub"></p>
           </div>
           <div class="bot sc-bot" data-bot data-mood="idle" id="sumBot" aria-hidden="true"></div>
@@ -496,6 +588,13 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
         <div class="filternote hide" id="filterNote"></div>
         <div class="rows" id="severe"></div>
         <div class="fixcta" id="fixCta"></div>
+        <form class="mailbox hide" id="mailForm" novalidate>
+          <label for="mailIn"><b>Email me this report and a ready llms.txt</b></label>
+          <div class="mrow"><input id="mailIn" type="email" autocomplete="email" inputmode="email" placeholder="you@company.com" maxlength="254"><button class="primary small" type="submit" id="mailBtn">Send</button></div>
+          <label class="mchk"><input type="checkbox" id="mailRem"> Also send me one reminder in 2 days</label>
+          <p class="mnote">One email now, plus one reminder only if you tick the box. <a href="/privacy">Privacy</a></p>
+          <p class="mstat" id="mailMsg" aria-live="polite"></p>
+        </form>
 
         <div class="acc gwrap" id="moreAcc">
           <button class="grp" type="button" data-acc aria-expanded="false"><span>More to improve</span><span class="n" id="moreN">0</span><span class="sub" id="moreSub"></span><span class="chev">›</span></button>
@@ -575,21 +674,47 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
 
   <div id="viewHistory" class="hide">
     <div class="hhead">
-      <h1>History</h1>
+      <h2>History</h2>
       <button id="clearHistory" type="button" class="small">Clear all</button>
     </div>
     <p class="muted" style="font-size:14px">Saved only in this browser. Tap a scan to open it again.</p>
     <div class="hlist" id="hlist"></div>
   </div>
 
-  <footer>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v2.4.0</span></footer>
+  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v2.5.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div class="toast" id="toast" role="status"></div>
+<dialog class="paydlg" id="payDlg" aria-labelledby="payTitle">
+  <form method="dialog" class="pclose"><button type="submit" aria-label="Close">×</button></form>
+  <p class="ptitle2" id="payTitle">Get the full fix guide</p>
+  <p class="psub">Every fix for <b id="payHost"></b>, with steps and ready-to-paste code.</p>
+  <ul class="pinc">
+    <li>All <b id="payN">0</b> fixes, ranked, with every step</li>
+    <li>Code filled in for your site: JSON-LD, llms.txt, robots.txt, head tags</li>
+    <li>One Markdown file for your developer or your AI coding tool</li>
+    <li>One-time payment, instant delivery, 7-day refund</li>
+  </ul>
+  <div class="pbuy">
+    <button class="primary" type="button" data-buy="single">One site, <span id="paySingle">$19</span></button>
+    <button type="button" data-buy="pack" id="buyPack">10 sites, <span id="payPack">$49</span></button>
+  </div>
+  <p class="pnote2">Secure checkout by Polar, our merchant of record, in a new tab. Tax may be added. <a href="/pricing" target="_blank" rel="noopener">Pricing</a> · <a href="/refund" target="_blank" rel="noopener">Refunds</a> · <a href="/terms" target="_blank" rel="noopener">Terms</a></p>
+  <div class="pkey">
+    <label for="keyIn"><b>Already bought?</b> Paste your license key.</label>
+    <div class="mrow"><input id="keyIn" type="text" autocomplete="off" spellcheck="false" placeholder="Your license key" maxlength="200"><button type="button" class="small" id="keyBtn">Unlock</button></div>
+    <p class="kmsg" id="keyMsg" aria-live="polite"></p>
+    <a id="portalLink" class="hide" target="_blank" rel="noopener">Find your key in the Polar customer portal ↗</a>
+  </div>
+</dialog>
+<div class="consent hide" id="consent" role="region" aria-label="Cookie choice">
+  <p>We use cookies to measure visits and ads, so we can improve the site. <a href="/privacy">Privacy</a></p>
+  <div><button type="button" class="small" data-consent="no">Decline</button><button type="button" class="primary small" data-consent="yes">Accept</button></div>
+</div>
 
 <script>
 "use strict";
-const APP_VERSION = "2.4.0"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "2.5.0"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -670,7 +795,8 @@ document.addEventListener("pointermove", e => {
 const WORDS = ["ChatGPT", "Claude", "Perplexity", "Gemini", "Copilot", "AI"]; let wi = 0;
 setInterval(() => {
   if(document.hidden || REDUCED || $("#hero").classList.contains("compact")) return;
-  wi = (wi + 1) % WORDS.length; const r = $("#rot");
+  const r = $("#rot"); if(!r) return;  /* landing pages have no rotating word */
+  wi = (wi + 1) % WORDS.length;
   r.classList.remove("swap"); void r.offsetWidth; r.textContent = WORDS[wi]; r.classList.add("swap");
 }, 2400);
 const EXAMPLES = ["yoursite.com", "anthropic.com", "stripe.com", "your-shop.co.il", "wikipedia.org"]; let exI = 0, exC = 0, exDel = false;
@@ -855,6 +981,7 @@ async function run(raw, opts = {}){
   const url = String(raw || "").trim(); if(!url || running) return;
   const fresh = !!opts.fresh || (!!DATA && sameTarget(url, DATA.url));  /* a rescan must never show an old answer */
   running = true; DATA = null; ENTRY = null; STAGE = null;
+  track("scan_started", {host: hostOf(url), fresh});
   $("#err").classList.add("hide"); $("#out").classList.add("hide");
   setCompact(true); setBusy(true); mood($("#heroBot"), "read");
   $("#progTitle").textContent = "Scanning " + hostOf(url) + "…";
@@ -871,10 +998,12 @@ async function run(raw, opts = {}){
     quip.textContent = "Done!"; await sleep(REDUCED ? 0 : 320);
     DATA = d; ENTRY = addToHistory(d);
     render(d, {entry: ENTRY, fresh});
+    afterRender(d);
     setUrlParam(d.url);
   }catch(e){
     mood($("#heroBot"), "sad");
     showErr(e.message || "The scan failed. Please try again.");
+    track("scan_failed", {host: hostOf(url), error: String(e.message || "").slice(0, 120)});
   }finally{
     clearInterval(t1); clearInterval(t2); running = false;
     $("#progress").classList.add("hide"); setBusy(false);
@@ -953,7 +1082,8 @@ function issueHtml(it, i){
   const steps = it.steps.length ? it.steps : it.hints;
   const sawBlock = saw.length ? `<h4>What the AI saw</h4><ul>${saw.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
   const extra = steps.length - MAXSTEPS;
-  const fixBlock = steps.length ? `<h4>${saw.length ? "How to fix" : "What to do"}</h4><ol>${steps.map((x, k) => `<li${k >= MAXSTEPS ? ' class="xs hide"' : ""}>${linkify(x)}</li>`).join("")}</ol>${extra > 0 ? `<button type="button" class="small steps-btn" data-act="steps" data-n="${extra}">Show ${extra} more step${extra > 1 ? "s" : ""}</button>` : ""}` : "";
+  const fixFull = steps.length ? `<h4>${saw.length ? "How to fix" : "What to do"}</h4><ol>${steps.map((x, k) => `<li${k >= MAXSTEPS ? ' class="xs hide"' : ""}>${linkify(x)}</li>`).join("")}</ol>${extra > 0 ? `<button type="button" class="small steps-btn" data-act="steps" data-n="${extra}">Show ${extra} more step${extra > 1 ? "s" : ""}</button>` : ""}` : "";
+  const fixBlock = steps.length && locked(it) ? `<div class="locked"><p>🔒 <b>${steps.length} step${steps.length > 1 ? "s" : ""}</b> and ready-to-paste code for this fix are in the full fix guide.</p><button type="button" class="primary small" data-act="buy">Unlock all fixes</button></div>` : fixFull;
   return `<article class="issue acc sev-${it.sev}${open ? " open" : ""}${done ? " done" : ""}" data-k="${esc(it.key)}" style="--i:${Math.min(i, 10)}">
     <div class="ih">
       <button class="chk" type="button" role="checkbox" aria-checked="${done}" aria-label="Mark as done: ${esc(it.label)}"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 5"/></svg></button>
@@ -1014,7 +1144,7 @@ function renderTop(d, entry, opts){
   const pot = d.missed?.usable && d.missed.potential != null && d.missed.potential > s + 1 ? d.missed.potential : null;
   $("#potential").classList.toggle("hide", !pot);
   if(pot) $("#potential").innerHTML = `Fix everything and you could reach <b>${pot}</b>.`;
-  $("#fixCta").innerHTML = `<span>Ready-to-paste fixes for every issue</span><button class="primary" type="button" data-act="guide">⬇ Fix guide</button>`;
+  refreshPayUi();
   const on = $("#oldNotice");
   if(opts.saved){
     on.innerHTML = `Saved report from ${fmtTime(ts)}. <a href="#" id="rescanLink">Rescan</a> to see the site now.`;
@@ -1067,6 +1197,7 @@ $("#moreBtn").onclick = e => {
 };
 document.addEventListener("click", e => { if(!e.target.closest(".menuwrap")) closeMenu(); });
 async function doShare(){
+  track("share_clicked", {host: hostOf(DATA.url)});
   const link = location.origin + "/?url=" + encodeURIComponent(DATA.url);
   if(navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
     try { await navigator.share({title: "AI Site Scan: " + hostOf(DATA.url), url: link}); } catch {}
@@ -1075,6 +1206,8 @@ async function doShare(){
   try { await navigator.clipboard.writeText(link); toast("Link copied. Opening it runs a fresh scan.", "🔗"); } catch { prompt("Copy this link:", link); }
 }
 function doGuide(btn){
+  if(DATA && payOn() && !isUnlocked(hostOf(DATA.url))){ openPay("guide"); return; }
+  track("guide_downloaded", {host: hostOf(DATA.url), paid: payOn()});
   download(buildFixGuide(DATA), "ai-fix-guide-" + hostOf(DATA.url) + ".md", "text/markdown");
   toast("Fix guide downloaded", "⬇"); burstAt(btn, 18);
 }
@@ -1121,6 +1254,8 @@ $("#out").addEventListener("click", e => {
   }
   const act = e.target.closest("[data-act]")?.dataset.act;
   if(act === "guide") doGuide(e.target.closest("[data-act]"));
+  else if(act === "buy") openPay("locked_fix");
+  else if(act === "llms" && DATA){ download(buildLlms(DATA), "llms.txt", "text/plain"); track("llms_downloaded", {host: hostOf(DATA.url)}); }
   else if(act === "steps"){
     const b = e.target.closest("[data-act]"), ib = b.closest(".ib"), hidden = ib.querySelector(".xs.hide") != null;
     ib.querySelectorAll(".xs").forEach(li => li.classList.toggle("hide", !hidden));
@@ -1556,12 +1691,224 @@ function internalLinks(md, origin){
   return out;
 }
 
+/* ---------- v2.5: settings from /api/config, cookie choice, analytics, ads ---------- */
+let CFG = {}, CFG_READY = Promise.resolve({});
+const CKEY = "aiSiteScan.consent.v1", UKEY = "aiSiteScan.unlock.v2", BKEY = "aiSiteScan.buyhost.v1", FREE_FIXES = 3;
+const LANDING = location.pathname.replace(/\/+$/, "") || "/";
+const PH = {q: [], on: false, off: false};
+const consentChoice = () => { try { return localStorage.getItem(CKEY) || ""; } catch { return ""; } };
+function track(ev, props){
+  const p = Object.assign({landing: LANDING, app_version: APP_VERSION}, props || {});
+  if(PH.on){ try { window.posthog.capture(ev, p); } catch {} }
+  else if(!PH.off && PH.q.length < 50) PH.q.push([ev, p]);
+}
+function loadPostHog(c){
+  /* the official PostHog snippet (posthog.com/docs/libraries/js), unchanged */
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}p||((p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",p.onerror=function(){p=null},(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r));var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  /* no cookies until the visitor accepts: "memory" keeps the ID for this page view only */
+  window.posthog.init(c.key, {api_host: c.host, defaults: "2026-08-30", persistence: consentChoice() === "yes" ? "localStorage+cookie" : "memory", session_recording: {maskAllInputs: true}});
+  PH.on = true;
+  PH.q.splice(0).forEach(([e, p]) => { try { window.posthog.capture(e, p); } catch {} });
+}
+function loadAds(){  /* Google Ads tag: only after the visitor accepts cookies */
+  const a = CFG.ads; if(!a || !a.id || window.gtag) return;
+  const s = document.createElement("script"); s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(a.id); document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || []; window.gtag = function(){ window.dataLayer.push(arguments); };
+  window.gtag("js", new Date()); window.gtag("config", a.id);
+}
+function adConv(kind, value){
+  const a = CFG.ads; if(!a || !a[kind] || !window.gtag || consentChoice() !== "yes") return;
+  window.gtag("event", "conversion", Object.assign({send_to: a.id + "/" + a[kind]}, value ? {value, currency: "USD"} : {}));
+}
+function setConsent(v){
+  try { localStorage.setItem(CKEY, v); } catch {}
+  $("#consent").classList.add("hide");
+  if(v === "yes"){ if(PH.on){ try { window.posthog.set_config({persistence: "localStorage+cookie"}); } catch {} } loadAds(); }
+  track("consent", {choice: v});
+}
+$("#consent").addEventListener("click", e => { const b = e.target.closest("[data-consent]"); if(b) setConsent(b.dataset.consent); });
+function loadConfig(){
+  CFG_READY = fetch("/api/config").then(r => r.ok ? r.json() : {}).catch(() => ({})).then(c => {
+    CFG = c && typeof c === "object" ? c : {};
+    if(CFG.posthog && CFG.posthog.key) loadPostHog(CFG.posthog); else { PH.off = true; PH.q.length = 0; }
+    if((CFG.posthog || CFG.ads) && !consentChoice()) $("#consent").classList.remove("hide");
+    if(consentChoice() === "yes") loadAds();
+    if(DATA){ renderIssues(); refreshPayUi(); }
+    handleReturn();
+    return CFG;
+  });
+  return CFG_READY;
+}
+
+/* ---------- landing pages: /llms-txt and /ai-robots-txt are this page with a matching headline ---------- */
+const LANDINGS = {
+  "/llms-txt": {h: "Check your llms.txt, and get one written", lede: "Free check of your llms.txt and your AI readiness. Get a ready llms.txt built from your own pages.", title: "Free llms.txt checker and generator | AI Site Scan", desc: "Check whether your site has a valid llms.txt, and get one written from your own pages. Free AI readiness score from 0 to 100, no login."},
+  "/ai-robots-txt": {h: "Can GPTBot and ClaudeBot read your site?", lede: "Free test of 14 AI crawlers against your robots.txt and your server. See which bots get in and which are refused.", title: "AI robots.txt checker: GPTBot, ClaudeBot, PerplexityBot | AI Site Scan", desc: "Test whether GPTBot, ClaudeBot, PerplexityBot and 11 more AI bots can read your site. Free check of robots.txt rules and real server answers."},
+};
+function applyLanding(){
+  const L = LANDINGS[LANDING]; if(!L) return;
+  const h1 = $("#hero h1"); h1.innerHTML = `<span class="eyebrow">AI Site Scan</span> ${esc(L.h)}`; h1.setAttribute("aria-label", "AI Site Scan: " + L.h);
+  $("#hero .lede").textContent = L.lede; document.title = L.title;
+  const md = document.querySelector('meta[name="description"]'); if(md) md.setAttribute("content", L.desc);
+  const cn = document.querySelector('link[rel="canonical"]'); if(cn) cn.setAttribute("href", "https://getaisitescan.com" + LANDING);
+}
+
+/* ---------- paywall: the top fixes stay free, the full guide needs a license key ---------- */
+const payOn = () => !!(CFG.paywall && CFG.checkout && CFG.checkout.single);
+function unlockState(){ try { const s = JSON.parse(localStorage.getItem(UKEY) || "{}"); return s && typeof s === "object" ? s : {}; } catch { return {}; } }
+function isUnlocked(host){ const s = unlockState(); return !!(s.sites && s.sites[host]); }
+function locked(it){ return !!DATA && payOn() && !isUnlocked(hostOf(DATA.url)) && ISSUES.indexOf(it) >= FREE_FIXES; }
+function refreshPayUi(){
+  $("#mailForm").classList.toggle("hide", !CFG.email || !DATA);
+  if(!DATA) return;
+  const lockedNow = payOn() && !isUnlocked(hostOf(DATA.url));
+  const price = "$" + ((CFG.prices && CFG.prices.single) || 19);
+  $("#exportBtn").textContent = lockedNow ? "🔓 Get the full fix guide" : "⬇ Get the fix guide";
+  $("#fixCta").innerHTML = lockedNow
+    ? `<span>Every fix, with ready-to-paste code</span><button class="primary" type="button" data-act="buy">Get the full guide, ${esc(price)}</button>`
+    : `<span>Ready-to-paste fixes for every issue</span><button class="primary" type="button" data-act="guide">⬇ Fix guide</button>`;
+}
+function openPay(from){
+  if(!DATA || !payOn()) return;
+  const host = hostOf(DATA.url), dlg = $("#payDlg"), pr = CFG.prices || {};
+  $("#payTitle").textContent = "Get the full fix guide";
+  $("#payHost").textContent = host; $("#payN").textContent = ISSUES.length;
+  $("#paySingle").textContent = "$" + (pr.single || 19); $("#payPack").textContent = "$" + (pr.pack || 49);
+  $("#buyPack").classList.toggle("hide", !(CFG.checkout && CFG.checkout.pack));
+  const pl = $("#portalLink"); pl.classList.toggle("hide", !CFG.portal); if(CFG.portal) pl.href = CFG.portal;
+  $("#keyMsg").textContent = ""; const s = unlockState(); if(s.last && !$("#keyIn").value) $("#keyIn").value = s.last;
+  if(typeof dlg.showModal === "function"){ if(!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
+  track("paywall_seen", {host, from, issues: ISSUES.length});
+}
+function closePay(){ const dlg = $("#payDlg"); if(typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open"); }
+function buy(kind){
+  const base = CFG.checkout && CFG.checkout[kind]; if(!base || !DATA) return;
+  let u; try { u = new URL(base); } catch { return; }
+  const q = new URLSearchParams(location.search);
+  ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(k => { if(q.get(k)) u.searchParams.set(k, q.get(k)); });
+  let ref = ""; try { ref = PH.on ? window.posthog.get_distinct_id() : ""; } catch {}
+  if(ref) u.searchParams.set("reference_id", String(ref));
+  const email = ($("#mailIn").value || "").trim(); if(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) u.searchParams.set("customer_email", email);
+  try { localStorage.setItem(BKEY, DATA.url); } catch {}  /* the full address: http-only sites scan again the same way */
+  track("checkout_started", {product: kind, host: hostOf(DATA.url)}); adConv("checkout");
+  window.open(u.toString(), "_blank", "noopener");
+}
+async function doUnlock(doneMsg){
+  if(!DATA) return;
+  const key = $("#keyIn").value.trim(), msg = $("#keyMsg"), btn = $("#keyBtn"), host = hostOf(DATA.url);
+  if(!key){ msg.textContent = "Paste your license key first."; return; }
+  const s = unlockState(), prev = s.sites && s.sites[host];
+  btn.disabled = true; msg.textContent = "Checking your key…";
+  try{
+    const r = await fetch("/api/unlock", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({key, host, activation_id: prev && prev.key === key ? prev.activation_id : undefined})});
+    const d = await r.json().catch(() => ({}));
+    if(!r.ok || !d.ok) throw new Error(d.error || "Could not check the key. Try again in a minute.");
+    s.last = key; s.sites = s.sites || {}; s.sites[host] = {key, activation_id: d.activation_id, at: Date.now()};
+    try { localStorage.setItem(UKEY, JSON.stringify(s)); } catch {}
+    msg.textContent = ""; closePay();
+    renderIssues(); refreshPayUi();
+    toast(typeof doneMsg === "string" ? doneMsg : "Unlocked. Every fix is open.", "🔓"); burstAt($("#exportBtn"), 30);
+    track("key_unlocked", {host, sites_limit: d.sites_limit});
+  }catch(err){ msg.textContent = err.message; track("key_failed", {host}); }
+  finally{ btn.disabled = false; }
+}
+$("#payDlg").addEventListener("click", e => {
+  const b = e.target.closest("[data-buy]"); if(b){ buy(b.dataset.buy); return; }
+  if(e.target === $("#payDlg")) closePay();  /* a click on the dark backdrop */
+});
+$("#keyBtn").onclick = () => doUnlock();
+$("#keyIn").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); doUnlock(); } });
+
+/* back from Polar's checkout: ?paid=single|pack&checkout_id=...
+   /api/claim fetches the new license key, so the guide unlocks with no copy and paste.
+   If that is off or slow, the buyer pastes the key from Polar's email or customer portal. */
+async function claimKey(id){
+  for(let i = 0; i < 12; i++){
+    let r = null, d = {};
+    try { r = await fetch("/api/claim?checkout_id=" + encodeURIComponent(id), {cache: "no-store"}); d = await r.json().catch(() => ({})); } catch {}
+    if(r && r.ok && d.ok && d.key) return d;
+    if(r && !d.pending && r.status !== 429) return null;  /* off (503), unknown checkout, expired or failed */
+    await sleep(2500);
+  }
+  return null;
+}
+function saveLastKey(key){ const s = unlockState(); s.last = key; try { localStorage.setItem(UKEY, JSON.stringify(s)); } catch {} }
+async function handleReturn(){
+  const q = new URLSearchParams(location.search), paid = q.get("paid"), checkoutId = q.get("checkout_id") || "";
+  if(!paid) return;
+  const u = new URL(location); u.searchParams.delete("paid"); u.searchParams.delete("checkout_id"); history.replaceState(null, "", u);
+  const pr = CFG.prices || {}, value = paid === "pack" ? (pr.pack || 49) : (pr.single || 19);
+  track("purchase_returned", {product: paid, value}); adConv("purchase", value);
+  while(running) await sleep(200);
+  let target = ""; try { target = localStorage.getItem(BKEY) || ""; } catch {}
+  if(!DATA && target){ $("#u").value = target; toggleClear(); await run(target); }
+  if(!DATA || !payOn()){
+    const got = checkoutId && payOn() ? await claimKey(checkoutId) : null;
+    if(got){ saveLastKey(got.key); track("key_claimed", {where: "no_scan"}); toast("Thank you! Your key is saved. Check your site to unlock it.", "🎉"); }
+    else toast("Thank you! Check a site, then paste your license key.", "🎉");
+    return;
+  }
+  openPay("return");
+  $("#payTitle").textContent = "Thank you! Getting your license key…";
+  $("#keyMsg").textContent = "This takes a few seconds.";
+  const got = checkoutId ? await claimKey(checkoutId) : null;
+  if(got){
+    $("#keyIn").value = got.key; saveLastKey(got.key);
+    if(got.portal){ const pl = $("#portalLink"); pl.href = got.portal; pl.classList.remove("hide"); }
+    track("key_claimed", {host: hostOf(DATA.url), sites_limit: got.sites_limit});
+    await doUnlock("Thank you! Your guide is unlocked. Polar emailed your receipt.");
+    if(isUnlocked(hostOf(DATA.url))) return;
+  }
+  $("#payTitle").textContent = "Thank you! Now unlock your guide";
+  if(!got) $("#keyMsg").textContent = "Your license key is in the email from Polar and in the Polar customer portal. Paste it above.";
+  $("#keyIn").focus();
+}
+
+/* ---------- email the report and a ready llms.txt ---------- */
+function buildLlms(d){
+  const ai = d.ai_view || {}; let origin; try { origin = new URL(ai.final_url || d.url).origin; } catch { origin = d.url; }
+  const name = cleanName(ai.og_title || ai.title || hostOf(d.url)), desc = ai.description || ai.og_description || "";
+  const links = internalLinks(ai.markdown || "", origin).slice(0, 12);
+  const lines = links.length ? links.map(l => `- [${l.text}](${l.url}): TODO short description`) : [`- [Home](${origin}/): TODO short description`];
+  return [`# ${name}`, "", `> ${desc || "TODO: one or two sentences about what the site offers and for whom."}`, "", "## Main pages", "", ...lines, "", "## Optional", "", `- [About](${origin}/about): TODO`, ""].join("\n");
+}
+$("#mailForm").addEventListener("submit", async e => {
+  e.preventDefault(); if(!DATA) return;
+  const email = $("#mailIn").value.trim(), btn = $("#mailBtn"), msg = $("#mailMsg"), reminder = $("#mailRem").checked;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ msg.textContent = "Enter a valid email address."; return; }
+  btn.disabled = true; msg.textContent = "Sending…";
+  try{
+    const r = await fetch("/api/email", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({email, url: DATA.url, reminder})});
+    const d = await r.json().catch(() => ({}));
+    if(!r.ok || !d.ok) throw new Error(d.error || "Could not send the email. Try again later.");
+    msg.innerHTML = `Sent. Check your inbox. <button type="button" class="small" data-act="llms">⬇ Download llms.txt now</button>`;
+    track("email_given", {host: hostOf(DATA.url), reminder}); adConv("lead");
+  }catch(err){ msg.textContent = err.message; }
+  finally{ btn.disabled = false; }
+});
+function afterRender(d){
+  const host = hostOf(d.url);
+  track("scan_done", {host, score: d.score, band: d.band, issues: ISSUES.length, cached: !!d.cached});
+  $("#mailMsg").textContent = "";
+  CFG_READY.then(() => {
+    if(!DATA || hostOf(DATA.url) !== host) return;
+    refreshPayUi();
+    const q = new URLSearchParams(location.search);
+    if(q.get("buy") === "1"){
+      const u = new URL(location); u.searchParams.delete("buy"); history.replaceState(null, "", u);
+      if(payOn() && !isUnlocked(host)) setTimeout(() => openPay("email"), 500);
+    }
+  });
+}
+
 /* ---------- start ---------- */
 $("#appv").textContent = "v" + APP_VERSION;
 mountBots(); updateCount();
 document.fonts?.ready.then(moveInd); moveInd();
 const q = new URLSearchParams(location.search).get("url");
+applyLanding();
 if(q){ $("#u").value = q; toggleClear(); run(q); } else { $("#u").focus({preventScroll: true}); }
+loadConfig();
 </script>
 </body>
 </html>

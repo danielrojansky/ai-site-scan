@@ -1,0 +1,9 @@
+# AI Site Scan: every crawler, AI crawlers included, may read the public pages.
+# The /api/ paths run live scans, so crawlers should not call them.
+
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /api/
+
+Sitemap: https://getaisitescan.com/sitemap.xml

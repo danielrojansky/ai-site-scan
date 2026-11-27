@@ -1,0 +1,4 @@
+# AI Site Scan: AI crawlers may read every public page.
+User-Agent: *
+Allow: /
+Disallow: /api/
