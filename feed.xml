@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AI Site Scan changelog</title>
+    <link>https://getaisitescan.com/</link>
+    <atom:link href="https://getaisitescan.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>New checks and changes in AI Site Scan, the free AI readiness scan for websites.</description>
+    <language>en</language>
+    <lastBuildDate>Fri, 27 Nov 2026 20:00:00 +0200</lastBuildDate>
+    <item>
+      <title>Version 2.5.0: full fix guide, llms.txt and AI robots.txt pages</title>
+      <link>https://getaisitescan.com/</link>
+      <guid isPermaLink="false">ai-site-scan-2.5.0</guid>
+      <pubDate>Fri, 27 Nov 2026 20:00:00 +0200</pubDate>
+      <description>A paid full fix guide (one-time payment: $19 for one site, $49 for 10 sites) with instant key delivery, new pricing and contact pages, clearer refund and delivery terms, the report and a ready llms.txt by email, an llms.txt checker page and an AI robots.txt checker page.</description>
+    </item>
+    <item>
+      <title>Version 2.4.0: agent readiness</title>
+      <link>https://getaisitescan.com/</link>
+      <guid isPermaLink="false">ai-site-scan-2.4.0</guid>
+      <pubDate>Wed, 25 Nov 2026 23:37:00 +0200</pubDate>
+      <description>23 checks of the standards AI agents look for, with a level from 0 to 5.</description>
+    </item>
+    <item>
+      <title>Version 2.3.0: one list of issues</title>
+      <link>https://getaisitescan.com/</link>
+      <guid isPermaLink="false">ai-site-scan-2.3.0</guid>
+      <pubDate>Wed, 25 Nov 2026 22:59:00 +0200</pubDate>
+      <description>A new one-column report: the score card, one list of issues with the worst first, and closed detail panels.</description>
+    </item>
+  </channel>
+</rss>

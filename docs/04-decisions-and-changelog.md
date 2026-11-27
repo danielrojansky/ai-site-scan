@@ -21,6 +21,9 @@
 | Local business location (v2.2) | A check that flags a local business whose page text never says where it is. Critical when the page clearly depends on a place (local business data, opening hours, or 5 signals), high for a shop or delivery business, medium when only a country or area is named. Not in the score. Software and media sites are never flagged | A score penalty; flag every site without an address; ask an AI model | The score stays the engine's. A flag on every site would be a false alarm, so it applies only to a business that depends on a place. Found on a real site: the address was only in hidden JSON-LD, so most AI tools never saw it |
 | New interface (v2.3) | One narrow column. One list of issues (each issue once: what the AI saw, how to fix), severe first. The AI journey is a strip that filters the list. Details (AI view, bots, platforms, key facts, score breakdown) are closed panels. The screenshot loads only when its panel opens | Keep the separate "What the AI missed", "Start here" and "All fixes" sections; remove the mascot; keep the wide layout | Daniel asked for less visible text, everything still reachable, severe issues first. Showing one issue three times (missed, top fixes, all fixes) was the main source of text. The mascot stays small and calm |
 | Agent readiness (v2.4) | A separate function `/api/agent` and a closed Details panel with 23 rows and a level from 0 to 5. The page asks for it after the scan. Only WebMCP uses a real browser, once, when the panel opens. Not in the score | Put the checks in `/api/scan`; add them to the score; run every check in Chrome; depend on isitagentready.com's own scanner | The scan stays at 1 to 3 seconds and the score stays the engine's. Files, headers and DNS can be read exactly and cheaply. Only WebMCP needs a running page. We apply the public standards and the rules in isitagentready.com's public documentation ourselves, and compared the results with its website on four real sites |
+| Payments (v2.5) | Polar as merchant of record. One-time products with a License Key benefit. Checkout links, no own checkout page. The key unlocks the guide; one activation per site (label = host) | Stripe (Daniel would be the seller and handle tax himself); Dodo Payments; Lemon Squeezy; own database of buyers | Polar handles tax and receipts in every country, pays out to Israel, and keeps the keys. No database to run |
+| Key delivery (v2.5) | `/api/claim`: the success URL carries the checkout ID; the server reads the checkout, opens a customer session and reads the new key; the page applies it | Buyer pastes the key from Polar's email; webhook that emails the key | No copy and paste, so "instant delivery" is true. Paste stays as a fallback |
+| Merchant review pages (v2.5) | Pricing, contact, refunds and delivery, terms, privacy, built from one template with the same footer on every page | Policy generator text; one long legal page | Polar, Dodo and card networks check that prices, delivery, refund and cancellation terms, a contact route and the seller's identity are on the live site and match the account form |
 
 ## Changelog
 
@@ -98,6 +101,21 @@ All times Asia/Jerusalem.
 | 23:37 | The WebMCP function bounds every wait and sends each tool out of the page the moment it registers. Found on the first preview: vercel.com froze our small Chrome and the function hit the 40 s platform limit. Now a heavy page answers in time, or shows as "unable", never as a platform timeout |
 | 23:37 | Compared with the isitagentready.com website on four sites: the level matched on all four (a small shop at level 1, developers.cloudflare.com at level 5, isitagentready.com at level 5, vercel.com at level 1). Differences are listed in the roadmap |
 | 23:37 | 32 new tests (108 in all) |
+
+### 27 Nov 2026, version 2.5.0
+
+All times Asia/Jerusalem.
+
+| Time | Change |
+|---|---|
+| 21:00 | Own domain getaisitescan.com (www redirects to it). robots.txt with Content Signals, sitemap.xml, llms.txt, llms-full.txt, feed.xml, /.well-known/ai.txt, /ai/summary.json (with the WebMCP tool), /ai/faq.json, /ai/service.json, logo, favicon, Open Graph image |
+| 21:00 | Home page: brand line in the H1, JSON-LD graph (Organization, WebSite, WebPage, WebApplication with the 3 offers, FAQPage), a visible "What AI Site Scan checks" section with pricing and 7 questions, WebMCP attributes on the scan form. Own score on a local copy: 62 before, 92 after |
+| 21:00 | New pages: /pricing, /contact, /about, /refund (refunds, cancellation and delivery), /terms, /privacy. Same header and footer on every page. Business details: Daniel Rojansky, sole trader in Israel, trading as Daniel Consulting. Polar named as merchant of record |
+| 21:00 | Paywall: the first 3 fixes stay free, the rest and the fix guide need a license key. $19 for one site, $49 for 10 sites. It stays off until the Polar settings exist in Vercel |
+| 21:00 | New functions: `/api/config` (public settings), `/api/unlock` (license key activation per site), `/api/claim` (key delivery after checkout), `/api/email` (report and llms.txt by email, optional reminder), `/api/polar-webhook` (sale event and email), `/api/cron-selfcheck` (daily scan of our own site). Every Polar call pins `Polar-Version: 2026-10` |
+| 21:00 | Analytics and ads: PostHog without cookies until the visitor accepts, Google Ads tag only after consent. Both stay off until their settings exist |
+| 21:00 | Landing pages /llms-txt and /ai-robots-txt (the same app with their own headline) |
+| 21:00 | 13 new handler tests with a fake Polar (claim, unlock, config, webhook signature) and a browser test of the paywall, the return from checkout and every page |
 
 ## Test results at launch
 

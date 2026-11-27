@@ -2,6 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "buildCommand": null,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/llms-txt", "destination": "/" },
+    { "source": "/ai-robots-txt", "destination": "/" }
+  ],
+  "crons": [
+    { "path": "/api/cron-selfcheck", "schedule": "0 5 * * *" }
+  ],
   "functions": {
     "api/scan.py": {
       "maxDuration": 60,
@@ -20,6 +28,30 @@
       "maxDuration": 45,
       "memory": 2048,
       "includeFiles": "node_modules/@sparticuz/chromium/bin/**"
+    },
+    "api/config.js": {
+      "maxDuration": 5,
+      "memory": 256
+    },
+    "api/unlock.js": {
+      "maxDuration": 15,
+      "memory": 256
+    },
+    "api/claim.js": {
+      "maxDuration": 15,
+      "memory": 256
+    },
+    "api/email.js": {
+      "maxDuration": 60,
+      "memory": 256
+    },
+    "api/polar-webhook.js": {
+      "maxDuration": 15,
+      "memory": 256
+    },
+    "api/cron-selfcheck.js": {
+      "maxDuration": 60,
+      "memory": 256
     }
   },
   "headers": [
@@ -34,6 +66,12 @@
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
         }
+      ]
+    },
+    {
+      "source": "/ai/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     }
   ]

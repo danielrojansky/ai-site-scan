@@ -1,0 +1,36 @@
+{
+  "faqs": [
+    {
+      "question": "What does AI Site Scan check?",
+      "answer": "It checks whether AI tools can reach your page, read its text without JavaScript, understand who you are from structured data, and trust and find your other pages. It also tests 14 AI bots and 23 agent-readiness standards."
+    },
+    {
+      "question": "Is the scan free?",
+      "answer": "Yes. The scan, the score, the AI view, the bot test and the top 3 fixes are free and need no login. The full fix guide with code for every fix costs $19 for one site or $49 for 10 sites."
+    },
+    {
+      "question": "How long does a scan take?",
+      "answer": "Most scans take 1 to 3 seconds. The agent-readiness checks load a few seconds after the score."
+    },
+    {
+      "question": "Does a high score mean AI tools will cite my site?",
+      "answer": "No. The score shows how easy it is for AI tools to reach and understand the page. It does not promise citations or rankings."
+    },
+    {
+      "question": "Where does the score come from?",
+      "answer": "The score comes from the open-source geo-optimizer-skill engine (MIT license). AI Site Scan adds its own extra checks, which do not change the score."
+    },
+    {
+      "question": "How do I get the full fix guide after I pay?",
+      "answer": "Right away. You pay on Polar's secure checkout and come back to AI Site Scan. Your license key is applied and every fix opens on screen. Polar also emails a receipt with a link to the key."
+    },
+    {
+      "question": "Is the full fix guide a subscription?",
+      "answer": "No. It is a one-time payment in US dollars: $19 for one site or $49 for 10 sites. Nothing renews, so there is nothing to cancel."
+    },
+    {
+      "question": "Can I get a refund?",
+      "answer": "Yes. Email support@getaisitescan.com within 7 days of the purchase for a full refund. No reason is needed."
+    }
+  ]
+}

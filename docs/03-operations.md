@@ -3,7 +3,7 @@
 ## Deploy
 
 - Push to `main` on GitHub. Vercel builds and deploys to production automatically (about 30 to 70 seconds).
-- Production URL: https://ai-site-scan.vercel.app
+- Production URL: https://getaisitescan.com (the old https://ai-site-scan.vercel.app still works)
 - Deployment protection is off, so the site is public.
 - Do **not** use "Add New > Import" in Vercel for this repo. It creates a second project. Git is already connected in Project > Settings > Git.
 
@@ -20,6 +20,37 @@
 Environment variables (optional):
 - `RATE_MAX`: scans per IP per 10 minutes (default 10).
 - `AGENT_RATE_MAX`: agent readiness checks per IP per 10 minutes (default 20).
+
+Version 2.5 settings. Each feature stays off until its settings exist. Add them in Vercel > Project > Settings > Environment Variables, then redeploy.
+
+| Variable | Used by | Value |
+|---|---|---|
+| `SITE_URL` | all | `https://getaisitescan.com` |
+| `SUPPORT_EMAIL` | config | `support@getaisitescan.com` |
+| `POLAR_ORG_ID` | unlock, claim | Polar organization ID |
+| `POLAR_CHECKOUT_SINGLE`, `POLAR_CHECKOUT_PACK` | config | Checkout link URLs of the two products |
+| `POLAR_PORTAL_URL` | config | `https://polar.sh/<org-slug>/portal` |
+| `POLAR_ACCESS_TOKEN` | claim, unlock | Organization access token with scopes `checkouts:read`, `customer_sessions:write`, `license_keys:read` |
+| `POLAR_WEBHOOK_SECRET` | polar-webhook | Secret of the webhook endpoint |
+| `POLAR_BENEFIT_IDS` | unlock, claim | Optional: comma list of the two License Key benefit IDs |
+| `POLAR_SERVER` | all Polar calls | `sandbox` for tests, empty for production |
+| `POLAR_API_VERSION` | all Polar calls | Optional, default `2026-10`. Upgrade before Polar removes it |
+| `PRICE_SINGLE`, `PRICE_PACK` | config | Optional, default 19 and 49. Must match Polar |
+| `RESEND_API_KEY`, `EMAIL_FROM` | email, webhook, cron | Resend key and a sender on a verified domain |
+| `OWNER_EMAIL` | webhook, cron | Where sale and self-check emails go |
+| `PUBLIC_POSTHOG_KEY`, `PUBLIC_POSTHOG_HOST` | config | PostHog project key and host |
+| `GADS_ID`, `GADS_PURCHASE_LABEL`, `GADS_CHECKOUT_LABEL`, `GADS_LEAD_LABEL` | config | Google Ads tag and conversion labels |
+| `CRON_SECRET` | cron-selfcheck | Random string. Vercel sends it to the cron call |
+| `SELFCHECK_MIN_SCORE` | cron-selfcheck | Optional, default 90 |
+
+## Payments (Polar)
+
+- Two one-time products, each with a License Key benefit: 1 activation (single site) and 10 activations (pack). No expiry, no usage limit, customer cannot deactivate.
+- Checkout link success URLs: `https://getaisitescan.com/?paid=single&checkout_id={CHECKOUT_ID}` and `...?paid=pack&checkout_id={CHECKOUT_ID}`.
+- Webhook endpoint: `https://getaisitescan.com/api/polar-webhook`, format Raw, event `order.paid`, API version 2026-10.
+- Flow: buy (new tab) > Polar checkout > success URL > `/api/claim` reads the key > `/api/unlock` activates it for the site (label = host) > the guide opens. If claim is off or slow, the buyer pastes the key from Polar's email.
+- Test in the Polar sandbox (`POLAR_SERVER=sandbox` on a preview deployment) or with a 100% discount code in production. Never test with a real card: Polar treats it as card testing.
+- Support: Polar expects a reply within 48 hours when it loops us into a customer thread.
 
 ## Run and test locally
 
@@ -68,4 +99,4 @@ Notes for local tests:
 
 ## Costs
 
-- Vercel Hobby plan. No paid services. The screenshot function is the heaviest part (Chrome, 2 GB, a few seconds per image). Edge caching limits repeat cost.
+- Vercel Hobby plan. Hobby is for personal, non-commercial use: move to Pro before the first sale. No other paid services until the Polar, Resend and PostHog settings are added (all have free tiers). The screenshot function is the heaviest part (Chrome, 2 GB, a few seconds per image). Edge caching limits repeat cost.

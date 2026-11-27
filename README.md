@@ -20,6 +20,7 @@ Full docs are in [`docs/`](docs/): overview, architecture, operations, decisions
 - Plain-language verdict, severity counts, share link, copy summary. The AI journey strip filters the issue list.
 - **Where is the business?** A shop, clinic, restaurant or delivery business must say where it is in the page text. If the address is missing, or only in hidden structured data, the report shows a red alert under the score, a critical fix at the top and a ready-to-paste fix (an address block and LocalBusiness JSON-LD filled from the site's own data). Software and media sites are never flagged.
 - **Agent readiness** (a closed Details panel): 23 checks for the standards AI agents look for. They are the same ones isitagentready.com (Cloudflare) tests: robots.txt, sitemap, Link headers, DNS-AID, Markdown for agents, Search for Agents, AI bot rules, Content Signals, Web Bot Auth, API catalog, OAuth and OIDC metadata, Auth.md, MCP server card, A2A agent card, Agent Skills, WebMCP, ARD, Poppy, and the payment protocols x402, MPP, UCP and ACP. Each row shows what we asked, why it matters and how to fix it. The result is a level from 0 (Not Ready) to 5 (Agent-Native). It does not change the score.
+- **Full fix guide (paid, v2.5)**: the first 3 fixes are free. The rest, and the guide file, unlock with a Polar license key: $19 for one site, $49 for 10 sites, one-time. The key arrives on its own after checkout. Pricing, contact, refund, terms and privacy pages meet merchant review rules.
 - Calm, playful interface: a small mascot, a count-up score ring, smooth open and close, confetti only for a great score with no critical issue. It respects "reduce motion".
 
 ## How it works
@@ -61,6 +62,6 @@ python -m unittest discover -s tests
 
 ## Deploy
 
-The Vercel project `ai-site-scan` is connected to this repo. Each push to `main` deploys to https://ai-site-scan.vercel.app. Other branches get a preview URL.
+The Vercel project `ai-site-scan` is connected to this repo. Each push to `main` deploys to https://getaisitescan.com (and https://ai-site-scan.vercel.app). Other branches get a preview URL.
 Do not use "Import" in Vercel again: it creates a second project.
 Bump the version in `api/scan.py` (`APP_VERSION`) and `index.html` (`APP_VERSION`) on every production push.

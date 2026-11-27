@@ -1,0 +1,27 @@
+{
+  "name": "AI Site Scan",
+  "url": "https://getaisitescan.com/",
+  "capabilities": [
+    "AI readiness score from 0 to 100",
+    "AI view of a page without JavaScript",
+    "Test of 14 AI crawlers and assistants",
+    "23 agent-readiness checks",
+    "llms.txt check and generator",
+    "Full fix guide with ready-to-paste code"
+  ],
+  "pricing": {
+    "scan": "free",
+    "fix_guide_one_site_usd": 19,
+    "fix_guide_ten_sites_usd": 49,
+    "billing": "one-time payment, no subscription",
+    "currency": "USD",
+    "refund_days": 7,
+    "delivery": "instant, digital, license key",
+    "merchant_of_record": "Polar Software, Inc. (polar.sh)",
+    "pricing_page": "https://getaisitescan.com/pricing"
+  },
+  "contact": {
+    "email": "support@getaisitescan.com",
+    "page": "https://getaisitescan.com/contact"
+  }
+}
