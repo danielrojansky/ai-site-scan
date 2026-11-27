@@ -7,6 +7,16 @@
 
 const { env, send } = require("./_lib");
 
+// POLAR_PORTAL_URL may be the full portal address or only the organization slug
+// ("daniel-consulting" becomes https://polar.sh/daniel-consulting/portal).
+function portalUrl() {
+  const v = env("POLAR_PORTAL_URL");
+  if (!v || /^https?:\/\//i.test(v)) return v;
+  const slug = v.replace(/^\/+|\/+$/g, "").replace(/\/portal$/i, "");
+  if (!/^[a-z0-9][a-z0-9-]*$/i.test(slug)) return "";
+  return `${env("POLAR_SERVER") === "sandbox" ? "https://sandbox.polar.sh" : "https://polar.sh"}/${slug}/portal`;
+}
+
 module.exports = (req, res) => {
   const single = env("POLAR_CHECKOUT_SINGLE"), pack = env("POLAR_CHECKOUT_PACK");
   const cfg = {
@@ -15,7 +25,7 @@ module.exports = (req, res) => {
     paywall: !!(env("POLAR_ORG_ID") && single),
     checkout: { single, pack },
     prices: { single: Number(env("PRICE_SINGLE", "19")) || 19, pack: Number(env("PRICE_PACK", "49")) || 49 },
-    portal: env("POLAR_PORTAL_URL"),
+    portal: portalUrl(),
     email: !!(env("RESEND_API_KEY") && env("EMAIL_FROM")),
     posthog: env("PUBLIC_POSTHOG_KEY") ? { key: env("PUBLIC_POSTHOG_KEY"), host: env("PUBLIC_POSTHOG_HOST", "https://us.i.posthog.com") } : null,
     ads: env("GADS_ID")

@@ -29,7 +29,7 @@ Version 2.5 settings. Each feature stays off until its settings exist. Add them 
 | `SUPPORT_EMAIL` | config | `support@getaisitescan.com` |
 | `POLAR_ORG_ID` | unlock, claim | Polar organization ID |
 | `POLAR_CHECKOUT_SINGLE`, `POLAR_CHECKOUT_PACK` | config | Checkout link URLs of the two products |
-| `POLAR_PORTAL_URL` | config | `https://polar.sh/<org-slug>/portal` |
+| `POLAR_PORTAL_URL` | config | `https://polar.sh/<org-slug>/portal`, or only the org slug |
 | `POLAR_ACCESS_TOKEN` | claim, unlock | Organization access token with scopes `checkouts:read`, `customer_sessions:write`, `license_keys:read` |
 | `POLAR_WEBHOOK_SECRET` | polar-webhook | Secret of the webhook endpoint |
 | `POLAR_BENEFIT_IDS` | unlock, claim | Optional: comma list of the two License Key benefit IDs |
