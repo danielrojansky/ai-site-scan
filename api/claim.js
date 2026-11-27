@@ -11,6 +11,14 @@
 const { env, send, limited, clientIp, siteUrl, polar } = require("./_lib");
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Granted keys from this order (not an older one), newest first.
+function pick(items, ck) {
+  const benefits = env("POLAR_BENEFIT_IDS").split(",").map((x) => x.trim()).filter(Boolean);
+  return (items || [])
+    .filter((x) => x && x.key && x.status === "granted" && (!benefits.length || benefits.includes(x.benefit_id)))
+    .filter((x) => !ck.created_at || later(x.created_at, ck.created_at))
+    .sort((a, b) => (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0));
+}
 const later = (a, b) => (Date.parse(a) || 0) >= (Date.parse(b) || 0) - 60 * 1000;
 
 module.exports = async (req, res) => {
@@ -20,34 +28,48 @@ module.exports = async (req, res) => {
   if (limited("claim:" + clientIp(req), 40, 10 * 60 * 1000)) return send(res, 429, { error: "Too many tries. Wait a few minutes." });
 
   const id = String(new URL(req.url, "http://local").searchParams.get("checkout_id") || "").trim();
-  if (!UUID.test(id)) return send(res, 400, { error: "This link has no valid checkout ID." });
+  if (!UUID.test(id)) { console.warn(`claim bad checkout id length=${id.length}`); return send(res, 400, { error: "This link has no valid checkout ID." }); }
 
   try {
     const c = await polar(`/v1/checkouts/${id}`, null, { auth: true, method: "GET" });
-    if (c.status === 404) return send(res, 404, { error: "This checkout was not found." });
+    if (c.status === 404) { console.warn(`claim checkout=${id.slice(0, 8)} not found`); return send(res, 404, { error: "This checkout was not found." }); }
+    if (!c.ok) console.warn(`claim checkout=${id.slice(0, 8)} polar status=${c.status}`);
     if (!c.ok || !c.data) return send(res, 502, { error: "Could not reach Polar. Trying again…", pending: true });
     const ck = c.data;
-    if (ck.organization_id && ck.organization_id !== org) return send(res, 404, { error: "This checkout was not found." });
+    const tag = `claim checkout=${id.slice(0, 8)} status=${ck.status} customer=${ck.customer_id ? "yes" : "no"}`;
+    // The token only sees its own organization, so a mismatch means POLAR_ORG_ID is set wrong.
+    if (ck.organization_id && ck.organization_id !== org) console.warn(`${tag} POLAR_ORG_ID does not match the checkout's organization`);
     if (ck.status !== "succeeded" || !ck.customer_id) {
       const pending = ck.status === "open" || ck.status === "confirmed" || (ck.status === "succeeded" && !ck.customer_id);
+      console.log(`${tag} pending=${pending}`);
       return send(res, 200, { ok: false, pending, status: ck.status });
     }
 
+    // Way 1: the buyer's own keys, through a customer session (also gives a signed-in portal link).
     const s = await polar("/v1/customer-sessions/", { customer_id: ck.customer_id, return_url: siteUrl() + "/" }, { auth: true });
-    if (!s.ok || !s.data || !s.data.token) return send(res, 502, { error: "Could not reach Polar. Trying again…", pending: true });
-
-    const k = await polar("/v1/customer-portal/license-keys/?limit=100", null, { auth: s.data.token, method: "GET" });
-    const benefits = env("POLAR_BENEFIT_IDS").split(",").map((x) => x.trim()).filter(Boolean);
-    const keys = (k.ok && k.data && Array.isArray(k.data.items) ? k.data.items : [])
-      .filter((x) => x && x.key && x.status === "granted" && (!benefits.length || benefits.includes(x.benefit_id)))
-      .filter((x) => !ck.created_at || later(x.created_at, ck.created_at))  // the key from this order, not an older one
-      .sort((a, b) => (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0));
+    const portal = (s.ok && s.data && s.data.customer_portal_url) || null;
+    let items = [], how = "";
+    if (s.ok && s.data && s.data.token) {
+      const k = await polar("/v1/customer-portal/license-keys/?limit=100", null, { auth: s.data.token, method: "GET" });
+      if (k.ok && k.data && Array.isArray(k.data.items)) { items = k.data.items; how = "portal"; }
+      else console.warn(`${tag} portal keys failed status=${k.status}`);
+    } else console.warn(`${tag} customer session failed status=${s.status}`);
+    // Way 2: the organization's keys for this customer (token scope license_keys:read).
+    if (!pick(items, ck).length) {
+      const q = new URLSearchParams({ organization_id: ck.organization_id || org, limit: "100" });
+      const k = await polar(`/v1/license-keys/?${q}`, null, { auth: true, method: "GET" });
+      if (k.ok && k.data && Array.isArray(k.data.items)) { items = k.data.items.filter((x) => x && x.customer_id === ck.customer_id); how = "org"; }
+      else console.warn(`${tag} org keys failed status=${k.status}`);
+    }
+    const keys = pick(items, ck);
     // Polar grants the key a few seconds after the payment: the page asks again.
-    if (!keys.length) return send(res, 200, { ok: false, pending: true, status: "granting", portal: s.data.customer_portal_url || null });
-
+    if (!keys.length) {
+      console.log(`${tag} keys=0 seen=${items.length} via=${how || "none"} pending=true`);
+      return send(res, 200, { ok: false, pending: true, status: "granting", portal });
+    }
     const key = keys[0];
-    console.log(`claim checkout=${id.slice(0, 8)} limit=${key.limit_activations ?? "none"}`);
-    return send(res, 200, { ok: true, key: key.key, sites_limit: key.limit_activations ?? null, portal: s.data.customer_portal_url || null });
+    console.log(`${tag} key found via=${how} limit=${key.limit_activations ?? "none"}`);
+    return send(res, 200, { ok: true, key: key.key, sites_limit: key.limit_activations ?? null, portal });
   } catch (e) {
     console.error("claim failed:", (e && e.stack) || e);
     return send(res, 502, { error: "Could not reach Polar. Trying again…", pending: true });
