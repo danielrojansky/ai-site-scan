@@ -452,6 +452,8 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
 .mstat:empty,.kmsg:empty{display:none}
 .mstat button{margin-left:6px}
 .paydlg{border:none;border-radius:18px;padding:22px 22px 18px;max-width:460px;width:calc(100% - 32px);box-shadow:var(--shadow-lg);color:var(--ink)}
+.paydlg.paid .psub,.paydlg.paid .pinc,.paydlg.paid .pbuy,.paydlg.paid .pnote2{display:none}
+.paydlg.paid .pkey{border-top:none;margin-top:4px;padding-top:0}
 .paydlg::backdrop{background:rgba(20,23,28,.45)}
 .paydlg .ptitle2{font-size:22px;font-weight:700;letter-spacing:-.015em;margin:0 34px 4px 0}
 .paydlg .pclose{position:absolute;top:10px;right:10px;margin:0}
@@ -1771,6 +1773,7 @@ function refreshPayUi(){
 function openPay(from){
   if(!DATA || !payOn()) return;
   const host = hostOf(DATA.url), dlg = $("#payDlg"), pr = CFG.prices || {};
+  dlg.classList.remove("paid");
   $("#payTitle").textContent = "Get the full fix guide";
   $("#payHost").textContent = host; $("#payN").textContent = ISSUES.length;
   $("#paySingle").textContent = "$" + (pr.single || 19); $("#payPack").textContent = "$" + (pr.pack || 49);
@@ -1823,7 +1826,7 @@ $("#keyIn").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventD
    /api/claim fetches the new license key, so the guide unlocks with no copy and paste.
    If that is off or slow, the buyer pastes the key from Polar's email or customer portal. */
 async function claimKey(id){
-  for(let i = 0; i < 12; i++){
+  for(let i = 0; i < 24; i++){  /* about 60 s: Polar grants the key a few seconds after payment */
     let r = null, d = {};
     try { r = await fetch("/api/claim?checkout_id=" + encodeURIComponent(id), {cache: "no-store"}); d = await r.json().catch(() => ({})); } catch {}
     if(r && r.ok && d.ok && d.key) return d;
@@ -1849,8 +1852,9 @@ async function handleReturn(){
     return;
   }
   openPay("return");
-  $("#payTitle").textContent = "Thank you! Getting your license key…";
-  $("#keyMsg").textContent = "This takes a few seconds.";
+  $("#payDlg").classList.add("paid");  /* after payment: no buy buttons, only the key */
+  $("#payTitle").textContent = "Payment received. Unlocking your guide…";
+  $("#keyMsg").textContent = "This takes a few seconds. Please keep this page open.";
   const got = checkoutId ? await claimKey(checkoutId) : null;
   if(got){
     $("#keyIn").value = got.key; saveLastKey(got.key);
@@ -1859,8 +1863,11 @@ async function handleReturn(){
     await doUnlock("Thank you! Your guide is unlocked. Polar emailed your receipt.");
     if(isUnlocked(hostOf(DATA.url))) return;
   }
-  $("#payTitle").textContent = "Thank you! Now unlock your guide";
-  if(!got) $("#keyMsg").textContent = "Your license key is in the email from Polar and in the Polar customer portal. Paste it above.";
+  $("#payTitle").textContent = "Payment received. One more step";
+  if(!got){
+    $("#keyMsg").textContent = "Your license key is in the email from Polar and in the Polar customer portal. Paste it above and click Unlock.";
+    track("key_claim_failed", {host: hostOf(DATA.url), has_checkout_id: !!checkoutId});
+  }
   $("#keyIn").focus();
 }
 
