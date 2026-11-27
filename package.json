@@ -1,9 +1,12 @@
 {
   "name": "ai-site-scan",
   "private": true,
-  "engines": { "node": "24.x" },
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
     "@sparticuz/chromium": "158.0.0",
+    "@supabase/supabase-js": "^2.119.2",
     "puppeteer-core": "25.18.1"
   }
 }

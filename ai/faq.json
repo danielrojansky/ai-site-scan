@@ -6,7 +6,7 @@
     },
     {
       "question": "Is the scan free?",
-      "answer": "Yes. The scan, the score, the AI view, the bot test and the top 3 fixes are free and need no login. The full fix guide with code for every fix costs $19 for one site or $49 for 10 sites."
+      "answer": "Yes. The scan, the score, the AI view, the bot test and the top 3 fixes are free and need no login. The full report costs $19 once for one site, or $29 a month for Pro with 10 reports."
     },
     {
       "question": "How long does a scan take?",
@@ -21,16 +21,16 @@
       "answer": "The score comes from the open-source geo-optimizer-skill engine (MIT license). AI Site Scan adds its own extra checks, which do not change the score."
     },
     {
-      "question": "How do I get the full fix guide after I pay?",
-      "answer": "Right away. You pay on Polar's secure checkout and come back to AI Site Scan. Your license key is applied and every fix opens on screen. Polar also emails a receipt with a link to the key."
+      "question": "How do I get the full report after I pay?",
+      "answer": "Right away. You log in with your email or Google, pay on Polar's secure checkout and come back to AI Site Scan. Every fix opens on screen, and the report is emailed to you and saved in your account."
     },
     {
-      "question": "Is the full fix guide a subscription?",
-      "answer": "No. It is a one-time payment in US dollars: $19 for one site or $49 for 10 sites. Nothing renews, so there is nothing to cancel."
+      "question": "Is it a subscription?",
+      "answer": "The Full report ($19) is a one-time payment for one site with 1 rescan within 30 days. Pro ($29 a month) is a subscription with 10 reports a month that renews until you cancel."
     },
     {
       "question": "Can I get a refund?",
-      "answer": "Yes. Email support@getaisitescan.com within 7 days of the purchase for a full refund. No reason is needed."
+      "answer": "Yes. Email support@getaisitescan.com within 7 days of buying a Full report for a full refund. For Pro, see https://getaisitescan.com/refund."
     }
   ]
 }

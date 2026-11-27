@@ -1,9 +1,13 @@
 // Polar webhook: POST /api/polar-webhook
 // On "order.paid": emails you the sale and sends a "purchase" event to PostHog (server side, so ad blockers cannot hide it).
 // Settings: POLAR_WEBHOOK_SECRET (required), OWNER_EMAIL (sale alerts), RESEND_API_KEY + EMAIL_FROM, PUBLIC_POSTHOG_KEY.
-// In Polar: Settings > Webhooks > Add endpoint, format Raw, URL https://getaisitescan.com/api/polar-webhook, event order.paid.
+// In Polar: Settings > Webhooks > Add endpoint, format Raw, URL https://getaisitescan.com/api/polar-webhook, events order.paid and order.refunded.
+// order.paid also gives report credits (see grantFromOrder). A 500 makes Polar retry.
 
 const { env, send, readRaw, verifyWebhook, capture, sendEmail, esc } = require("./_lib");
+const { db, dbReady, grantFromOrder } = require("./_db");
+
+
 
 const UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
 
@@ -41,7 +45,17 @@ module.exports = async (req, res) => {
     return send(res, 400, { error: "Not JSON." });
   }
 
+  if (evt && evt.type === "order.refunded" && evt.data) {
+    const o = evt.data;
+    if (dbReady() && Number(o.refunded_amount || 0) >= Number(o.total_amount || 0)) {
+      const { error } = await db().rpc("revoke_order", { p_order: String(o.id) });
+      console.log(`order.refunded id=${o.id} revoked=${!error}${error ? " " + error.message : ""}`);
+    } else console.log(`order.refunded id=${o.id} partial, kept`);
+  }
+
   if (evt && evt.type === "order.paid" && evt.data) {
+    const granted = await grantFromOrder(evt.data);
+    if (granted.startsWith("error")) { console.error(`order.paid id=${evt.data.id} ${granted}`); return send(res, 500, { error: "Retry later." }); }
     const f = orderFacts(evt.data);
     const owner = env("OWNER_EMAIL");
     const jobs = [
@@ -60,9 +74,10 @@ module.exports = async (req, res) => {
       );
     }
     await Promise.allSettled(jobs);
-    console.log(`order.paid id=${f.id} amount=${f.amount} ${f.currency} product=${f.product}`);
+    console.log(`order.paid id=${f.id} amount=${f.amount} ${f.currency} product=${f.product} credits=${granted}`);
   }
   return send(res, 202, { ok: true });
 };
 
 module.exports.orderFacts = orderFacts;
+module.exports.grantFromOrder = grantFromOrder;

@@ -4,11 +4,20 @@
   "buildCommand": null,
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/llms-txt", "destination": "/" },
-    { "source": "/ai-robots-txt", "destination": "/" }
+    {
+      "source": "/llms-txt",
+      "destination": "/"
+    },
+    {
+      "source": "/ai-robots-txt",
+      "destination": "/"
+    }
   ],
   "crons": [
-    { "path": "/api/cron-selfcheck", "schedule": "0 5 * * *" }
+    {
+      "path": "/api/cron-selfcheck",
+      "schedule": "0 5 * * *"
+    }
   ],
   "functions": {
     "api/scan.py": {
@@ -33,14 +42,6 @@
       "maxDuration": 5,
       "memory": 256
     },
-    "api/unlock.js": {
-      "maxDuration": 15,
-      "memory": 256
-    },
-    "api/claim.js": {
-      "maxDuration": 15,
-      "memory": 256
-    },
     "api/email.js": {
       "maxDuration": 60,
       "memory": 256
@@ -51,6 +52,10 @@
     },
     "api/cron-selfcheck.js": {
       "maxDuration": 60,
+      "memory": 256
+    },
+    "api/account.js": {
+      "maxDuration": 20,
       "memory": 256
     }
   },
@@ -71,7 +76,10 @@
     {
       "source": "/ai/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
       ]
     }
   ]

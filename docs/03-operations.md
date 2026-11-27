@@ -27,15 +27,15 @@ Version 2.5 settings. Each feature stays off until its settings exist. Add them 
 |---|---|---|
 | `SITE_URL` | all | `https://getaisitescan.com` |
 | `SUPPORT_EMAIL` | config | `support@getaisitescan.com` |
-| `POLAR_ORG_ID` | unlock, claim | Polar organization ID |
-| `POLAR_CHECKOUT_SINGLE`, `POLAR_CHECKOUT_PACK` | config | Checkout link URLs of the two products |
-| `POLAR_PORTAL_URL` | config | `https://polar.sh/<org-slug>/portal`, or only the org slug |
-| `POLAR_ACCESS_TOKEN` | claim, unlock | Organization access token with scopes `checkouts:read`, `customer_sessions:write`, `license_keys:read` |
-| `POLAR_WEBHOOK_SECRET` | polar-webhook | Secret of the webhook endpoint |
-| `POLAR_BENEFIT_IDS` | unlock, claim | Optional: comma list of the two License Key benefit IDs |
+| `SUPABASE_SECRET_KEY` | account, webhook, config | Supabase secret key (project ai-site-scan). Turns accounts and the paywall on |
+| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | account, config | Optional: defaults point to the ai-site-scan project |
+| `POLAR_PRODUCT_SINGLE`, `POLAR_PRODUCT_PRO` | account, webhook | Product IDs of "Full report" ($19 once) and "Pro" ($29 a month) |
+| `POLAR_ACCESS_TOKEN` | account | Organization token with scopes `checkouts:write`, `customer_sessions:write`, `orders:read` |
+| `POLAR_WEBHOOK_SECRET` | polar-webhook | Secret of the webhook endpoint (events order.paid, order.refunded) |
 | `POLAR_SERVER` | all Polar calls | `sandbox` for tests, empty for production |
-| `POLAR_API_VERSION` | all Polar calls | Optional, default `2026-10`. Upgrade before Polar removes it |
-| `PRICE_SINGLE`, `PRICE_PACK` | config | Optional, default 19 and 49. Must match Polar |
+| `POLAR_API_VERSION` | all Polar calls | Optional, default `2026-10` |
+| `PRICE_SINGLE`, `PRICE_PRO`, `PRO_REPORTS_PER_MONTH` | config, webhook | Optional, default 19, 29 and 10. Must match Polar |
+| `LOGIN_GOOGLE` | config | `1` after Google login is set up in Supabase |
 | `RESEND_API_KEY`, `EMAIL_FROM` | email, webhook, cron | Resend key and a sender on a verified domain |
 | `OWNER_EMAIL` | webhook, cron | Where sale and self-check emails go |
 | `PUBLIC_POSTHOG_KEY`, `PUBLIC_POSTHOG_HOST` | config | PostHog project key and host |
@@ -43,13 +43,14 @@ Version 2.5 settings. Each feature stays off until its settings exist. Add them 
 | `CRON_SECRET` | cron-selfcheck | Random string. Vercel sends it to the cron call |
 | `SELFCHECK_MIN_SCORE` | cron-selfcheck | Optional, default 90 |
 
-## Payments (Polar)
+## Accounts and payments (v3)
 
-- Two one-time products, each with a License Key benefit: 1 activation (single site) and 10 activations (pack). No expiry, no usage limit, customer cannot deactivate.
-- Checkout link success URLs: `https://getaisitescan.com/?paid=single&checkout_id={CHECKOUT_ID}` and `...?paid=pack&checkout_id={CHECKOUT_ID}`.
-- Webhook endpoint: `https://getaisitescan.com/api/polar-webhook`, format Raw, event `order.paid`, API version 2026-10.
-- Flow: buy (new tab) > Polar checkout > success URL > `/api/claim` reads the key > `/api/unlock` activates it for the site (label = host) > the guide opens. If claim is off or slow, the buyer pastes the key from Polar's email.
-- Test in the Polar sandbox (`POLAR_SERVER=sandbox` on a preview deployment) or with a 100% discount code in production. Never test with a real card: Polar treats it as card testing.
+- Login: Supabase Auth, email one-time code (or the link in the same email) and Google. The page loads supabase-js from jsdelivr only when needed.
+- Database (Supabase project `ai-site-scan`, us-east-1): `grants` (credits from Polar orders), `unlocks` (a site unlocked by one credit, with its rescans), `reports` (saved reports). Row security: users read only their own rows. The server writes through `grant_order`, `revoke_order` and `claim_report` (see `supabase/migrations/`).
+- Products in Polar: "Full report" $19 one-time (1 credit; the site gets 1 rescan within 30 days) and "Pro" $29 a month (10 credits per paid month, valid until the period end + 3 days; rescans of its sites are included). No benefits needed.
+- Flow: log in > `/api/account?do=checkout` creates a Polar checkout for this user (`external_customer_id` = user id, email filled in) > success URL `/?paid=<plan>&checkout_id={CHECKOUT_ID}` > the page calls `sync` (reads this user's paid orders, in case the webhook is late) and `me` until a credit shows > `unlock` uses it for the scan on screen > `save` stores the guide and emails it with the guide attached.
+- Webhook `order.paid` gives credits (a database error answers 500 so Polar retries). `order.refunded` (full) removes the order's credits and sites.
+- Test with a 100% discount code. Never test with a real card.
 - Support: Polar expects a reply within 48 hours when it loops us into a customer thread.
 
 ## Run and test locally

@@ -1,8 +1,8 @@
 {
   "name": "AI Site Scan",
-  "description": "Free check of how well ChatGPT, Claude, Perplexity and Google AI can reach, read and understand a website. It gives a score from 0 to 100, a side-by-side AI view, a test of 14 AI bots, 23 agent-readiness checks and a ranked fix list. The full fix guide is a one-time payment of $19 for one site or $49 for 10 sites, with instant delivery and a 7-day refund.",
+  "description": "Free check of how well ChatGPT, Claude, Perplexity and Google AI can reach, read and understand a website. It gives a score from 0 to 100, a side-by-side AI view, a test of 14 AI bots, 23 agent-readiness checks and a ranked fix list. The full report costs $19 once for one site, or $29 a month for Pro with 10 reports a month. Reports are emailed and saved in the buyer's account.",
   "url": "https://getaisitescan.com/",
-  "lastModified": "2026-11-27",
+  "lastModified": "2026-11-28",
   "pricing": "https://getaisitescan.com/pricing",
   "contact": "support@getaisitescan.com",
   "webmcp": {

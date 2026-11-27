@@ -22,6 +22,7 @@
 | New interface (v2.3) | One narrow column. One list of issues (each issue once: what the AI saw, how to fix), severe first. The AI journey is a strip that filters the list. Details (AI view, bots, platforms, key facts, score breakdown) are closed panels. The screenshot loads only when its panel opens | Keep the separate "What the AI missed", "Start here" and "All fixes" sections; remove the mascot; keep the wide layout | Daniel asked for less visible text, everything still reachable, severe issues first. Showing one issue three times (missed, top fixes, all fixes) was the main source of text. The mascot stays small and calm |
 | Agent readiness (v2.4) | A separate function `/api/agent` and a closed Details panel with 23 rows and a level from 0 to 5. The page asks for it after the scan. Only WebMCP uses a real browser, once, when the panel opens. Not in the score | Put the checks in `/api/scan`; add them to the score; run every check in Chrome; depend on isitagentready.com's own scanner | The scan stays at 1 to 3 seconds and the score stays the engine's. Files, headers and DNS can be read exactly and cheaply. Only WebMCP needs a running page. We apply the public standards and the rules in isitagentready.com's public documentation ourselves, and compared the results with its website on four real sites |
 | Payments (v2.5) | Polar as merchant of record. One-time products with a License Key benefit. Checkout links, no own checkout page. The key unlocks the guide; one activation per site (label = host) | Stripe (Daniel would be the seller and handle tax himself); Dodo Payments; Lemon Squeezy; own database of buyers | Polar handles tax and receipts in every country, pays out to Israel, and keeps the keys. No database to run |
+| Accounts (v3) | Supabase Auth and Postgres, one serverless function for all account actions | Own email codes and a KV store; Clerk or Auth0 | Free at this size, row security, Google login built in, and one function keeps the project under Vercel's function limit |
 | Key delivery (v2.5) | `/api/claim`: the success URL carries the checkout ID; the server reads the checkout, opens a customer session and reads the new key; the page applies it | Buyer pastes the key from Polar's email; webhook that emails the key | No copy and paste, so "instant delivery" is true. Paste stays as a fallback |
 | Merchant review pages (v2.5) | Pricing, contact, refunds and delivery, terms, privacy, built from one template with the same footer on every page | Policy generator text; one long legal page | Polar, Dodo and card networks check that prices, delivery, refund and cancellation terms, a contact route and the seller's identity are on the live site and match the account form |
 
@@ -116,6 +117,17 @@ All times Asia/Jerusalem.
 | 21:00 | Analytics and ads: PostHog without cookies until the visitor accepts, Google Ads tag only after consent. Both stay off until their settings exist |
 | 21:00 | Landing pages /llms-txt and /ai-robots-txt (the same app with their own headline) |
 | 21:00 | 13 new handler tests with a fake Polar (claim, unlock, config, webhook signature) and a browser test of the paywall, the return from checkout and every page |
+
+### 28 Nov 2026, version 3.0.0
+
+| Change |
+|---|
+| Accounts: log in with an email code or Google (Supabase). The free check still needs no login |
+| New plans: Full report $19 once (1 site, 1 rescan within 30 days) and Pro $29 a month (10 reports). License keys and the 10-site pack are gone |
+| Reports are emailed (guide attached) and saved in "My reports", where they open again later |
+| New `/api/account` function (me, checkout, unlock, save, sync, portal, report). `/api/claim` and `/api/unlock` removed |
+| Webhook gives and removes credits. Pricing, terms, refund and privacy pages describe the subscription, renewal and cancellation |
+| Tests: 13 account and webhook tests with a fake Supabase and Polar, credit rules tested in the database, browser test of scan, login, pay, unlock, workspace |
 
 ## Test results at launch
 

@@ -145,12 +145,13 @@ async function capture(event, distinctId, properties = {}) {
 /* ---------- Resend (email) ---------- */
 const emailReady = () => !!(env("RESEND_API_KEY") && env("EMAIL_FROM"));
 
-async function sendEmail({ to, subject, html, text, scheduledAt, replyTo, tags }) {
+async function sendEmail({ to, subject, html, text, scheduledAt, replyTo, tags, attachments }) {
   if (!emailReady()) return { ok: false, error: "Email is not set up." };
   const body = { from: env("EMAIL_FROM"), to: Array.isArray(to) ? to : [to], subject, html, text };
   if (scheduledAt) body.scheduled_at = scheduledAt;
   if (replyTo) body.reply_to = replyTo;
   if (tags) body.tags = tags;
+  if (attachments) body.attachments = attachments;  // [{filename, content: base64}]
   try {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
