@@ -165,6 +165,13 @@ All times Asia/Jerusalem.
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
 
+### 28 Nov 2026, version 4.0.2
+
+| Change |
+|---|
+| The bakery example in the hero is drawn with CSS (content from data-t attributes), so crawlers do not read its address, hours and price as ours. Our own scan had started to flag "Say where your business is" |
+| Smaller one-line cookie banner (under 5% of the screen), so the pop-up check passes on our own page |
+
 ### 28 Nov 2026, version 4.0.1
 
 | Change |
