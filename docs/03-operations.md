@@ -52,6 +52,7 @@ Version 3 settings. Each feature stays off until its settings exist. Add them in
 - Webhook `order.paid` gives credits (a database error answers 500 so Polar retries). `order.refunded` (full) removes the order's credits and sites.
 - Test with the 100% discount code `F53KRI8C` (shown as REVIEW100 in Polar). Never test with a real card. Polar asks for a card on the Pro subscription even at $0, so Pro cannot be tested this way.
 - "Scan again" in My reports uses the site's included rescan in one click (the page remembers the request for 2 minutes).
+- Analytics across the checkout: the page sends its PostHog ID and first-visit `utm_*` tags with the checkout; Polar keeps them in the order metadata, and the webhook uses them for the PostHog purchase event and the sale email.
 - Support: Polar expects a reply within 48 hours when it loops us into a customer thread.
 
 ## Run and test locally
@@ -67,7 +68,7 @@ Notes for local tests:
 - For the screenshot and WebMCP functions outside Vercel, set `CHROME_PATH` to a local Chrome (they are plain handlers: a small Node server can call them).
 - A browser test with Playwright can mock `/api/scan` and `/api/shot` and run the whole UI flow (scan, export, history, reopen, new scan).
 - Offline tests for the checks: `python -m unittest discover -s tests` (108 tests, under a second, no network).
-- Account, payment and email tests: `node tests/test_accounts.js` (18 tests with a fake Supabase, Polar, Resend and PostHog).
+- Account, payment and email tests: `node tests/test_accounts.js` (19 tests with a fake Supabase, Polar, Resend and PostHog).
 - Browser test of the paid flow: add `127.0.0.1 local.aisitescan.test` to `/etc/hosts`, run `python3 tests/devserver.py . 8765`, then `python3 tests/ui_flow.py` (Playwright with Chromium).
 - A small dev server (a `ThreadingHTTPServer` that serves `index.html` and routes `/api/scan` to `api/scan.handler`) is the quickest way to test the real scan and the page together, without `vercel dev`. Set `RATE_MAX=1000` for it.
 - To compare engine speed or scores, call `scan.scan(url)` in a Python shell. `scan.scan` runs the parallel path.

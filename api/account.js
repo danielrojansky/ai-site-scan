@@ -51,6 +51,15 @@ async function checkout(user, body) {
   const product = productId(plan === "pro" ? "pro" : "single");
   if (!product) return [503, { error: "This plan is not on sale yet." }];
   const host = hostOf(body.url) || "";
+  // The visitor's PostHog ID and first-visit campaign tags ride along, so the webhook's purchase event
+  // joins the visitor's funnel and the sale email names the source (polar-webhook.js orderFacts).
+  const meta = { user_id: user.id, plan, host };
+  const ph = String(body.ph || "");
+  if (/^[\w.:@$-]{1,100}$/.test(ph)) meta.reference_id = ph;
+  const utm = body.utm && typeof body.utm === "object" ? body.utm : {};
+  for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]) {
+    if (typeof utm[k] === "string" && utm[k].trim()) meta[k] = utm[k].trim().slice(0, 200);
+  }
   const r = await polar("/v1/checkouts/", {
     products: [product],
     external_customer_id: user.id,
@@ -58,7 +67,7 @@ async function checkout(user, body) {
     success_url: `${siteUrl()}/?paid=${plan}&checkout_id={CHECKOUT_ID}`,
     return_url: `${siteUrl()}/`,
     allow_discount_codes: true,
-    metadata: { user_id: user.id, plan, host },
+    metadata: meta,
   }, { auth: true });
   if (!r.ok || !r.data || !r.data.url) {
     console.error(`checkout failed status=${r.status} detail=${JSON.stringify(r.data && (r.data.detail || r.data.error)).slice(0, 300)}`);
