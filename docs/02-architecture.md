@@ -49,7 +49,7 @@ Hosting is on Vercel. Accounts, credits and saved reports are in Supabase (Postg
 | `api/shot.js` | Screenshot API (Node 24), CommonJS handler with dynamic `import()` |
 | `api/scan.py` `_benchmark()` | Writes the site address, date and score to Supabase `scan_scores` and reads `score_benchmark(s)`: how many sites (latest score each, 90 days) score lower. Needs `SUPABASE_SECRET_KEY`; fails quietly in about 2 s at most |
 | `assets/site.css` | Shared v4 style for the static pages (pricing, compare, sample, how-we-test, about, contact, legal) |
-| `index.md` | The home page in Markdown, served on / for `Accept: text/markdown` (vercel.json rewrite with a header condition) |
+| `index.md`, `middleware.js` | The home page in Markdown. `middleware.js` (Vercel Routing Middleware, before static files) serves it on / for `Accept: text/markdown` |
 | `sample.html` | Public sample report for react.dev |
 | `api/agentux.js` | Agent usability API (Node): opens the page in headless Chrome at 1280 x 800 like a browser agent, returns the accessibility tree, the layers that cover the screen, a screenshot and the checks |
 | `api/_agentux.js` | `snapshot()` and `motionProbe()` run inside the page; `evaluate()` is pure and turns a snapshot into checks and an A to F grade |
