@@ -29,7 +29,7 @@ Version 2.5 settings. Each feature stays off until its settings exist. Add them 
 | `SUPPORT_EMAIL` | config | `support@getaisitescan.com` |
 | `SUPABASE_SECRET_KEY` | account, webhook, config | Supabase secret key (project ai-site-scan). Turns accounts and the paywall on |
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | account, config | Optional: defaults point to the ai-site-scan project |
-| `POLAR_PRODUCT_SINGLE`, `POLAR_PRODUCT_PRO` | account, webhook | Product IDs of "Full report" ($19 once) and "Pro" ($29 a month) |
+| `POLAR_PRODUCT_SINGLE`, `POLAR_PRODUCT_PRO` | account, webhook | Product IDs of "Full report" ($19 once) and "Pro" ($29 a month). Fallback: `POLAR_CHECKOUT_SINGLE` / `POLAR_CHECKOUT_PACK`, used only when they hold a product ID |
 | `POLAR_ACCESS_TOKEN` | account | Organization token with scopes `checkouts:write`, `customer_sessions:write`, `orders:read` |
 | `POLAR_WEBHOOK_SECRET` | polar-webhook | Secret of the webhook endpoint (events order.paid, order.refunded) |
 | `POLAR_SERVER` | all Polar calls | `sandbox` for tests, empty for production |

@@ -12,7 +12,7 @@
 //           POLAR_PRODUCT_SINGLE, POLAR_PRODUCT_PRO, RESEND_API_KEY + EMAIL_FROM.
 
 const { env, send, readJson, limited, clientIp, hostOf, siteUrl, esc, polar, sendEmail, emailReady } = require("./_lib");
-const { db, dbReady, userFrom, grantFromOrder, UUID } = require("./_db");
+const { db, dbReady, userFrom, grantFromOrder, productId, UUID } = require("./_db");
 
 const PRO_REPORTS = () => Number(env("PRO_REPORTS_PER_MONTH", "10")) || 10;
 
@@ -48,7 +48,7 @@ async function me(user) {
 
 async function checkout(user, body) {
   const plan = body.plan === "pro" ? "pro" : "single";
-  const product = plan === "pro" ? env("POLAR_PRODUCT_PRO") : env("POLAR_PRODUCT_SINGLE");
+  const product = productId(plan === "pro" ? "pro" : "single");
   if (!product) return [503, { error: "This plan is not on sale yet." }];
   const host = hostOf(body.url) || "";
   const r = await polar("/v1/checkouts/", {

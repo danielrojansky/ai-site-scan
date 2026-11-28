@@ -7,15 +7,15 @@
 //   ads      <- GADS_ID (+ conversion labels)
 
 const { env, send } = require("./_lib");
-const { dbReady, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = require("./_db");
+const { dbReady, productId, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = require("./_db");
 
 module.exports = (req, res) => {
-  const plans = !!(dbReady() && env("POLAR_PRODUCT_SINGLE"));
+  const plans = !!(dbReady() && productId("single"));
   const cfg = {
     site: env("SITE_URL", "https://getaisitescan.com"),
     support: env("SUPPORT_EMAIL", "support@getaisitescan.com"),
     paywall: plans,                                  // accounts + products ready: the full guide needs a credit
-    pro: !!(plans && env("POLAR_PRODUCT_PRO")),
+    pro: !!(plans && productId("pro")),
     prices: { single: Number(env("PRICE_SINGLE", "19")) || 19, pro: Number(env("PRICE_PRO", "29")) || 29 },
     pro_reports: Number(env("PRO_REPORTS_PER_MONTH", "10")) || 10,
     supabase: { url: SUPABASE_URL(), key: SUPABASE_PUBLISHABLE_KEY(), google: env("LOGIN_GOOGLE", "") === "1" },

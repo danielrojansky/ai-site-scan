@@ -37,8 +37,8 @@ async function grantFromOrder(o) {
   const meta = o.metadata && typeof o.metadata === "object" ? o.metadata : {};
   const user = (o.customer && o.customer.external_id) || meta.user_id;
   if (!user || !UUID.test(String(user))) return "no user";
-  const pro = o.product_id && o.product_id === env("POLAR_PRODUCT_PRO");
-  const single = o.product_id && o.product_id === env("POLAR_PRODUCT_SINGLE");
+  const pro = o.product_id && o.product_id === productId("pro");
+  const single = o.product_id && o.product_id === productId("single");
   if (!pro && !single) return "other product";
   if (pro && !["subscription_create", "subscription_cycle"].includes(o.billing_reason)) return "skipped " + o.billing_reason;
   const end = o.subscription && o.subscription.current_period_end ? Date.parse(o.subscription.current_period_end) : Date.now() + 31 * 864e5;
@@ -50,4 +50,12 @@ async function grantFromOrder(o) {
   return error ? "error " + error.message : pro ? "pro granted" : "single granted";
 }
 
-module.exports = { db, dbReady, userFrom, grantFromOrder, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, UUID };
+/* Product IDs. POLAR_PRODUCT_* first; the older POLAR_CHECKOUT_SINGLE / POLAR_CHECKOUT_PACK
+   names are accepted only when they hold a product ID (a UUID), never a checkout link. */
+function productId(plan){
+  const [main, old] = plan === "pro" ? ["POLAR_PRODUCT_PRO", "POLAR_CHECKOUT_PACK"] : ["POLAR_PRODUCT_SINGLE", "POLAR_CHECKOUT_SINGLE"];
+  const a = env(main); if(a) return a;
+  const b = env(old); return UUID.test(b) ? b : "";
+}
+
+module.exports = { productId, db, dbReady, userFrom, grantFromOrder, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, UUID };
