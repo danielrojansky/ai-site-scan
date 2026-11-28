@@ -165,6 +165,12 @@ All times Asia/Jerusalem.
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
 
+### 28 Nov 2026, version 4.0.1
+
+| Change |
+|---|
+| Markdown for agents now works: a request for / with `Accept: text/markdown` gets /index.md from a Vercel Routing Middleware (`middleware.js`). The vercel.json rewrite did not apply because the static index.html wins, and its header rule labeled HTML as Markdown; both removed |
+
 ### 28 Nov 2026, version 4.0.0
 
 | Change |
