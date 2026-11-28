@@ -160,6 +160,12 @@ All times Asia/Jerusalem.
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
 
+### 28 Nov 2026, version 3.0.3
+
+| Change |
+|---|
+| Opening My reports reads the buyer's paid Polar orders once per visit, so a missed webhook heals by itself (before, only the return from checkout did this) |
+
 ## Test results at launch
 
 | Site | Score | Notes |

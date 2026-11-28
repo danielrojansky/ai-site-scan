@@ -50,6 +50,7 @@ Version 3 settings. Each feature stays off until its settings exist. Add them in
 - Products in Polar: "Full report" $19 one-time (1 credit; the site gets 1 rescan within 30 days) and "Pro" $29 a month (10 credits per paid month, valid until the period end + 3 days; rescans of its sites are included). No benefits needed.
 - Flow: log in > `/api/account?do=checkout` creates a Polar checkout for this user (`external_customer_id` = user id, email filled in) > success URL `/?paid=<plan>&checkout_id={CHECKOUT_ID}` > the page calls `sync` (reads this user's paid orders, in case the webhook is late) and `me` until a credit shows > `unlock` uses it for the scan on screen > `save` stores the guide and emails it with the guide attached.
 - Webhook `order.paid` gives credits (a database error answers 500 so Polar retries). `order.refunded` (full) removes the order's credits and sites.
+- If a webhook is missed: the return from checkout reads the buyer's paid orders (`sync`), and so does opening My reports (once per visit).
 - Test with the 100% discount code `F53KRI8C` (shown as REVIEW100 in Polar). Never test with a real card. Polar asks for a card on the Pro subscription even at $0, so Pro cannot be tested this way.
 - "Scan again" in My reports uses the site's included rescan in one click (the page remembers the request for 2 minutes).
 - Analytics across the checkout: the page sends its PostHog ID and first-visit `utm_*` tags with the checkout; Polar keeps them in the order metadata, and the webhook uses them for the PostHog purchase event and the sale email.

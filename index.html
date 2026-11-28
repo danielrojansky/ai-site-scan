@@ -714,7 +714,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
     </div>
   </div>
 
-  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.2</span></footer>
+  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.3</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div role="region" aria-label="Notifications"><div class="toast" id="toast" role="status"></div></div>
@@ -747,7 +747,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
 
 <script>
 "use strict";
-const APP_VERSION = "3.0.2"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "3.0.3"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -2021,6 +2021,8 @@ async function renderAcct(){
   login.classList.add("hide"); body.classList.remove("hide"); $("#acctTitle").textContent = "My reports";
   if(!ACCT) await loadMe();
   if(!ACCT){ $("#acctWho").textContent = "Could not load your account. Reload the page."; return; }
+  /* once per visit: read this buyer's paid Polar orders, in case a webhook was missed */
+  if(!SYNCED){ SYNCED = true; api("sync", {}).then(r => { if(r && r.ok && r.orders) loadMe(); }).catch(() => {}); }
   $("#acctWho").textContent = "Logged in as " + ACCT.email;
   const c = ACCT.credits || {};
   const lines = [];
@@ -2036,7 +2038,7 @@ async function renderAcct(){
     : '<p class="muted">No saved reports yet.</p>';
 }
 /* "Scan again" in My reports = the buyer asked for the rescan: use it without a second click (2 minutes) */
-let RESCAN_ASK = null;
+let RESCAN_ASK = null, SYNCED = false;
 async function openReport(id){
   try{
     const d = await api("report&id=" + encodeURIComponent(id));
@@ -2051,7 +2053,7 @@ $("#acctReports").addEventListener("click", e => {
   const o = e.target.closest("[data-open]"); if(o){ openReport(o.dataset.open); return; }
   const s = e.target.closest("[data-rescan]"); if(s){ RESCAN_ASK = {host: hostOf(s.dataset.rescan), t: Date.now()}; showView("scan"); $("#u").value = s.dataset.rescan; toggleClear(); run(s.dataset.rescan, {fresh: true}); }
 });
-$("#logoutBtn").onclick = async () => { if(SB) await SB.auth.signOut(); ACCT = null; CUR = null; renderAcct(); refreshAcctUi(); if(DATA) renderIssues(); toast("Logged out."); };
+$("#logoutBtn").onclick = async () => { if(SB) await SB.auth.signOut(); ACCT = null; CUR = null; SYNCED = false; renderAcct(); refreshAcctUi(); if(DATA) renderIssues(); toast("Logged out."); };
 $("#tabAcct").onclick = () => showView("acct");
 
 /* after the page loads: restore the login, then a Google return, a deep link or a purchase return */
