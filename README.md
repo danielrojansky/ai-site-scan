@@ -48,7 +48,11 @@ npx vercel dev
 ## Test
 
 ```bash
-python -m unittest discover -s tests
+python -m unittest discover -s tests   # scan checks (Python)
+node tests/test_accounts.js             # accounts, checkout, webhook (fake Supabase, Polar, Resend, PostHog)
+# browser flow: add "127.0.0.1 local.aisitescan.test" to /etc/hosts, then
+python3 tests/devserver.py . 8765 &
+python3 tests/ui_flow.py                # needs Playwright with Chromium
 ```
 
 ## Limits

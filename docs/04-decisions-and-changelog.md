@@ -129,6 +129,18 @@ All times Asia/Jerusalem.
 | Webhook gives and removes credits. Pricing, terms, refund and privacy pages describe the subscription, renewal and cancellation |
 | Tests: 13 account and webhook tests with a fake Supabase and Polar, credit rules tested in the database, browser test of scan, login, pay, unlock, workspace |
 
+### 28 Nov 2026, after launch
+
+| Change |
+|---|
+| Scoring-engine credit removed from public pages, llms files, FAQ data and scan output |
+| Webhook: sale email and PostHog revenue sent once per order (`webhook_events`), even when Polar repeats a delivery |
+| $0 orders (100% discount) are marked "Test order (free)" and send no revenue event; the buyer still gets the report |
+| Headers: `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `Permissions-Policy`, and a report-only Content-Security-Policy |
+| Caching: `/vendor/` for 1 year (versioned file names), logo, OG image and favicon for 1 day |
+| Product IDs also read from `POLAR_CHECKOUT_SINGLE` / `POLAR_CHECKOUT_PACK` when they hold a product ID |
+| Tests moved into the repo: `tests/test_accounts.js` (16), `tests/ui_flow.py` with `tests/devserver.py` |
+
 ## Test results at launch
 
 | Site | Score | Notes |

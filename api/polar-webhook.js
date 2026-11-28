@@ -9,6 +9,17 @@ const { db, dbReady, grantFromOrder } = require("./_db");
 
 
 
+/* Polar delivers at least once, so the same order.paid can come twice. Credits are already safe
+   (grant_order ignores a repeated order). This claims the side effects (sale email, PostHog revenue)
+   once per order: true = first time, false = seen before. If the database is down, send them anyway. */
+async function firstTime(type, orderId) {
+  if (!dbReady()) return true;
+  const { data, error } = await db().from("webhook_events")
+    .upsert({ id: `${type}:${orderId}`, type }, { onConflict: "id", ignoreDuplicates: true }).select("id");
+  if (error) { console.error(`webhook_events ${type} ${orderId}: ${error.message}`); return true; }
+  return Array.isArray(data) && data.length > 0;
+}
+
 const UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
 
 function orderFacts(o) {
@@ -57,8 +68,13 @@ module.exports = async (req, res) => {
     const granted = await grantFromOrder(evt.data);
     if (granted.startsWith("error")) { console.error(`order.paid id=${evt.data.id} ${granted}`); return send(res, 500, { error: "Retry later." }); }
     const f = orderFacts(evt.data);
+    if (!(await firstTime("order.paid", f.id))) {
+      console.log(`order.paid id=${f.id} repeat, credits=${granted}, no email or event`);
+      return send(res, 202, { ok: true, repeat: true });
+    }
+    const test = f.amount === 0; // a 100% discount code: real for the buyer, not revenue
     const owner = env("OWNER_EMAIL");
-    const jobs = [
+    const jobs = test ? [] : [
       capture("purchase", f.distinct, { order_id: f.id, product: f.product, amount: f.amount, revenue: f.amount, currency: f.currency, country: f.country, ...f.utm }),
     ];
     if (owner) {
@@ -66,18 +82,19 @@ module.exports = async (req, res) => {
       jobs.push(
         sendEmail({
           to: owner,
-          subject: `New sale: ${f.currency} ${f.amount.toFixed(2)}, ${f.product}`,
-          html: `<p><b>New sale on AI Site Scan.</b></p><ul><li>Product: ${esc(f.product)}</li><li>Amount: ${esc(f.currency)} ${f.amount.toFixed(2)}</li><li>Customer: ${esc(f.name)} ${esc(f.email)}</li><li>Country: ${esc(f.country || "unknown")}</li><li>Source: ${esc(src)}</li><li>Order: ${esc(f.id)}</li></ul>`,
-          text: `New sale on AI Site Scan\nProduct: ${f.product}\nAmount: ${f.currency} ${f.amount.toFixed(2)}\nCustomer: ${f.name} ${f.email}\nCountry: ${f.country || "unknown"}\nSource: ${src}\nOrder: ${f.id}`,
-          tags: [{ name: "kind", value: "sale" }],
+          subject: `${test ? "Test order (free)" : "New sale"}: ${f.currency} ${f.amount.toFixed(2)}, ${f.product}`,
+          html: `<p><b>${test ? "Free test order (100% discount) on AI Site Scan. Not revenue." : "New sale on AI Site Scan."}</b></p><ul><li>Product: ${esc(f.product)}</li><li>Amount: ${esc(f.currency)} ${f.amount.toFixed(2)}</li><li>Customer: ${esc(f.name)} ${esc(f.email)}</li><li>Country: ${esc(f.country || "unknown")}</li><li>Source: ${esc(src)}</li><li>Order: ${esc(f.id)}</li></ul>`,
+          text: `${test ? "Free test order (100% discount) on AI Site Scan. Not revenue." : "New sale on AI Site Scan"}\nProduct: ${f.product}\nAmount: ${f.currency} ${f.amount.toFixed(2)}\nCustomer: ${f.name} ${f.email}\nCountry: ${f.country || "unknown"}\nSource: ${src}\nOrder: ${f.id}`,
+          tags: [{ name: "kind", value: test ? "test_order" : "sale" }],
         })
       );
     }
     await Promise.allSettled(jobs);
-    console.log(`order.paid id=${f.id} amount=${f.amount} ${f.currency} product=${f.product} credits=${granted}`);
+    console.log(`order.paid id=${f.id} amount=${f.amount} ${f.currency} product=${f.product} credits=${granted}${test ? " test" : ""}`);
   }
   return send(res, 202, { ok: true });
 };
 
 module.exports.orderFacts = orderFacts;
+module.exports.firstTime = firstTime;
 module.exports.grantFromOrder = grantFromOrder;
