@@ -40,7 +40,9 @@ def account(route, request):
     if act == "checkout":
         STATE["checkout_plan"] = body.get("plan")
         return route.fulfill(json={"ok": True, "url": BASE + "/__fake_polar"})
-    if act == "sync": return route.fulfill(json={"ok": True})
+    if act == "sync":
+        STATE["syncs"] = STATE.get("syncs", 0) + 1
+        return route.fulfill(json={"ok": True, "orders": 1})
     if act == "unlock":
         if not STATE["paid"]: return route.fulfill(status=402, json={"ok": False, "no_credit": True})
         STATE["unlocks"] += 1
@@ -104,13 +106,16 @@ with sync_playwright() as p:
     page.screenshot(path=SHOTS + "/after_pay.png")
     ok("return: credit used, all fixes open, report saved (%d chars)" % STATE["guide_len"])
 
+    syncs = STATE.get("syncs", 0)
     page.click("#tabAcct"); page.wait_for_selector("#acctReports .rrow")
     assert page.locator("#tabAcct").inner_text() == "My reports"
+    page.wait_for_timeout(600)
+    assert STATE.get("syncs", 0) == syncs + 1, STATE
     assert "Rescans" in page.locator("#acctPlan").inner_text()
     page.screenshot(path=SHOTS + "/account.png", full_page=True)
     page.click("#acctReports [data-open]"); page.wait_for_selector("#guideDlg[open]")
     assert "saved" in page.locator("#guideText").inner_text()
-    ok("workspace: report listed and opens")
+    ok("workspace: report listed and opens, paid orders re-read once")
     page.keyboard.press("Escape")
 
     before = STATE["unlocks"]
