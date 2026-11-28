@@ -6,7 +6,14 @@
     <atom:link href="https://getaisitescan.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>New checks and changes in AI Site Scan, the free AI readiness scan for websites.</description>
     <language>en</language>
-    <lastBuildDate>Sat, 28 Nov 2026 18:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 19:00:00 +0200</lastBuildDate>
+    <item>
+      <title>Version 3.2.0: can AI agents use your site?</title>
+      <link>https://getaisitescan.com/how-we-test</link>
+      <guid isPermaLink="false">ai-site-scan-3.2.0</guid>
+      <pubDate>Sat, 28 Nov 2026 19:00:00 +0200</pubDate>
+      <description>Every scan now opens your page in a real browser, the way ChatGPT agent, Claude in Chrome and Gemini do. See the page as a list of named buttons and links, a screenshot with every pop-up marked, and an agent grade from A to F.</description>
+    </item>
     <item>
       <title>Version 3.1.0: how AI Site Scan compares</title>
       <link>https://getaisitescan.com/compare</link>

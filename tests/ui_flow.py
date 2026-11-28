@@ -48,7 +48,7 @@ def account(route, request):
         STATE["unlocks"] += 1
         return route.fulfill(json={"ok": True, "report_id": "33333333-3333-4333-8333-333333333333", "kind": "full", "plan": "single"})
     if act == "save":
-        STATE["saved"].append(body["report_id"]); STATE["guide_len"] = len(body.get("guide_md", ""))
+        STATE["saved"].append(body["report_id"]); STATE["guide_len"] = len(body.get("guide_md", "")); STATE["guide_md"] = body.get("guide_md", "")
         return route.fulfill(json={"ok": True, "emailed": True})
     if act == "report":
         return route.fulfill(json={"ok": True, "report": {"id": "r", "host": "local.aisitescan.test", "score": 92, "created_at": "2026-11-28T10:00:00Z", "guide_md": "# AI fix guide\nsaved"}})
@@ -68,6 +68,8 @@ with sync_playwright() as p:
     ctx.add_init_script(FAKE_SB)  # the page skips loading /vendor when window.supabase exists
     ctx.route("**/api/account?**", account)
     ctx.route("**/__fake_polar", fake_polar)
+    AGENTUX = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "agentux-bad.json")).read()
+    ctx.route("**/api/agentux?**", lambda r, q: r.fulfill(body=AGENTUX, content_type="application/json"))
     page = ctx.new_page()
     page.on("pageerror", lambda e: errors.append(f"pageerror: {e}"))
 
@@ -78,6 +80,15 @@ with sync_playwright() as p:
     page.wait_for_timeout(800)
     assert page.locator(".locked").count() >= 1
     ok("scan: fixes after the first 3 are locked")
+    page.wait_for_function("() => document.querySelector('#agGrade').textContent === 'F'", timeout=20000)
+    assert page.locator("#agents").is_visible() and "pass" in page.locator("#agSub").inner_text()
+    assert page.locator("#agP-tree .agtree .bad").count() >= 1 and page.locator(".aglock").is_visible()
+    page.locator("#agents").screenshot(path=SHOTS + "/agents_tree.png")
+    page.click("#agT-shot"); assert page.locator("#agP-shot .agshot img").is_visible() and page.locator("#agP-shot .ov").count() >= 1
+    page.locator("#agents").screenshot(path=SHOTS + "/agents_shot.png")
+    page.click("#agT-crawl"); assert "Text it can read" in page.locator("#agP-crawl").inner_text()
+    page.click("#agT-tree")
+    ok("agents: grade, tree with problems, screenshot with pop-up box, crawler view, locked code note")
 
     page.locator('[data-act="buy"]').first.click(); page.wait_for_selector("#payDlg[open]")
     t = page.locator("#payDlg").inner_text()
@@ -105,6 +116,10 @@ with sync_playwright() as p:
     assert STATE["saved"] and STATE["guide_len"] > 500, STATE
     page.screenshot(path=SHOTS + "/after_pay.png")
     ok("return: credit used, all fixes open, report saved (%d chars)" % STATE["guide_len"])
+    g = STATE["guide_md"]
+    assert "AI agents: make the page usable" in g and 'aria-label="TODO: what this does"' in g and "priceCurrency" in g and "Label every form field" in g, g[-3000:]
+    assert page.locator(".aglock").count() == 0
+    ok("report: agent fixes with code are in the saved guide")
 
     syncs = STATE.get("syncs", 0)
     page.click("#tabAcct"); page.wait_for_selector("#acctReports .rrow")

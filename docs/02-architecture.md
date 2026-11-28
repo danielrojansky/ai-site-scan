@@ -47,6 +47,8 @@ Hosting is on Vercel. Accounts, credits and saved reports are in Supabase (Postg
 | `api/_agentready.py` | The 23 agent readiness checks and the level rules as pure functions (no network) |
 | `api/webmcp.js` | WebMCP API (Node): opens the page in headless Chrome and lists the tools it registers |
 | `api/shot.js` | Screenshot API (Node 24), CommonJS handler with dynamic `import()` |
+| `api/agentux.js` | Agent usability API (Node): opens the page in headless Chrome at 1280 x 800 like a browser agent, returns the accessibility tree, the layers that cover the screen, a screenshot and the checks |
+| `api/_agentux.js` | `snapshot()` and `motionProbe()` run inside the page; `evaluate()` is pure and turns a snapshot into checks and an A to F grade |
 | `api/account.js` | Accounts API: me, report, checkout, unlock, save, sync, portal (one function for all; started under the Hobby function limit, kept as one on Pro) |
 | `api/polar-webhook.js` | Polar webhook: checks the signature, gives or removes credits, sends the sale email and the PostHog purchase once per order |
 | `api/config.js` | Public settings for the page. Each feature turns on when its settings exist |
@@ -233,6 +235,17 @@ WebMCP lets a page offer actions to a browser agent as tools. A page registers t
 - Tools are sent out the moment they are registered, so a heavy page that freezes its main thread afterwards (vercel.com does in our small Chrome on Vercel) still reports them. If the page never lets us read it and no tool came out, the answer has `partial: true` and the page shows the row as "unable".
 - Answer: `toolCount`, `tools[]` (`name`, `title`, `description`, `hasSchema`, at most 50), `detectionMethod` (`imperative_api`, `declarative_html`, `both` or null), `via` and, when the page could not be read, `partial`. A complete answer has `Cache-Control: public, max-age=300, s-maxage=600`. A partial one is not cached.
 - The page calls it once, when the Agent readiness panel opens and only if the row says `browser: true` (the static reading of the homepage did not find tools). The row shows "Checking in a real browser..." and then the browser result, and the counts are updated.
+
+## Agent usability API: `GET /api/agentux?url=<address>`
+
+Three kinds of AI visit a site. Search crawlers are the Scan API. This API covers the other two: agents that read the page (accessibility tree: Claude in Chrome, Perplexity Comet, ChatGPT agent) and agents that look at the screen (screenshots: ChatGPT agent, Gemini in Chrome).
+
+- One Chrome visit, 1280 x 800, same public-address guard and request filter as `shot.js` (images allowed, media blocked). Waits: 12 s first answer, 6 s network idle, 1.2 s settle, each page read capped at 6 s, watchdog 33 s, function limit 40 s, 2 GB.
+- `snapshot()` reads buttons, links and fields with their accessible names, same-name buttons, generic link text, labels and autocomplete, pointer-cursor boxes that are not controls, fixed layers over the screen (cookie, newsletter, chat, gate), search forms, #/ links, Product JSON-LD, price and stock text, and the first 32 lines of the tree plus up to 8 problem lines.
+- `motionProbe()` runs twice, 2.5 s apart, to find sliders that change by themselves.
+- Answer: `{grade, percent, passed, scored, is_shop, checks[{id, step, label, status, message, why, fix, data}], tree, overlays, viewport, counts, status, blocked, screenshot (JPEG data URL), checked_at}`. Cached at the edge for 10 minutes unless the site blocked us.
+- 10 base checks plus 4 shop checks when the page sells something. Pass 1, warn 0.5, n/a left out. A 90%+, B 75%+, C 60%+, D 40%+, F below. Not part of the 0 to 100 score. Rules in full: `/how-we-test`.
+- The page shows it as the "How AI sees this page" card with three tabs; the history keeps it without the screenshot. The fix guide adds the step "AI agents: make the page usable" with code built from `data`.
 
 ## Screenshot API: `GET /api/shot?url=<address>`
 

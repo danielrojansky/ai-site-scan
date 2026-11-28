@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Trail Shop</title>
+<style>body{margin:0;font-family:sans-serif}.card{cursor:pointer;padding:10px;border:1px solid #ccc;margin:6px}
+#cookie{position:fixed;left:0;right:0;bottom:0;height:420px;background:#222;color:#fff;padding:20px}
+.slider{width:600px;height:120px;overflow:hidden}</style></head>
+<body>
+<h1>Trail Shop</h1><h1>New arrivals</h1>
+<button><svg width="16" height="16"><path d="M0 0h16v16H0z"/></svg></button>
+<button aria-label=""></button><a href="/cart"><img src="cart.png" alt=""></a>
+<a href="#/shoes">Shoes</a><a href="#/socks">Socks</a><a href="#/hats">Hats</a>
+<button>Save</button><button>Save</button><button>Save</button>
+<input type="text" placeholder="Search products" name="term">
+<form><input type="text" placeholder="Your email" name="email"><input type="text" name="phone"></form>
+<div class="card" onclick="x()">Trail Runner 2</div><div class="card">Hiking Boot</div><div class="card">Sandal</div>
+<div class="slider" id="sl"><div class="track">Slide 1</div></div>
+<p>Price 129</p>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Trail Runner 2","offers":{"@type":"Offer","price":"129.00"}}</script>
+<div id="cookie">We use cookies to improve your experience. <button>×</button></div>
+<script>let i=1;setInterval(()=>{document.querySelector('#sl .track').textContent='Slide '+(++i)},800)</script>
+</body></html>

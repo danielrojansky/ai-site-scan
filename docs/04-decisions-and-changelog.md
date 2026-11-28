@@ -24,6 +24,7 @@
 | Payments (v2.5) | Polar as merchant of record. One-time products with a License Key benefit. Checkout links, no own checkout page. The key unlocks the guide; one activation per site (label = host) | Stripe (Daniel would be the seller and handle tax himself); Dodo Payments; Lemon Squeezy; own database of buyers | Polar handles tax and receipts in every country, pays out to Israel, and keeps the keys. No database to run |
 | Accounts (v3) | Supabase Auth and Postgres, one serverless function for all account actions | Own email codes and a KV store; Clerk or Auth0 | Free at this size, row security, Google login built in, and one function keeps the project under Vercel's function limit |
 | Key delivery (v2.5) | `/api/claim`: the success URL carries the checkout ID; the server reads the checkout, opens a customer session and reads the new key; the page applies it | Buyer pastes the key from Polar's email; webhook that emails the key | No copy and paste, so "instant delivery" is true. Paste stays as a fallback |
+| Agent usability (v3.2) | One Chrome visit per scan that reads the accessibility tree and the screen at load; 14 checks with an A to F grade, outside the score; code fixes in the paid report | Only the crawler view; screenshots only; an AI model to judge the page; add it to the score | Browser agents read the accessibility tree (Claude in Chrome, Comet) or screenshots (ChatGPT agent, Gemini), per their makers. Rules are measurable and testable offline. The score stays the engine's |
 | Comparison page (v3.1) | Static `/compare` page with named tools, dated sources and "Not stated" where unknown; rows where others win stay in | No comparison; unnamed "other tools"; claims without sources | AI crawlers read static HTML and quote sourced, fair tables. Honest rows build trust and keep the claims safe |
 | Merchant review pages (v2.5) | Pricing, contact, refunds and delivery, terms, privacy, built from one template with the same footer on every page | Policy generator text; one long legal page | Polar, Dodo and card networks check that prices, delivery, refund and cancellation terms, a contact route and the seller's identity are on the live site and match the account form |
 
@@ -160,6 +161,16 @@ All times Asia/Jerusalem.
 |---|
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
+
+### 28 Nov 2026, version 3.2.0
+
+| Change |
+|---|
+| New `/api/agentux` (headless Chrome) and `api/_agentux.js`: how browser agents see the page. Accessibility tree with unnamed and same-name parts marked, screenshot at load with every covering layer marked, and 14 checks (find, read, act, forms, pop-ups, sliders, and shop checks when the page sells) with an A to F grade. Not part of the score |
+| Results: new "How AI sees this page" card with three tabs (agents that read the page, agents that look at the screen, search crawlers) and the agent checks. Code for the fixes is locked until the report is unlocked |
+| Fix guide: new step "AI agents: make the page usable", with code built from the page (aria-labels on the real elements, labels and autocomplete on the real fields, search form, cookie bar, Product JSON-LD) and a list of checkout items to check by hand |
+| New page `/how-we-test` with every rule, the limits and the sources (OpenAI, Anthropic, Google, Search Engine Journal, Cloudflare, and the Instinct checklist). Linked from the footer, llms.txt, llms-full.txt, sitemap and ai/summary.json |
+| Tests: `tests/test_agentux.js` (11 unit tests, plus 2 real-Chrome runs on `tests/fixtures/agent-bad.html` and `agent-good.html` when CHROME_PATH is set); UI test checks the card, the tabs, the lock and the guide step |
 
 ### 28 Nov 2026, version 3.1.0
 
