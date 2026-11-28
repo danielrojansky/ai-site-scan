@@ -88,7 +88,7 @@ function reportEmail(user, rep, guide) {
 <p>Questions? Reply to this email.</p><p>AI Site Scan</p>`;
   const text = `Here is the full AI readiness report for ${rep.host}.${score}\nThe fix guide is attached as a Markdown file.\nOpen it in your workspace: ${link}\nLog in with ${user.email}.\n\nAI Site Scan`;
   return { to: user.email, subject, html, text, replyTo: env("SUPPORT_EMAIL", "support@getaisitescan.com"),
-    attachments: [{ filename: `ai-fix-guide-${rep.host}.md`, content: Buffer.from(guide, "utf8").toString("base64") }],
+    attachments: [{ filename: `ai-fix-guide-${rep.host}.md`, content: Buffer.from(guide, "utf8").toString("base64"), content_type: "text/markdown; charset=utf-8" }],
     tags: [{ name: "kind", value: "report" }] };
 }
 
