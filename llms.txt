@@ -2,7 +2,7 @@
 
 > AI Site Scan checks whether ChatGPT, Claude, Perplexity and Google AI can reach, read and understand a website. You enter an address and get an AI readiness score from 0 to 100, a side-by-side view of what a visitor and an AI tool see, a test of 14 AI bots, 23 agent-readiness checks and a ranked list of fixes.
 
-The scan is free and needs no login. The full fix guide, with steps and ready-to-paste code for every fix, is a one-time payment of $19 for one site or $49 for 10 sites. Delivery is instant, and there is a 7-day refund. Payments run on Polar, the merchant of record. Scores come from the open-source geo-optimizer-skill engine (MIT).
+The scan is free and needs no login. The full report, with steps and ready-to-paste code for every fix, costs $19 once for one site (with 1 rescan within 30 days), or $29 a month for Pro with 10 reports a month. Buyers log in with an email code or Google; reports are emailed and saved in their account. Payments run on Polar, the merchant of record. Scores come from the open-source geo-optimizer-skill engine (MIT).
 
 ## Main pages
 
@@ -10,7 +10,7 @@ The scan is free and needs no login. The full fix guide, with steps and ready-to
 - [llms.txt checker and generator](https://getaisitescan.com/llms-txt): checks a site's llms.txt and writes one from the site's own pages
 - [AI robots.txt checker](https://getaisitescan.com/ai-robots-txt): tests whether GPTBot, ClaudeBot, PerplexityBot and 11 more AI bots can read a site
 - [About](https://getaisitescan.com/about): who makes AI Site Scan and how the score works
-- [Pricing](https://getaisitescan.com/pricing): free check, $19 full fix guide for 1 site, $49 for 10 sites, one-time payments
+- [Pricing](https://getaisitescan.com/pricing): free check, $19 full report for 1 site, Pro at $29 a month for 10 reports
 - [Contact](https://getaisitescan.com/contact): support email and business details
 
 ## Policies

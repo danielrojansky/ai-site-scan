@@ -145,12 +145,13 @@ async function capture(event, distinctId, properties = {}) {
 /* ---------- Resend (email) ---------- */
 const emailReady = () => !!(env("RESEND_API_KEY") && env("EMAIL_FROM"));
 
-async function sendEmail({ to, subject, html, text, scheduledAt, replyTo, tags }) {
+async function sendEmail({ to, subject, html, text, scheduledAt, replyTo, tags, attachments }) {
   if (!emailReady()) return { ok: false, error: "Email is not set up." };
   const body = { from: env("EMAIL_FROM"), to: Array.isArray(to) ? to : [to], subject, html, text };
   if (scheduledAt) body.scheduled_at = scheduledAt;
   if (replyTo) body.reply_to = replyTo;
   if (tags) body.tags = tags;
+  if (attachments) body.attachments = attachments;  // [{filename, content: base64}]
   try {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -232,8 +233,7 @@ function buildLlms(d) {
 const RANK = { critical: 0, high: 1, medium: 2, low: 3 };
 function topActions(d, n = 3) {
   return ((d && d.actions) || [])
-    .slice()
-    .sort((a, b) => (RANK[a.priority] ?? 9) - (RANK[b.priority] ?? 9) || (b.gain || 0) - (a.gain || 0))
+    .toSorted((a, b) => (RANK[a.priority] ?? 9) - (RANK[b.priority] ?? 9) || (b.gain || 0) - (a.gain || 0))
     .slice(0, n);
 }
 

@@ -58,7 +58,7 @@ from geo_optimizer.models.results import CdnAiCrawlerResult  # noqa: E402
 from geo_optimizer.utils.http_async import fetch_url_async  # noqa: E402
 from geo_optimizer.utils.validators import normalize_url_scheme, validate_public_url  # noqa: E402
 
-APP_VERSION = "2.5.0"  # keep in step with the footer in index.html
+APP_VERSION = "3.0.0"  # keep in step with the footer in index.html
 ENGINE = "geo-optimizer-skill"
 try:
     from importlib.metadata import version as _v

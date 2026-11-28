@@ -23,19 +23,19 @@ AI tools such as ChatGPT, Claude, Perplexity and Google's AI Overviews answer qu
 
 A score from 0 to 100, the AI view, the bot test, every issue with what the AI saw, and the top 3 fixes in full. No login.
 
-#### Full fix guide
+#### Full report
 
-Every fix with steps and ready-to-paste code, filled in for your site. One Markdown file for your developer or your AI coding tool.
+Every fix with steps and ready-to-paste code, filled in for your site, plus 1 rescan within 30 days. Emailed to you and saved in your account.
 
-#### 10-site pack
+#### Pro
 
-The full fix guide for 10 sites, for freelancers and agencies who check client sites.
+10 full reports a month for any sites, with rescans. For freelancers and agencies. Cancel anytime.
 
-- **One-time payment** in US dollars. No subscription, nothing renews.
-- **Instant delivery.** After you pay, your license key is applied here and every fix opens. Polar emails your receipt and a link to your key.
+- **Log in with your email or Google** when you buy. No password.
+- **Instant delivery.** After you pay, every fix opens here. We email you the report and save it in your account.
 - **Secure checkout by Polar**, our merchant of record. We never see your card details.
-- **7-day refund**, no questions. [Pricing details](https://getaisitescan.com/pricing) · [Refunds and delivery](https://getaisitescan.com/refund)
-- **Self-serve.** The guide tells you or your developer what to change. We do not log in to your site.
+- **7-day refund** on the Full report. Pro renews monthly until you cancel. [Pricing details](https://getaisitescan.com/pricing) · [Refunds and delivery](https://getaisitescan.com/refund)
+- **Self-serve.** The report tells you or your developer what to change. We do not log in to your site.
 
 ### Questions
 
@@ -47,19 +47,19 @@ The full fix guide for 10 sites, for freelancers and agencies who check client s
 
 **What is in the full fix guide?** Every fix for your site, ranked, with the steps and ready-to-paste code filled in for your pages: JSON-LD, llms.txt, robots.txt and head tags. It is one Markdown file you can hand to a developer or an AI coding tool.
 
-**How do I get the guide after I pay?** Right away. You pay on Polar's secure checkout and come back here. Your license key is applied and every fix opens on screen. Polar also emails you a receipt with a link to your key.
+**How do I get the report after I pay?** Right away. You log in with your email or Google, pay on Polar's secure checkout and come back here. Every fix opens on screen, and we email you the report and save it in your account.
 
-**Is it a subscription?** No. You pay once, in US dollars. Nothing renews, so there is nothing to cancel.
+**Is it a subscription?** The Full report ($19) is a one-time payment. Pro ($29 a month, 10 reports) is a subscription that renews monthly until you cancel it in your account.
 
-**Can I get a refund?** Yes. If the guide does not help, email us within 7 days of your purchase for a full refund. You do not need to give a reason.
+**Can I get a refund?** Yes. Email us within 7 days of buying a Full report for a full refund, no reason needed. For Pro, see the refund policy.
 
-Made by [Daniel Rojansky](https://getaisitescan.com/about) in Israel. Updated Nov 27, 2026. Also see the [llms.txt checker](https://getaisitescan.com/llms-txt) and the [AI robots.txt checker](https://getaisitescan.com/ai-robots-txt).
+Made by [Daniel Rojansky](https://getaisitescan.com/about) in Israel. Updated Nov 28, 2026. Also see the [llms.txt checker](https://getaisitescan.com/llms-txt) and the [AI robots.txt checker](https://getaisitescan.com/ai-robots-txt).
 
 ## Pricing
 
 URL: https://getaisitescan.com/pricing
 
-The scan is free. You pay only for the full fix guide. Every price is a one-time payment in US dollars. There is no subscription, and nothing renews.
+The check is free. You pay only for the full report: every fix, with steps and ready-to-paste code. Prices are in US dollars.
 
 ### Free check
 
@@ -70,38 +70,41 @@ $0no login, no card
 - Test of 14 AI crawlers and assistants
 - Every issue, with what the AI saw
 - The top 3 fixes in full, with code
-- A draft llms.txt file for your site
 
-### Full fix guide
+### Full report
 
 $19one-time payment, 1 site
 
-- Every fix for your site, ranked by impact
-- Step-by-step instructions for each fix
+- Every fix for your site, ranked by impact, with step-by-step instructions
 - Ready-to-paste code filled in for your pages: JSON-LD, llms.txt, robots.txt and head tags
-- One Markdown file for your developer or your AI coding tool
-- Check the site again after your changes and get a fresh guide, at no extra cost
+- 1 rescan within 30 days, to check your fixes and get an updated report
+- Emailed to you as a Markdown file and saved in your account
 
-### 10-site pack
+### Pro
 
-$49one-time payment, 10 sites
+$29per month, cancel anytime
 
-- The full fix guide for 10 different sites
-- One license key for all 10 sites
+- 10 full reports every month, for any sites
+- Rescans of those sites during the month are included
+- Every report emailed and saved in your account
 - For freelancers and agencies who check client sites
 
-### What counts as one site
+### What counts as one report
 
-One site is one host name, such as example.com. www.example.com is the same site. blog.example.com is a different site. Your license key does not expire.
+One report is one site, by host name, such as example.com. www.example.com is the same site. blog.example.com is a different site. Unused Pro reports do not carry over to the next month.
 
 ### How you get it
 
 1. Check your site for free.
+1. Log in with your email (we send you a 6-digit code) or with Google. There is no password.
 1. Choose a plan and pay on Polar's secure checkout.
-1. You come back to AI Site Scan. Your license key is applied, and every fix opens right away.
-1. Polar emails you a receipt with a link to your license key, so you can unlock the same site in another browser.
+1. You come back to AI Site Scan, and every fix opens right away. We email you the report and save it in your account. Log in later to open it again.
 
 Delivery is instant and digital. Nothing is shipped. See [Refunds and delivery](https://getaisitescan.com/refund).
+
+### Pro renews every month
+
+Pro is a subscription. Polar charges $29 every month on the same day until you cancel. Cancel anytime in your account under "Receipts and subscription". After you cancel, Pro stays active until the end of the month you paid for, and nothing more is charged.
 
 ### Payment and tax
 
@@ -109,15 +112,15 @@ Checkout runs on Polar (polar.sh), our merchant of record. Polar is the seller o
 
 ### Refunds
 
-If the guide does not help you, email support@getaisitescan.com within 7 days of your purchase. You get a full refund, and you do not need to give a reason. See the [refund policy](https://getaisitescan.com/refund).
+Full report: email support@getaisitescan.com within 7 days of your purchase for a full refund, no reason needed. Pro: see the [refund policy](https://getaisitescan.com/refund).
 
 ### Questions
 
-**Do I need an account?** No. The check needs no login. To buy, you only give Polar your email and payment details.
+**Why do I need to log in?** So we can email you the report and keep it in your account. You log in with a one-time code or with Google. There is no password to remember.
 
-**Can I use the guide for a client's site?** Yes. Unlock the client's site with your key, and use the guide and its code on that site.
+**Can I use the report for a client's site?** Yes. Check the client's site, unlock its report, and use the guide and its code on that site.
 
-**Do you make the changes for me?** No. The guide is a self-serve digital product. You, your developer or your AI coding tool make the changes. We never log in to your site.
+**Do you make the changes for me?** No. The report is a self-serve digital product. You, your developer or your AI coding tool make the changes. We never log in to your site.
 
 **Which payment methods can I use?** Cards, and the other methods that Polar's checkout shows for your country.
 
@@ -140,7 +143,7 @@ AI Site Scan is made and run by Daniel Rojansky, an independent product and tech
 
 ### How we make money
 
-The check is free. We sell one product: the full fix guide, as a one-time payment of $19 for 1 site or $49 for 10 sites. There are no ads on the site, and we do not sell data. See [Pricing](https://getaisitescan.com/pricing).
+The check is free. We sell the full report in two ways: $19 once for 1 site, or Pro at $29 a month for 10 reports a month. There are no ads on the site, and we do not sell data. See [Pricing](https://getaisitescan.com/pricing).
 
 ### What the scan keeps
 
@@ -154,34 +157,35 @@ Email support@getaisitescan.com.
 
 URL: https://getaisitescan.com/refund
 
-- **One-time payment.** No subscription. We never charge you again.
-- **Instant digital delivery.** Nothing is shipped.
-- **Full refund within 7 days**, no reason needed.
+- **Instant digital delivery.** The report opens on screen, arrives by email and stays in your account. Nothing is shipped.
+- **Full report ($19):** one-time payment. Full refund within 7 days, no reason needed.
+- **Pro ($29 a month):** cancel anytime. It stays active until the end of the paid month.
 
 ### What you buy
 
-A digital product: the full fix guide for 1 site ($19) or for 10 sites ($49). A license key unlocks it on AI Site Scan. The guide lists every fix for the site, with steps and ready-to-paste code, and you can download it as one Markdown file.
+A digital product: the full AI readiness report for a site, with every fix, steps and ready-to-paste code, as one Markdown file. The Full report covers 1 site and 1 rescan within 30 days. Pro covers 10 reports a month, with rescans of those sites during the month.
 
 ### Delivery
 
-1. You pay on Polar's secure checkout.
-1. Polar sends you back to AI Site Scan. Your license key is applied, and every fix opens on screen within seconds.
-1. Polar emails you a receipt. It has a link to your Polar customer portal, where your license key is kept.
-1. Use the key to unlock the same site in another browser, or, with the 10-site pack, to unlock more sites.
+1. You log in with your email or Google, then pay on Polar's secure checkout.
+1. Polar sends you back to AI Site Scan, and every fix opens on screen within seconds.
+1. We email you the report and save it in your account. Log in at any time to open it again.
+1. Polar emails you a receipt.
 
-If you do not get your key within 15 minutes, check your spam folder, then email support@getaisitescan.com. We will send it to you.
+If the report does not open or does not arrive within 15 minutes, check your spam folder, then email support@getaisitescan.com. We will fix it.
 
-### Cancellation
+### Cancel Pro
 
-There is no subscription, so there is nothing to cancel. If you bought by mistake, ask for a refund.
+Log in, open "My reports", and click "Receipts and subscription". There you can cancel in a few clicks. You can also email us and we will cancel it for you. After you cancel, nothing more is charged, and Pro stays active until the end of the month you paid for.
 
 ### Refunds
 
-- Email support@getaisitescan.com within 7 days of your purchase. Write from the email you used at checkout, or include it and the order number.
-- You get a full refund. You do not need to give a reason.
+- **Full report:** email support@getaisitescan.com within 7 days of your purchase. You get a full refund, and you do not need to give a reason.
+- **Pro:** if you did not use any report in a month, email us within 7 days of that month's charge and we refund it. If you forgot to cancel, tell us: we will be fair.
+- Write from the email you log in with, or include it and the order number.
 - We refund through Polar to the payment method you used. Your bank may need 5 to 10 business days to show it.
-- After a refund, the license key stops working.
-- After 7 days, we still refund you if we could not deliver the guide, or if it does not work because of a fault on our side.
+- After a refund, the reports from that payment are no longer available.
+- After 7 days, we still refund you if we could not deliver the report, or if it does not work because of a fault on our side.
 
 ### Before you dispute a charge
 
@@ -189,7 +193,7 @@ Please email us first. We answer fast, and a refund from us is quicker than a di
 
 ### Price changes
 
-We may change prices for future orders. A change never affects an order you already paid.
+We may change prices for future orders. For Pro, we email you at least 30 days before a new price applies, and you can cancel before then.
 
 ## Terms of service
 
@@ -197,65 +201,73 @@ URL: https://getaisitescan.com/terms
 
 ### 1. Who we are
 
-AI Site Scan (getaisitescan.com) is run by Daniel Rojansky, a sole trader registered in Israel, trading as Daniel Consulting ("we", "us"). Contact: support@getaisitescan.com. These terms apply when you use the site or buy the full fix guide.
+AI Site Scan (getaisitescan.com) is run by Daniel Rojansky, a sole trader registered in Israel, trading as Daniel Consulting ("we", "us"). Contact: support@getaisitescan.com. These terms apply when you use the site, create an account, or buy a report.
 
 ### 2. The service
 
-The check is free. It tests public web pages and shows how AI tools can reach, read and understand them. The full fix guide is a paid digital product. It lists every fix for a site, with steps and ready-to-paste code. A license key unlocks it.
+The check is free. It tests public web pages and shows how AI tools can reach, read and understand them. The full report is a paid digital product. It lists every fix for a site, with steps and ready-to-paste code.
 
 To test access for AI tools, the scanner requests the page you enter with the user agent names that those tools publish. It also reads public files such as robots.txt, sitemap.xml and llms.txt. It reads only public pages. It does not log in, and it does not get past paywalls or other access controls.
 
-### 3. Fair use
+### 3. Your account
+
+To buy, you create an account with your email address (we send you a one-time code) or with Google. Keep access to that email safe. Your reports are saved in your account. You can ask us to delete the account and its reports at any time.
+
+### 4. Fair use
 
 Check your own sites, or sites you have permission to test. Do not use the scanner to overload, attack or probe a site, or to check many sites in bulk with scripts. We limit how often one visitor can scan, and we may block traffic that looks like abuse.
 
-### 4. Prices and payment
+### 5. Plans, prices and payment
 
-Prices are on the [pricing page](https://getaisitescan.com/pricing), in US dollars. Each purchase is a one-time payment. There is no subscription.
+Prices are on the [pricing page](https://getaisitescan.com/pricing), in US dollars. The Full report is a one-time payment for 1 site, with 1 rescan within 30 days. Pro is a monthly subscription with 10 reports a month. Unused Pro reports do not carry over.
 
-Polar Software, Inc. ("Polar") is our merchant of record and authorized reseller. When you buy, you buy the guide from Polar, and Polar's [Buyer Terms](https://polar.sh/legal/checkout-buyer-terms) also apply. Polar takes the payment, adds sales tax or VAT where it applies, and sends your receipt. Your right to use the guide comes from these terms. We never see or store your card details.
+Polar Software, Inc. ("Polar") is our merchant of record and authorized reseller. When you buy, you buy from Polar, and Polar's [Buyer Terms](https://polar.sh/legal/checkout-buyer-terms) also apply. Polar takes the payment, adds sales tax or VAT where it applies, and sends your receipt. Your right to use the reports comes from these terms. We never see or store your card details.
 
-### 5. Delivery
+### 6. Subscription renewal and cancellation
 
-Delivery is digital and instant. After payment, your license key is applied on the site and the guide unlocks. Polar also emails you a receipt with a link to your key. Nothing is shipped. Details are on the [Refunds and delivery](https://getaisitescan.com/refund) page.
+Pro renews automatically every month and Polar charges your payment method until you cancel. You can cancel anytime from your account ("Receipts and subscription") or by email. Pro then stays active until the end of the paid month. We email you at least 30 days before a price change.
 
-### 6. Your license key
+### 7. Delivery
 
-Each purchase gives you one license key. The single-site key unlocks the guide for 1 site. The 10-site key unlocks it for 10 sites. One site is one host name, such as example.com. Keys do not expire. You may use the guide and its code on the sites you unlocked, for yourself or for your clients. Do not share, publish or resell the key or the guide. We may disable a key that is shared or abused.
+Delivery is digital and instant. After payment, the report opens on the site, is emailed to you and is saved in your account. Details are on the [Refunds and delivery](https://getaisitescan.com/refund) page.
 
-### 7. Refunds and cancellation
+### 8. Using the reports
 
-You can get a full refund within 7 days of your purchase. There is nothing to cancel, because nothing renews. Details are on the [Refunds and delivery](https://getaisitescan.com/refund) page.
+You may use the reports and their code on the sites you checked, for yourself or for your clients. Do not resell the reports as a product or share your account.
 
-### 8. No guarantee
+### 9. Refunds
+
+The refund rules are on the [Refunds and delivery](https://getaisitescan.com/refund) page.
+
+### 10. No guarantee
 
 The score and the fixes come from an automated tool. They do not promise that AI tools or search engines will read, cite or rank a site, or that traffic will grow. Check each fix, and back up your site, before you change it.
 
-### 9. Availability
+### 11. Availability
 
-We work to keep the site running, but we cannot promise that it is always available or free of errors. We may change, add or remove features. If we stop selling the guide, a guide you already downloaded stays yours.
+We work to keep the site running, but we cannot promise that it is always available or free of errors. We may change, add or remove features. If we stop the service, you can download your saved reports first, and we refund the unused part of a Pro month.
 
-### 10. Ownership
+### 12. Ownership
 
-Your site and its content stay yours. We use what we fetch only to make your report. The site, our code and the text of the guide belong to us, except the open-source scoring engine (MIT license), which belongs to its authors.
+Your site and its content stay yours. We use what we fetch only to make your report. The site, our code and the text of the reports belong to us, except the open-source scoring engine (MIT license), which belongs to its authors.
 
-### 11. Liability
+### 13. Liability
 
 As far as the law allows, we are not liable for indirect or consequential losses, such as lost profits or lost data, and our total liability to you is limited to the amount you paid us in the 12 months before the claim. Nothing in these terms limits a liability that the law does not let us limit.
 
-### 12. Sanctions
+### 14. Sanctions
 
 You may not use or buy from AI Site Scan if you are in a country, or on a list, under US, EU, UK or Israeli sanctions. Polar may also block payments from some countries.
 
-### 13. Changes to these terms
+### 15. Changes to these terms
 
-We may update these terms. The date at the top shows the last change. A change does not affect a purchase you made before it.
+We may update these terms. The date at the top shows the last change. We email account holders about important changes.
 
-### 14. Law
+### 16. Law
 
 Israeli law applies, and the courts of the Tel Aviv district have jurisdiction. If you are a consumer, you keep the rights that the law where you live gives you and that cannot be waived.
 
-### 15. Contact
+### 17. Contact
 
 Email support@getaisitescan.com.
 
@@ -271,8 +283,9 @@ Daniel Rojansky, trading as Daniel Consulting, Israel, is responsible for your d
 
 - **Addresses you check.** We fetch the page you enter, and some public files of that site, to make your report. The result stays in a server cache for 10 minutes. Server logs keep the site, the score and the time for a short time.
 - **Scan history.** It stays only in your browser. You can delete it in the History tab.
-- **License key and unlocked sites.** If you buy, your browser keeps your license key and the sites you unlocked, so you do not have to paste the key again. To check a key, we send it and the site name to Polar.
-- **Your email, if you give it.** We use it to send your report and, if you ask, one reminder. Emails go out through Resend. We do not add you to a newsletter.
+- **Your account.** Your email address. If you log in with Google, also your name and profile picture from Google. We use them to log you in and to send your reports.
+- **Your reports and purchases.** The reports you unlock (site, score, fixes), what you bought and how many reports you have left. They are saved in your account so you can open them again.
+- **Emails.** We email you your reports and, if you ask for it on the free check, one reminder. Emails go out through Resend. We do not add you to a newsletter.
 - **Messages you send us.** We keep them to answer you and to keep a record of support requests.
 - **Analytics.** PostHog records page views, clicks and scan steps, so we can improve the product. Until you accept cookies, it stores nothing in your browser. If you accept, it keeps an ID in a cookie and in local storage. Session recordings hide what you type.
 - **Advertising.** Only if you accept cookies, Google Ads measures whether a visit from an ad led to a purchase.
@@ -280,29 +293,29 @@ Daniel Rojansky, trading as Daniel Consulting, Israel, is responsible for your d
 
 ### Legal bases
 
-We use your data to give you what you asked for, such as a report or a purchase (contract). We use analytics and advertising cookies, and send a reminder email, only with your consent. We keep short server logs to protect the service from abuse (legitimate interest).
+We use your data to give you what you asked for, such as an account, a report or a purchase (contract). We use analytics and advertising cookies, and send a reminder email, only with your consent. We keep short server logs to protect the service from abuse (legitimate interest).
 
 ### Who processes it
 
-These service providers process data for us, each under its own data protection terms: Vercel (hosting), PostHog (analytics), Resend (email), Polar (payments, as merchant of record) and Google (ads, only with your consent). They may process data in the United States, the European Union and other countries. We do not sell your data, and we do not share it for other companies' marketing.
+These service providers process data for us, each under its own data protection terms: Vercel (hosting), Supabase (login and database), PostHog (analytics), Resend (email), Polar (payments, as merchant of record), Google (login, only if you choose it, and ads, only with your consent). They may process data in the United States, the European Union and other countries. We do not sell your data, and we do not share it for other companies' marketing.
 
 ### How long we keep it
 
 - Scan results: 10 minutes in the server cache.
 - Server logs: a few days at most.
-- Your email for reports: until you ask us to delete it.
+- Your account and saved reports: until you ask us to delete them.
 - Support messages: up to 2 years.
 - Purchase records: as long as tax and accounting law requires. Polar keeps the payment records as merchant of record.
 
 ### Cookies and browser storage
 
-**Always on, because the site needs them:** your scan history, your cookie choice, and, if you bought, your license key and unlocked sites. These stay in your browser's local storage and are not sent to anyone, except the key and site name when we check a key with Polar.
+**Always on, because the site needs them:** your login session, your scan history and your cookie choice. They stay in your browser's local storage.
 
 **Only after you accept:** PostHog analytics (a cookie and a local storage ID) and Google Ads conversion cookies. To change your choice, clear this site's data in your browser and choose again.
 
 ### Your rights
 
-You can ask for a copy of your data, ask us to correct or delete it, or object to how we use it. You can withdraw your consent at any time. Email support@getaisitescan.com, and we will reply within 30 days. You can also complain to your data protection authority. In Israel, that is the Privacy Protection Authority.
+You can ask for a copy of your data, ask us to correct or delete it (including your whole account), or object to how we use it. You can withdraw your consent at any time. Email support@getaisitescan.com, and we will reply within 30 days. You can also complain to your data protection authority. In Israel, that is the Privacy Protection Authority.
 
 ### Children
 
@@ -310,7 +323,7 @@ AI Site Scan is for website owners and businesses. It is not meant for children 
 
 ### Security
 
-The whole site uses HTTPS. We keep as little data as we can. Card details go only to Polar's checkout.
+The whole site uses HTTPS. Logins use one-time codes or Google, so we store no passwords. Card details go only to Polar's checkout. We keep as little data as we can.
 
 ### Changes
 
@@ -324,7 +337,7 @@ Email support@getaisitescan.com. We reply within 2 business days, and usually mu
 
 ### What to write
 
-- **An order or a license key:** the email you used at checkout and the order number from Polar's receipt.
+- **An order, a report or your account:** the email you log in with and the order number from Polar's receipt.
 - **A refund:** the same details. You do not need to give a reason. See [Refunds and delivery](https://getaisitescan.com/refund).
 - **A wrong or strange result:** the address you checked and what you expected to see.
 - **Your data:** to get a copy of your data or to have it deleted, write from the email address it is about. See [Privacy](https://getaisitescan.com/privacy).

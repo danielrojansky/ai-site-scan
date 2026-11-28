@@ -11,12 +11,13 @@
   ],
   "pricing": {
     "scan": "free",
-    "fix_guide_one_site_usd": 19,
-    "fix_guide_ten_sites_usd": 49,
-    "billing": "one-time payment, no subscription",
+    "full_report_one_site_usd": 19,
+    "full_report_includes": "1 site, 1 rescan within 30 days, one-time payment",
+    "pro_monthly_usd": 29,
+    "pro_reports_per_month": 10,
     "currency": "USD",
-    "refund_days": 7,
-    "delivery": "instant, digital, license key",
+    "refund": "7 days on the full report; see refund page for Pro",
+    "delivery": "instant, digital, emailed and saved in the account",
     "merchant_of_record": "Polar Software, Inc. (polar.sh)",
     "pricing_page": "https://getaisitescan.com/pricing"
   },
