@@ -11,6 +11,7 @@ process.env.RESEND_API_KEY = "re_test"; process.env.EMAIL_FROM = "AI Site Scan <
 process.env.POLAR_WEBHOOK_SECRET = "polar_whs_test";
 process.env.OWNER_EMAIL = "owner@example.com"; process.env.PUBLIC_POSTHOG_KEY = "phc_test";
 const seenEvents = new Set();
+let FAKE_CFG = { paywall: true, pro: true, email: true };
 
 const USER = { id: "22222222-2222-4222-8222-222222222222", email: "buyer@example.com" };
 let rpcCalls = [], updates = [], rpcResult = {};
@@ -38,6 +39,8 @@ let fetches = [];
 global.fetch = async (url, opts = {}) => {
   const u = new URL(url); const body = opts.body ? JSON.parse(opts.body) : null;
   fetches.push({ url: u.toString(), path: u.pathname, method: opts.method || "GET", body, headers: opts.headers });
+  if (u.pathname === "/api/scan") return { ok: true, status: 200, json: async () => ({ score: 95, url: "https://" + u.searchParams.get("url"), actions: [] }) };
+  if (u.pathname === "/api/config") return { ok: true, status: 200, json: async () => FAKE_CFG };
   if (u.hostname.endsWith("posthog.com")) return { ok: true, status: 200, json: async () => ({}) };
   if (u.hostname === "api.resend.com") return { ok: true, status: 200, json: async () => ({ id: "em_1" }) };
   if (u.pathname === "/v1/checkouts/") return { ok: true, status: 201, json: async () => ({ url: "https://polar.sh/checkout/polar_c_x" }) };
@@ -141,12 +144,25 @@ const call = async (h, req) => { const r = mkRes(); await h(req, r); return r; }
     assert.equal(events().length, 0); assert.match(mails()[0].body.subject, /^Test order \(free\)/);
     assert.ok(rpcCalls.some((c) => c.name === "grant_order")); // the buyer still gets the report
   });
-  await t("products: old setting names work only with a product ID", async () => {
-    const keep = [process.env.POLAR_PRODUCT_SINGLE, process.env.POLAR_PRODUCT_PRO];
-    delete process.env.POLAR_PRODUCT_SINGLE; delete process.env.POLAR_PRODUCT_PRO;
-    process.env.POLAR_CHECKOUT_SINGLE = "https://buy.polar.sh/polar_cl_old"; process.env.POLAR_CHECKOUT_PACK = "11111111-1111-4111-8111-000000000009";
-    assert.equal(dbmod.productId("single"), ""); assert.equal(dbmod.productId("pro"), "11111111-1111-4111-8111-000000000009");
-    [process.env.POLAR_PRODUCT_SINGLE, process.env.POLAR_PRODUCT_PRO] = keep; delete process.env.POLAR_CHECKOUT_SINGLE; delete process.env.POLAR_CHECKOUT_PACK;
+  const mail = require(path.join(ROOT, "api", "email.js"));
+  await t("lead email: links to the full fix guide while the paywall is on", async () => {
+    const r = await call(mail, mkReq({ method: "POST", url: "/api/email", auth: "", body: { email: "lead@example.com", url: "example.com" } }));
+    assert.equal(r.statusCode, 200, r.b);
+    const sent = fetches.find((f) => f.url.includes("resend.com"));
+    assert.ok(sent && sent.body.html.includes("buy=1"), "no buy link");
+  });
+  const cron = require(path.join(ROOT, "api", "cron-selfcheck.js"));
+  await t("self-check: alerts when the paywall is off", async () => {
+    FAKE_CFG = { paywall: false, pro: false, email: true };
+    const r = await call(cron, mkReq({ url: "/api/cron-selfcheck", auth: "" }));
+    const d = r.json(); assert.equal(d.ok, false); assert.ok(d.problems.some((p) => p.includes("paywall is off")), r.b);
+    assert.ok(fetches.some((f) => f.url.includes("resend.com") && f.body.subject.includes("self-check")));
+  });
+  await t("self-check: quiet when everything is on", async () => {
+    FAKE_CFG = { paywall: true, pro: true, email: true };
+    const r = await call(cron, mkReq({ url: "/api/cron-selfcheck", auth: "" }));
+    const d = r.json(); assert.equal(d.ok, true, r.b); assert.equal(d.score, 95);
+    assert.ok(!fetches.some((f) => f.url.includes("resend.com")));
   });
   const cfg = require(path.join(ROOT, "api", "config.js"));
   await t("config: paywall on with products and database, public keys only", async () => {

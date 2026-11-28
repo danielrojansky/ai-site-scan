@@ -138,8 +138,20 @@ All times Asia/Jerusalem.
 | $0 orders (100% discount) are marked "Test order (free)" and send no revenue event; the buyer still gets the report |
 | Headers: `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `Permissions-Policy`, and a report-only Content-Security-Policy |
 | Caching: `/vendor/` for 1 year (versioned file names), logo, OG image and favicon for 1 day |
-| Product IDs also read from `POLAR_CHECKOUT_SINGLE` / `POLAR_CHECKOUT_PACK` when they hold a product ID |
+| Product IDs come from `POLAR_PRODUCT_SINGLE` and `POLAR_PRODUCT_PRO`. The old `POLAR_CHECKOUT_*` and `POLAR_PORTAL_URL` settings are deleted |
+| Report email attaches the guide as `text/markdown`. The score counts up only the first time a result is shown |
+| Google login live (Google Auth Platform app "AI Site Scan", in production) |
 | Tests moved into the repo: `tests/test_accounts.js` (16), `tests/ui_flow.py` with `tests/devserver.py` |
+
+### 28 Nov 2026, version 3.0.1
+
+| Change |
+|---|
+| "Scan again" in My reports uses the included rescan in one click |
+| The lead email ("Email me this report") links to the full fix guide again. It read the deleted `POLAR_CHECKOUT_SINGLE` setting |
+| Daily self-check also emails when the paywall, Pro or email is off, or the database does not answer |
+| Report-only Content-Security-Policy allows PostHog's assets host (it was the only violation seen) |
+| Tests: 18 account tests (lead email, self-check), browser test covers the one-click rescan |
 
 ## Test results at launch
 

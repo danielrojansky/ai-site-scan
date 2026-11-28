@@ -17,10 +17,23 @@ Browser (index.html, one file, no build step)
   |       '-- headless Chrome with a WebMCP stand-in -> the tools the page registers
   |-- GET /api/shot?url=...  -> Node function (api/shot.js)
   |       '-- headless Chrome (@sparticuz/chromium + puppeteer-core) -> JPEG
+  |-- /api/config            -> Node: public settings (paywall, prices, Supabase public key, PostHog)
+  |-- Supabase Auth (supabase-js, self-hosted in /vendor): email code or Google -> access token
+  |-- /api/account?do=...     -> Node (api/account.js), every call with the user's token
+  |       |-- me, report: read grants, unlocks, reports (Supabase, secret key)
+  |       |-- checkout: Polar checkout for this user -> polar.sh -> back to /?paid=<plan>
+  |       |-- sync: read this user's paid Polar orders (if the webhook is late)
+  |       |-- unlock: claim_report() uses a credit or a rescan for the scan on screen
+  |       '-- save: stores the fix guide, emails it with the guide attached (Resend)
+  |-- /api/email               -> Node: free report email + llms.txt, one reminder 2 days later
   '-- localStorage: scan history (last 30), fixes ticked off
       Fix guide (.md): built in the browser from the scan JSON
+
+Polar  -> POST /api/polar-webhook (order.paid gives credits, order.refunded removes them;
+          sale email + PostHog purchase once per order)
+Vercel cron 05:00 UTC -> /api/cron-selfcheck (score, config flags, database; emails the owner on a problem)
 ```
-All hosting is on Vercel. There is no database.
+Hosting is on Vercel. Accounts, credits and saved reports are in Supabase (Postgres, us-east-1). Payments are on Polar, the merchant of record.
 
 ## Files
 
@@ -34,6 +47,15 @@ All hosting is on Vercel. There is no database.
 | `api/_agentready.py` | The 23 agent readiness checks and the level rules as pure functions (no network) |
 | `api/webmcp.js` | WebMCP API (Node): opens the page in headless Chrome and lists the tools it registers |
 | `api/shot.js` | Screenshot API (Node 24), CommonJS handler with dynamic `import()` |
+| `api/account.js` | Accounts API: me, report, checkout, unlock, save, sync, portal (one function for all, to stay under the Hobby function limit) |
+| `api/polar-webhook.js` | Polar webhook: checks the signature, gives or removes credits, sends the sale email and the PostHog purchase once per order |
+| `api/config.js` | Public settings for the page. Each feature turns on when its settings exist |
+| `api/email.js` | Free report email and the 2-day reminder (Resend) |
+| `api/cron-selfcheck.js` | Daily self-check (Vercel cron) |
+| `api/_lib.js`, `api/_db.js` | Shared Node helpers: request reading, rate limit, Polar calls, webhook signature, Resend, PostHog; Supabase client, credits from an order, product IDs |
+| `supabase/migrations/` | Tables `grants`, `unlocks`, `reports`, `webhook_events`, row level security, and the functions `grant_order`, `revoke_order`, `claim_report` |
+| `vendor/supabase-js-2.119.2.js` | Self-hosted login library, loaded with an integrity hash |
+| `tests/test_accounts.js`, `tests/ui_flow.py`, `tests/devserver.py` | Account, webhook, email and self-check tests with fakes; browser test of the paid flow and its local server |
 | `tests/test_checks.py` | Offline tests for `_checks.py` and `_location.py` (`python -m unittest discover -s tests`) |
 | `tests/test_agentready.py` | Offline tests for `_agentready.py` |
 | `requirements.txt` | `geo-optimizer-skill[async]==4.28.0` (the async extra adds httpx) |

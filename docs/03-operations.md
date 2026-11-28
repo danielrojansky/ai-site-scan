@@ -21,7 +21,7 @@ Environment variables (optional):
 - `RATE_MAX`: scans per IP per 10 minutes (default 10).
 - `AGENT_RATE_MAX`: agent readiness checks per IP per 10 minutes (default 20).
 
-Version 2.5 settings. Each feature stays off until its settings exist. Add them in Vercel > Project > Settings > Environment Variables, then redeploy.
+Version 3 settings. Each feature stays off until its settings exist. Add them in Vercel > Project > Settings > Environment Variables, then redeploy. The secrets are set for Production only, so previews have no paywall.
 
 | Variable | Used by | Value |
 |---|---|---|
@@ -29,7 +29,7 @@ Version 2.5 settings. Each feature stays off until its settings exist. Add them 
 | `SUPPORT_EMAIL` | config | `support@getaisitescan.com` |
 | `SUPABASE_SECRET_KEY` | account, webhook, config | Supabase secret key (project ai-site-scan). Turns accounts and the paywall on |
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | account, config | Optional: defaults point to the ai-site-scan project |
-| `POLAR_PRODUCT_SINGLE`, `POLAR_PRODUCT_PRO` | account, webhook | Product IDs of "Full report" ($19 once) and "Pro" ($29 a month). Fallback: `POLAR_CHECKOUT_SINGLE` / `POLAR_CHECKOUT_PACK`, used only when they hold a product ID |
+| `POLAR_PRODUCT_SINGLE`, `POLAR_PRODUCT_PRO` | account, webhook, email, config | Product IDs of "Full report" ($19 once, `af3b2092-7a79-4eec-a833-3c7884af041c`) and "Pro" ($29 a month, `dfb0dc4a-8115-4be4-b36c-6779d4340f36`) |
 | `POLAR_ACCESS_TOKEN` | account | Organization token with scopes `checkouts:write`, `customer_sessions:write`, `orders:read` |
 | `POLAR_WEBHOOK_SECRET` | polar-webhook | Secret of the webhook endpoint (events order.paid, order.refunded) |
 | `POLAR_SERVER` | all Polar calls | `sandbox` for tests, empty for production |
@@ -40,17 +40,18 @@ Version 2.5 settings. Each feature stays off until its settings exist. Add them 
 | `OWNER_EMAIL` | webhook, cron | Where sale and self-check emails go |
 | `PUBLIC_POSTHOG_KEY`, `PUBLIC_POSTHOG_HOST` | config | PostHog project key and host |
 | `GADS_ID`, `GADS_PURCHASE_LABEL`, `GADS_CHECKOUT_LABEL`, `GADS_LEAD_LABEL` | config | Google Ads tag and conversion labels |
-| `CRON_SECRET` | cron-selfcheck | Random string. Vercel sends it to the cron call |
+| `CRON_SECRET` | cron-selfcheck | Random string. Vercel sends it to the cron call. Not set yet: without it anyone can start the self-check (3 runs per hour per address) |
 | `SELFCHECK_MIN_SCORE` | cron-selfcheck | Optional, default 90 |
 
 ## Accounts and payments (v3)
 
-- Login: Supabase Auth, email one-time code (or the link in the same email) and Google. The page loads supabase-js from jsdelivr only when needed.
+- Login: Supabase Auth, a 6-digit email code and Google. The page loads supabase-js only when needed, from our own copy `/vendor/supabase-js-2.119.2.js` with an integrity hash (cached for 1 year). Supabase sends its emails through Resend (custom SMTP). The templates "Confirm sign up" and "Magic link or OTP" both show `{{ .Token }}`.
 - Database (Supabase project `ai-site-scan`, us-east-1): `grants` (credits from Polar orders), `unlocks` (a site unlocked by one credit, with its rescans), `reports` (saved reports). Row security: users read only their own rows. The server writes through `grant_order`, `revoke_order` and `claim_report` (see `supabase/migrations/`).
 - Products in Polar: "Full report" $19 one-time (1 credit; the site gets 1 rescan within 30 days) and "Pro" $29 a month (10 credits per paid month, valid until the period end + 3 days; rescans of its sites are included). No benefits needed.
 - Flow: log in > `/api/account?do=checkout` creates a Polar checkout for this user (`external_customer_id` = user id, email filled in) > success URL `/?paid=<plan>&checkout_id={CHECKOUT_ID}` > the page calls `sync` (reads this user's paid orders, in case the webhook is late) and `me` until a credit shows > `unlock` uses it for the scan on screen > `save` stores the guide and emails it with the guide attached.
 - Webhook `order.paid` gives credits (a database error answers 500 so Polar retries). `order.refunded` (full) removes the order's credits and sites.
-- Test with a 100% discount code. Never test with a real card.
+- Test with the 100% discount code `F53KRI8C` (shown as REVIEW100 in Polar). Never test with a real card. Polar asks for a card on the Pro subscription even at $0, so Pro cannot be tested this way.
+- "Scan again" in My reports uses the site's included rescan in one click (the page remembers the request for 2 minutes).
 - Support: Polar expects a reply within 48 hours when it loops us into a customer thread.
 
 ## Run and test locally
@@ -66,13 +67,18 @@ Notes for local tests:
 - For the screenshot and WebMCP functions outside Vercel, set `CHROME_PATH` to a local Chrome (they are plain handlers: a small Node server can call them).
 - A browser test with Playwright can mock `/api/scan` and `/api/shot` and run the whole UI flow (scan, export, history, reopen, new scan).
 - Offline tests for the checks: `python -m unittest discover -s tests` (108 tests, under a second, no network).
+- Account, payment and email tests: `node tests/test_accounts.js` (18 tests with a fake Supabase, Polar, Resend and PostHog).
+- Browser test of the paid flow: add `127.0.0.1 local.aisitescan.test` to `/etc/hosts`, run `python3 tests/devserver.py . 8765`, then `python3 tests/ui_flow.py` (Playwright with Chromium).
 - A small dev server (a `ThreadingHTTPServer` that serves `index.html` and routes `/api/scan` to `api/scan.handler`) is the quickest way to test the real scan and the page together, without `vercel dev`. Set `RATE_MAX=1000` for it.
 - To compare engine speed or scores, call `scan.scan(url)` in a Python shell. `scan.scan` runs the parallel path.
 
 ## Monitoring
 
-- Vercel dashboard: Project `ai-site-scan` > Logs. Python errors are printed with a traceback to stderr.
-- Each scan logs one access line.
+- Vercel dashboard: Project `ai-site-scan` > Logs. Python errors are printed with a traceback to stderr. The Hobby plan keeps 1 hour of logs.
+- Each scan logs one access line. Payments log `order.paid id=... product=... credits=...` (a $0 order ends with `test`).
+- Daily self-check at 05:00 UTC (`/api/cron-selfcheck`): a fresh scan of our own site, `/api/config` and the database. It emails `OWNER_EMAIL` when the score is under 90, something does not answer, or the paywall, Pro or email is off.
+- PostHog (US): page views, scans, paywall views, logins, checkouts and purchases. A $0 order sends no purchase event.
+- Polar: orders, customers, refunds. Supabase: Authentication > Users, Table Editor (`grants`, `unlocks`, `reports`, `webhook_events`).
 
 ## Troubleshooting (problems already seen and fixed)
 
@@ -100,4 +106,4 @@ Notes for local tests:
 
 ## Costs
 
-- Vercel Hobby plan. Hobby is for personal, non-commercial use: move to Pro before the first sale. No other paid services until the Polar, Resend and PostHog settings are added (all have free tiers). The screenshot function is the heaviest part (Chrome, 2 GB, a few seconds per image). Edge caching limits repeat cost.
+- Vercel Hobby plan. Vercel's terms allow Hobby only for personal or non-commercial use (https://vercel.com/legal/terms, section 4), and the site now sells: move to Pro ($20 per developer seat a month, https://vercel.com/docs/plans/hobby). Supabase, Resend, PostHog and Google Cloud run on free tiers. Polar takes its fee per sale. The screenshot function is the heaviest part (Chrome, 2 GB, a few seconds per image). Edge caching limits repeat cost.

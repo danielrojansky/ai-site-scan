@@ -714,7 +714,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
     </div>
   </div>
 
-  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.0</span></footer>
+  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.1</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div role="region" aria-label="Notifications"><div class="toast" id="toast" role="status"></div></div>
@@ -747,7 +747,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
 
 <script>
 "use strict";
-const APP_VERSION = "3.0.0"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "3.0.1"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -2024,6 +2024,8 @@ async function renderAcct(){
   $("#acctReports").innerHTML = reps.length ? reps.map(r => `<div class="rrow"><div><b>${esc(r.host)}</b> <span class="rmeta">${r.score != null ? esc(String(r.score)) + "/100 · " : ""}${r.kind === "rescan" ? "rescan · " : ""}${esc(fmtDate(r.created_at))}</span></div><div class="rbtns"><button type="button" class="small" data-open="${esc(r.id)}">Open</button><button type="button" class="small" data-rescan="${esc(r.url)}">Scan again</button></div></div>`).join("")
     : '<p class="muted">No saved reports yet.</p>';
 }
+/* "Scan again" in My reports = the buyer asked for the rescan: use it without a second click (2 minutes) */
+let RESCAN_ASK = null;
 async function openReport(id){
   try{
     const d = await api("report&id=" + encodeURIComponent(id));
@@ -2036,7 +2038,7 @@ async function openReport(id){
 }
 $("#acctReports").addEventListener("click", e => {
   const o = e.target.closest("[data-open]"); if(o){ openReport(o.dataset.open); return; }
-  const s = e.target.closest("[data-rescan]"); if(s){ showView("scan"); $("#u").value = s.dataset.rescan; toggleClear(); run(s.dataset.rescan, {fresh: true}); }
+  const s = e.target.closest("[data-rescan]"); if(s){ RESCAN_ASK = {host: hostOf(s.dataset.rescan), t: Date.now()}; showView("scan"); $("#u").value = s.dataset.rescan; toggleClear(); run(s.dataset.rescan, {fresh: true}); }
 });
 $("#logoutBtn").onclick = async () => { if(SB) await SB.auth.signOut(); ACCT = null; CUR = null; renderAcct(); refreshAcctUi(); if(DATA) renderIssues(); toast("Logged out."); };
 $("#tabAcct").onclick = () => showView("acct");
@@ -2095,10 +2097,16 @@ function afterRender(d){
   $("#mailMsg").textContent = "";
   CFG_READY.then(() => {
     if(!DATA || hostOf(DATA.url) !== host) return;
+    const asked = !!RESCAN_ASK && RESCAN_ASK.host === host && Date.now() - RESCAN_ASK.t < 120000;
+    RESCAN_ASK = null;
     if(ACCT && !unlockedNow()){  /* this exact scan was unlocked before: no new credit */
       const rep = (ACCT.reports || []).find(r => r.host === host && r.scan_key === scanKey(DATA));
       if(rep){ CUR = {key: scanKey(DATA), report_id: rep.id, kind: rep.kind}; renderIssues(); }
-      else { const s = siteInfo(host); if(payOn() && s && s.unlimited) unlockScan("Included in Pro. Every fix is open.").catch(() => {}); }
+      else {
+        const s = siteInfo(host);
+        if(payOn() && s && s.unlimited) unlockScan("Included in Pro. Every fix is open.").catch(() => {});
+        else if(payOn() && asked && s && s.rescans_left > 0) unlockScan("Rescan used. Every fix is open.").catch(() => {});
+      }
     }
     refreshPayUi();
     const q = new URLSearchParams(location.search);

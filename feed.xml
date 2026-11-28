@@ -6,7 +6,14 @@
     <atom:link href="https://getaisitescan.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>New checks and changes in AI Site Scan, the free AI readiness scan for websites.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 27 Nov 2026 20:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 14:00:00 +0200</lastBuildDate>
+    <item>
+      <title>Version 3.0.1: one-click rescan and safer emails</title>
+      <link>https://getaisitescan.com/</link>
+      <guid isPermaLink="false">ai-site-scan-3.0.1</guid>
+      <pubDate>Sat, 28 Nov 2026 14:00:00 +0200</pubDate>
+      <description>Scan again from My reports now uses your included rescan in one click. The report email attaches the fix guide as a Markdown file, and the score no longer counts up twice after you pay.</description>
+    </item>
     <item>
       <title>Version 3.0.0: accounts, saved reports and Pro</title>
       <link>https://getaisitescan.com/pricing</link>
