@@ -2,7 +2,7 @@
 
 > AI Site Scan checks whether ChatGPT, Claude, Perplexity and Google AI can reach, read and understand a website. You enter an address and get an AI readiness score from 0 to 100, a side-by-side view of what a visitor and an AI tool see, a test of 14 AI bots, 23 agent-readiness checks and a ranked list of fixes.
 
-The scan is free and needs no login. The full report, with steps and ready-to-paste code for every fix, costs $19 once for one site (with 1 rescan within 30 days), or $29 a month for Pro with 10 reports a month. Buyers log in with an email code or Google; reports are emailed and saved in their account. Payments run on Polar, the merchant of record. Scores come from the open-source geo-optimizer-skill engine (MIT).
+The scan is free and needs no login. The full report, with steps and ready-to-paste code for every fix, costs $19 once for one site (with 1 rescan within 30 days), or $29 a month for Pro with 10 reports a month. Buyers log in with an email code or Google; reports are emailed and saved in their account. Payments run on Polar, the merchant of record.
 
 ## Main pages
 
@@ -23,4 +23,3 @@ The scan is free and needs no login. The full report, with steps and ready-to-pa
 
 - [Full text of every page](https://getaisitescan.com/llms-full.txt): the pages above in one Markdown file
 - [Changelog feed](https://getaisitescan.com/feed.xml)
-- [Source of the scoring engine](https://github.com/auriti-labs/geo-optimizer-skill)

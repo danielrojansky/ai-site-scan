@@ -59,13 +59,6 @@ from geo_optimizer.utils.http_async import fetch_url_async  # noqa: E402
 from geo_optimizer.utils.validators import normalize_url_scheme, validate_public_url  # noqa: E402
 
 APP_VERSION = "3.0.0"  # keep in step with the footer in index.html
-ENGINE = "geo-optimizer-skill"
-try:
-    from importlib.metadata import version as _v
-
-    ENGINE_VERSION = _v("geo-optimizer-skill")
-except Exception:  # pragma: no cover
-    ENGINE_VERSION = "unknown"
 
 # ---------------------------------------------------------------------------
 # Basic rate limit and cache (per function instance, best effort)
@@ -390,8 +383,6 @@ async def scan_async(url: str) -> dict:
         "app_version": APP_VERSION,
         "url": url,
         "scanned_at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
-        "engine": {"name": ENGINE, "version": ENGINE_VERSION,
-                   "repo": "https://github.com/auriti-labs/geo-optimizer-skill"},
         "score": audit.get("score"),
         "band": audit.get("band"),
         "error": audit.get("error"),
