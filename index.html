@@ -774,7 +774,7 @@ function toast(msg, icon){
 }
 const easeOut = t => 1 - Math.pow(1 - t, 3);
 function tween(dur, fn, done){
-  if(REDUCED){ fn(1); done && done(); return; }
+  if(REDUCED || dur <= 0){ fn(1); done && done(); return; }
   const t0 = performance.now();
   (function step(now){
     const p = Math.min(1, (now - t0) / dur);
@@ -1160,12 +1160,16 @@ function renderTop(d, entry, opts){
   const cnt = {critical: 0, high: 0, medium: 0, low: 0}; ISSUES.forEach(i => cnt[i.sev]++);
   const locCrit = ISSUES.some(i => i.cat === "location" && i.sev === "critical");
   const ring = $("#ring"), num = $("#score"), band = $("#band");
-  ring.classList.remove("done"); ring.style.setProperty("--p", 0); num.textContent = "0";
+  /* count up only the first time a result is shown; a redraw of the same result (after login,
+     unlock or payment) shows the final score at once */
+  const again = ring.dataset.entry === entry.id && ring.classList.contains("done");
+  ring.dataset.entry = entry.id;
+  if(!again){ ring.classList.remove("done"); ring.style.setProperty("--p", 0); num.textContent = "0"; }
   band.className = "band " + (d.band || ""); band.textContent = BAND[d.band] || (d.band ? cap(d.band) : "");
   mood($("#sumBot"), locCrit ? (s >= 40 ? "idle" : "sad") : s >= 80 ? "happy" : s >= 40 ? "idle" : "sad");
-  tween(1100, p => { const v = s * p; ring.style.setProperty("--p", v); ring.style.setProperty("--c", colorFor(v)); num.textContent = Math.round(v); }, () => {
+  tween(again ? 0 : 1100, p => { const v = s * p; ring.style.setProperty("--p", v); ring.style.setProperty("--c", colorFor(v)); num.textContent = Math.round(v); }, () => {
     ring.classList.add("done"); band.classList.add("in");
-    if(s >= 80 && !opts.saved && !cnt.critical && !locCrit) burstAt(ring, 56);  /* no confetti while a critical issue stands */
+    if(s >= 80 && !again && !opts.saved && !cnt.critical && !locCrit) burstAt(ring, 56);  /* no confetti while a critical issue stands */
   });
   if(d.band == null) band.classList.add("in");
   const prev = olderEntry(entry), dl = prev && prev.score != null && d.score != null ? d.score - prev.score : null;
