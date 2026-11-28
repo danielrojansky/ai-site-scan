@@ -123,7 +123,7 @@ with sync_playwright() as p:
 
     syncs = STATE.get("syncs", 0)
     page.click("#tabAcct"); page.wait_for_selector("#acctReports .rrow")
-    assert page.locator("#tabAcct").inner_text() == "My reports"
+    assert page.locator("#tabAcct").inner_text() == "My sites"
     page.wait_for_timeout(600)
     assert STATE.get("syncs", 0) == syncs + 1, STATE
     assert "Rescans" in page.locator("#acctPlan").inner_text()

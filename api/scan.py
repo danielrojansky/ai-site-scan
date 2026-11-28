@@ -58,7 +58,7 @@ from geo_optimizer.models.results import CdnAiCrawlerResult  # noqa: E402
 from geo_optimizer.utils.http_async import fetch_url_async  # noqa: E402
 from geo_optimizer.utils.validators import normalize_url_scheme, validate_public_url  # noqa: E402
 
-APP_VERSION = "3.2.1"  # keep in step with the footer in index.html
+APP_VERSION = "4.0.0"  # keep in step with the footer in index.html
 
 # ---------------------------------------------------------------------------
 # Basic rate limit and cache (per function instance, best effort)
@@ -442,6 +442,31 @@ def scan(url: str) -> dict:
         return ex.submit(asyncio.run, scan_async(url)).result()
 
 
+def _benchmark(host: str, score) -> dict | None:
+    """Store this site's score for today (anonymous: site address and score only) and return how it compares.
+    Needs SUPABASE_SECRET_KEY. Fails quietly: the scan never waits more than about 2 seconds for it."""
+    key = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
+    if not key or not isinstance(score, int) or not host or "." not in host:
+        return None
+    import urllib.request
+    base = os.environ.get("SUPABASE_URL", "https://rhbhkeuvftqwjjoyzseh.supabase.co").rstrip("/")
+    head = {"apikey": key, "Content-Type": "application/json"}
+    try:
+        req = urllib.request.Request(base + "/rest/v1/scan_scores?on_conflict=host,scanned_on", method="POST",
+                                     data=json.dumps([{"host": host, "score": score}]).encode(),
+                                     headers={**head, "Prefer": "resolution=merge-duplicates,return=minimal"})
+        urllib.request.urlopen(req, timeout=1.2).read()
+        req = urllib.request.Request(base + "/rest/v1/rpc/score_benchmark", method="POST",
+                                     data=json.dumps({"s": score}).encode(), headers=head)
+        rows = json.loads(urllib.request.urlopen(req, timeout=1.2).read() or b"[]")
+        row = rows[0] if isinstance(rows, list) and rows else rows
+        n, below = int(row.get("n") or 0), int(row.get("below") or 0)
+        return {"n": n, "below_pct": round(100 * below / n) if n else 0}
+    except Exception as e:
+        print(f"benchmark failed: {type(e).__name__}", flush=True)
+        return None
+
+
 # ---------------------------------------------------------------------------
 # Handler
 # ---------------------------------------------------------------------------
@@ -506,6 +531,8 @@ class handler(BaseHTTPRequestHandler):
             return self._send(502, {"error": str(e)[:300]})
         except Exception as e:
             return self._send(500, {"error": f"Scan failed: {type(e).__name__}: {str(e)[:200]}"})
+        if data.get("score") is not None and not data.get("error") and (data.get("ai_view") or {}).get("ok"):
+            data["benchmark"] = _benchmark(re.sub(r"^www\.", "", (p.hostname or "").lower()), data.get("score"))
         print(f"scan host={p.hostname} score={data.get('score')} total_ms={data['duration_ms']} "
               f"engine_ms={data['timings']['engine_ms']} actions={len(data['actions'])}", flush=True)
         with _lock:

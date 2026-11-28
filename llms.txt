@@ -10,6 +10,7 @@ The scan is free and needs no login. The full report, with steps and ready-to-pa
 - [llms.txt checker and generator](https://getaisitescan.com/llms-txt): checks a site's llms.txt and writes one from the site's own pages
 - [AI robots.txt checker](https://getaisitescan.com/ai-robots-txt): tests whether GPTBot, ClaudeBot, PerplexityBot and 11 more AI bots can read a site
 - [About](https://getaisitescan.com/about): who makes AI Site Scan and how the score works
+- [Sample report](https://getaisitescan.com/sample): a real full report for react.dev, score 63 to 90, fixes with code and an agent grade
 - [Compare](https://getaisitescan.com/compare): AI Site Scan vs HubSpot AI Search Grader, Semrush AI Agent Readiness, Hostinger AI Visibility Checker, Cloudflare isitagentready.com and Otterly.AI, with sources
 - [How we test](https://getaisitescan.com/how-we-test): the three kinds of AI we test (search crawlers, agents that read the page, agents that look at the screen), every agent check, its limits and sources
 - [Pricing](https://getaisitescan.com/pricing): free check, $19 full report for 1 site, Pro at $29 a month for 10 reports

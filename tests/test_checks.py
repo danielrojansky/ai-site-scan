@@ -598,3 +598,13 @@ class Location(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HiddenLinks(unittest.TestCase):
+    def test_aria_hidden_links_are_not_empty(self):
+        from bs4 import BeautifulSoup
+        html = ('<body><a href="/v1" aria-hidden="true" tabindex="-1"><div class="thumb"></div></a>'
+                '<a href="/v1">Video one</a><div aria-hidden="true"><a href="/v2"><span></span></a></div>'
+                '<a href="/x"><span></span></a></body>')
+        lk = C.link_facts(BeautifulSoup(html, "html.parser").body, "example.com")
+        self.assertEqual(lk["empty"], 1)

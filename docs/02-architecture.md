@@ -47,6 +47,10 @@ Hosting is on Vercel. Accounts, credits and saved reports are in Supabase (Postg
 | `api/_agentready.py` | The 23 agent readiness checks and the level rules as pure functions (no network) |
 | `api/webmcp.js` | WebMCP API (Node): opens the page in headless Chrome and lists the tools it registers |
 | `api/shot.js` | Screenshot API (Node 24), CommonJS handler with dynamic `import()` |
+| `api/scan.py` `_benchmark()` | Writes the site address, date and score to Supabase `scan_scores` and reads `score_benchmark(s)`: how many sites (latest score each, 90 days) score lower. Needs `SUPABASE_SECRET_KEY`; fails quietly in about 2 s at most |
+| `assets/site.css` | Shared v4 style for the static pages (pricing, compare, sample, how-we-test, about, contact, legal) |
+| `index.md` | The home page in Markdown, served on / for `Accept: text/markdown` (vercel.json rewrite with a header condition) |
+| `sample.html` | Public sample report for react.dev |
 | `api/agentux.js` | Agent usability API (Node): opens the page in headless Chrome at 1280 x 800 like a browser agent, returns the accessibility tree, the layers that cover the screen, a screenshot and the checks |
 | `api/_agentux.js` | `snapshot()` and `motionProbe()` run inside the page; `evaluate()` is pure and turns a snapshot into checks and an A to F grade |
 | `api/account.js` | Accounts API: me, report, checkout, unlock, save, sync, portal (one function for all; started under the Hobby function limit, kept as one on Pro) |

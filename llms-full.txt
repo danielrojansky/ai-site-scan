@@ -43,7 +43,7 @@ Every fix with steps and ready-to-paste code, filled in for your site, plus 1 re
 
 **Where does the score come from?** We check 9 areas, such as robots.txt, structured data, content and brand signals, for a total of 100 points. Our extra checks, such as the bot test and agent readiness, do not change the score.
 
-**Do you store my results?** Your history stays in your own browser. Our server keeps a result for 10 minutes, so a repeat check is fast.
+**Do you store my results?** Your history stays in your own browser. Our server keeps a full result for 10 minutes, so a repeat check is fast. To compare sites, we keep only the site address, the date and the score.
 
 **What is in the full fix guide?** Every fix for your site, ranked, with the steps and ready-to-paste code filled in for your pages: JSON-LD, llms.txt, robots.txt and head tags. It is one Markdown file you can hand to a developer or an AI coding tool.
 
@@ -161,6 +161,12 @@ Sources:
 - Hostinger AI Visibility Checker: https://www.hostinger.com/ai-visibility-checker
 - Cloudflare isitagentready.com: https://isitagentready.com/
 - Otterly.AI: https://otterly.ai/pricing
+
+## Sample full report: react.dev
+
+URL: https://getaisitescan.com/sample
+
+A real AI Site Scan full report for react.dev, scanned on 2026-11-28: score 63 of 100 and 90 after the fixes; ChatGPT 48, Google AI Overviews 56, Perplexity 60; agent grade B (5 of 8 checks). 8 fixes ranked by impact: structured data (JSON-LD, +14), brand and entity signals (+7), Google AI readiness (+3), AI discovery files (+3), and smaller items. Each fix has steps and ready-to-paste code filled in for the site, for example Organization and WebSite JSON-LD, a robots.txt with the AI crawlers and the sitemap, and a search form with a results address for AI agents.
 
 ## How we test
 

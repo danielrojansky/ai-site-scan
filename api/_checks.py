@@ -381,7 +381,9 @@ def link_facts(body: Tag, host: str) -> dict:
             internal += 1
         text = _clean(a.get_text(" "))
         labelled = text or a.get("aria-label") or a.get("aria-labelledby") or a.get("title")
-        if not labelled and not a.find(["img", "svg", "picture", "video", "canvas", "input"]):
+        hidden = a.get("aria-hidden") == "true" or a.find_parent(attrs={"aria-hidden": "true"}) is not None
+        # a link hidden from assistive tech (often a duplicate thumbnail link) is not read as empty
+        if not labelled and not hidden and not a.find(["img", "svg", "picture", "video", "canvas", "input"]):
             empty += 1
         norm = re.sub(r"[^\w\s]", "", text.lower()).strip()
         if norm in GENERIC_LINKS and not a.get("aria-label"):

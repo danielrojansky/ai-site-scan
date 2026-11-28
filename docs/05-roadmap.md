@@ -21,6 +21,9 @@ Last updated: 28 Nov 2026 (version 3.0.3).
 
 ## Next steps (28 Nov 2026)
 
+To reach 100 on our own scan: add sameAs links to 3 of Wikipedia, Wikidata, LinkedIn and Crunchbase. Daniel provides his LinkedIn profile (founder sameAs) and creates a Wikidata item and a Crunchbase page.
+
+
 | # | Step | Who | Effort |
 |---|---|---|---|
 | 1 | Done 28 Nov 2026: Vercel is on Pro | Daniel | Done |

@@ -24,6 +24,9 @@
 | Payments (v2.5) | Polar as merchant of record. One-time products with a License Key benefit. Checkout links, no own checkout page. The key unlocks the guide; one activation per site (label = host) | Stripe (Daniel would be the seller and handle tax himself); Dodo Payments; Lemon Squeezy; own database of buyers | Polar handles tax and receipts in every country, pays out to Israel, and keeps the keys. No database to run |
 | Accounts (v3) | Supabase Auth and Postgres, one serverless function for all account actions | Own email codes and a KV store; Clerk or Auth0 | Free at this size, row security, Google login built in, and one function keeps the project under Vercel's function limit |
 | Key delivery (v2.5) | `/api/claim`: the success URL carries the checkout ID; the server reads the checkout, opens a customer session and reads the new key; the page applies it | Buyer pastes the key from Polar's email; webhook that emails the key | No copy and paste, so "instant delivery" is true. Paste stays as a fallback |
+| Design v4 "X-ray" (4.0) | Dark navy hero that shows a page next to what ChatGPT reads; status colors only for meaning; Schibsted Grotesk with IBM Plex Mono only for machine-read text; fonts self-hosted in /vendor | Keep v3; a light SaaS-card look; Google Fonts | The old site looked generic. The X-ray is the product's own idea, shown before any text. Self-hosting keeps the CSP strict and no third party sees visitors |
+| Benchmark (4.0) | Store site address, date and score (no user data) in Supabase, latest score per site in 90 days; show "better than N%" only from 30 sites | Client-side posting; invented numbers; no comparison | Server-side writes cannot be faked from the page; a threshold keeps the number honest |
+| Markdown for agents (4.0) | A Markdown copy of the home page at /index.md, served on / when a request asks for text/markdown, plus a Link header | No Markdown | Counts in the score (AI discovery) and in agent readiness, and helps agents that prefer Markdown |
 | Agent usability (v3.2) | One Chrome visit per scan that reads the accessibility tree and the screen at load; 14 checks with an A to F grade, outside the score; code fixes in the paid report | Only the crawler view; screenshots only; an AI model to judge the page; add it to the score | Browser agents read the accessibility tree (Claude in Chrome, Comet) or screenshots (ChatGPT agent, Gemini), per their makers. Rules are measurable and testable offline. The score stays the engine's |
 | Comparison page (v3.1) | Static `/compare` page with named tools, dated sources and "Not stated" where unknown; rows where others win stay in | No comparison; unnamed "other tools"; claims without sources | AI crawlers read static HTML and quote sourced, fair tables. Honest rows build trust and keep the claims safe |
 | Merchant review pages (v2.5) | Pricing, contact, refunds and delivery, terms, privacy, built from one template with the same footer on every page | Policy generator text; one long legal page | Polar, Dodo and card networks check that prices, delivery, refund and cancellation terms, a contact route and the seller's identity are on the live site and match the account form |
@@ -161,6 +164,20 @@ All times Asia/Jerusalem.
 |---|
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
+
+### 28 Nov 2026, version 4.0.0
+
+| Change |
+|---|
+| New design "X-ray": dark hero with an example page next to what ChatGPT reads, the five AI steps, three kinds of AI (with sources), a report preview, pricing, comparison and questions. Fonts Schibsted Grotesk and IBM Plex Mono, self-hosted |
+| Header: links to the sample report, compare and pricing; when logged in, an account chip with a menu (email, plan, sites unlocked, My sites, receipts, upgrade to Pro, log out) |
+| Results: dark verdict band, a tile per AI platform, a "points to gain" card, the "How AI sees this page" card with three tabs right after it, then the journey and "What AI gets wrong, worst first". Locked fixes show a blurred code preview. A bar at the bottom shows the locked fixes and the points to gain |
+| My sites (was My reports): tiles (sites, average score, points to gain, weakest reader), a table of sites with each platform's score and report status, a Pro offer from the real number of locked sites, saved reports |
+| Benchmark: table `scan_scores` and function `score_benchmark` in Supabase; the scan stores the site address, date and score and returns `benchmark {n, below_pct}`; the verdict shows it from 30 sites. Privacy page, about page and FAQ updated |
+| New page `/sample`: a real full report for react.dev, shortened. Linked from the header, footers, llms.txt, llms-full.txt and the sitemap |
+| Static pages share `/assets/site.css` with the v4 look |
+| Score: links to OpenAI, Anthropic and Google sources on the home page; `/index.md` and `Accept: text/markdown` on /; Link header (describedby llms.txt, service-doc How we test, alternate Markdown) |
+| Link check: links hidden with aria-hidden no longer count as empty links (react.dev was reported with 5) |
 
 ### 28 Nov 2026, version 3.2.1
 
