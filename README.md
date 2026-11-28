@@ -6,7 +6,7 @@ A small web app. Enter a URL and get a score and a to-do list in seconds. The re
 2. **One list of issues**, severe first. Each issue shows once: what the AI saw, why it matters and how to fix it. Tick issues off as you fix them. This is the free teaser for the full report and the fix guide.
 3. **Details, closed until you open them**: how AI sees your page (the page without JavaScript next to a screenshot), the bot access test (14 crawlers and AI assistants tested at once), agent readiness (23 standards that AI agents look for, with a level from 0 to 5), AI platforms, key facts and the score breakdown.
 
-Current version: **2.4.0** (shown in the page footer).
+Current version: **3.0.1** (shown in the page footer). Live at https://getaisitescan.com.
 
 ## Documentation
 

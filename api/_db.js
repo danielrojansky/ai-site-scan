@@ -50,12 +50,9 @@ async function grantFromOrder(o) {
   return error ? "error " + error.message : pro ? "pro granted" : "single granted";
 }
 
-/* Product IDs. POLAR_PRODUCT_* first; the older POLAR_CHECKOUT_SINGLE / POLAR_CHECKOUT_PACK
-   names are accepted only when they hold a product ID (a UUID), never a checkout link. */
+/* Product IDs of the two Polar products (Vercel settings). */
 function productId(plan){
-  const [main, old] = plan === "pro" ? ["POLAR_PRODUCT_PRO", "POLAR_CHECKOUT_PACK"] : ["POLAR_PRODUCT_SINGLE", "POLAR_CHECKOUT_SINGLE"];
-  const a = env(main); if(a) return a;
-  const b = env(old); return UUID.test(b) ? b : "";
+  return env(plan === "pro" ? "POLAR_PRODUCT_PRO" : "POLAR_PRODUCT_SINGLE");
 }
 
 module.exports = { productId, db, dbReady, userFrom, grantFromOrder, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, UUID };

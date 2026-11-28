@@ -1,10 +1,9 @@
-"""Browser test of the paid flow (scan, login, checkout, return, workspace, logout) with fake Supabase and Polar.
+"""Browser test of the paid flow with fake Supabase and Polar: scan, log in with a code, pay, unlock,
+report saved, workspace, one-click rescan, log out.
 Run: add "127.0.0.1 local.aisitescan.test" to /etc/hosts, start `python3 tests/devserver.py . 8765`,
 then `python3 tests/ui_flow.py`. Needs Playwright with Chromium."""
-import os, tempfile
+import json, os, sys, tempfile
 SHOTS = os.environ.get("SHOTS_DIR") or tempfile.mkdtemp(prefix="aiss-shots-")
-"""Browser test of the account flow: scan, log in with a code, pay (fake Polar), unlock, report saved, workspace."""
-import json, sys
 from playwright.sync_api import sync_playwright
 
 BASE = "http://local.aisitescan.test:8765"
@@ -113,6 +112,22 @@ with sync_playwright() as p:
     assert "saved" in page.locator("#guideText").inner_text()
     ok("workspace: report listed and opens")
     page.keyboard.press("Escape")
+
+    before = STATE["unlocks"]
+    def later_scan(route, request):  # a scan in the same minute counts as the same result; make this one new
+        resp = route.fetch(); d = resp.json(); d["scanned_at"] = "2030-01-01 00:00 UTC"
+        route.fulfill(response=resp, json=d)
+    page.route("**/api/scan?**", later_scan)
+    page.click("#acctReports [data-rescan]")
+    for _ in range(120):
+        if STATE["unlocks"] > before: break
+        page.wait_for_timeout(500)
+    assert STATE["unlocks"] == before + 1, STATE
+    page.wait_for_timeout(800)
+    assert page.locator("#payDlg[open]").count() == 0 and page.locator(".locked").count() == 0
+    ok("rescan: 'Scan again' in My reports uses the included rescan in one click")
+
+    page.click("#tabAcct"); page.wait_for_selector("#logoutBtn:not(.hide)")
     page.click("#logoutBtn"); page.wait_for_function("() => document.querySelector('#tabAcct').textContent === 'Log in'")
     ok("log out")
     b.close()

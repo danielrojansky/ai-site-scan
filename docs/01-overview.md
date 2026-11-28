@@ -1,21 +1,25 @@
 # AI Site Scan: overview
 
-Last updated: 25 Nov 2026, 23:35 (Asia/Jerusalem). App version 2.4.0
+Last updated: 28 Nov 2026, 14:00 (Asia/Jerusalem). App version 3.0.1
 Owner: Daniel Rojansky
 
 ## What it is
 
-AI Site Scan is a free web app. You enter a website address. The app tells you how well AI tools (ChatGPT, Claude, Perplexity, Google AI Overviews) can reach, read and understand that site, and what to fix.
+AI Site Scan is a web app. You enter a website address. The app tells you how well AI tools (ChatGPT, Claude, Perplexity, Google AI Overviews) can reach, read and understand that site, and what to fix. The scan is free. The full report (every fix with ready-to-paste code) is paid: $19 once for one site, or Pro at $29 a month for 10 reports.
 
 ## Links
 
 | Item | Value |
 |---|---|
-| Live app | https://ai-site-scan.vercel.app |
+| Live app | https://getaisitescan.com (the old https://ai-site-scan.vercel.app still works) |
 | GitHub repo | https://github.com/danielrojansky/ai-site-scan (branch `main`) |
 | Vercel project | `ai-site-scan` (id `prj_mmAM1HwKQduftTI2wD2Rd9AjdcZt`) |
 | Vercel team | `danielrojansky-8273s-projects` (id `team_xh9PcZyIa6lW6nLv8G0YrACi`) |
-| Scan engine | geo-optimizer-skill 4.28.0, MIT, https://github.com/auriti-labs/geo-optimizer-skill |
+| Scan engine | geo-optimizer-skill 4.28.0, MIT, https://github.com/auriti-labs/geo-optimizer-skill (not named on the public site since 28 Nov 2026) |
+| Accounts and data | Supabase project `ai-site-scan`, ref `rhbhkeuvftqwjjoyzseh`, us-east-1 |
+| Payments | Polar, organization "Daniel Consulting" (merchant of record) |
+| Email | Resend (sending, domain getaisitescan.com) and ImprovMX (support@ to Gmail) |
+| Analytics | PostHog, US region |
 
 ## What the user gets
 
@@ -33,16 +37,14 @@ AI Site Scan is a free web app. You enter a website address. The app tells you h
 10. **History tab:** last 30 scans, saved in the browser. Open, rescan, delete, and see score changes.
 11. **Agent readiness (v2.4):** a closed Details panel with 23 checks of the standards AI agents look for (the ones isitagentready.com tests), a level from 0 to 5, and for each check what we asked, why it matters and how to fix it. It does not change the score.
 12. **Other:** one Scan/Rescan button in the address bar (see below), Share link (opens a scan), Copy summary, JSON download.
+13. **Full report (paid, v3):** the first 3 fixes are free. Buyers log in (email code or Google), pay on Polar, and every fix opens. The report is emailed with the fix guide attached and saved in "My reports". A Full report includes 1 rescan of the site within 30 days ("Scan again" in My reports uses it in one click). Pro includes rescans of its sites while the month is paid.
 
-## Status (25 Nov 2026)
+## Status (28 Nov 2026)
 
-- Live and public. No login.
-- Auto-deploy: each push to `main` deploys to production. Other branches get a preview URL.
-- Version 2.4.0: Agent readiness panel. All the checks of isitagentready.com, as a level from 0 to 5 and 23 rows, loaded after the scan from a new function.
-- Version 2.3.0: new interface. One narrow column, one list of issues (severe first), everything else collapsed.
-- Version 2.2.0: the "Say where your business is" check for local businesses (critical when the page text never says where the business is), a red alert under the score, and an optional Content Signals extra.
-- Version 2.1.0: "What the AI agent missed" section, one smart Scan/Rescan button (Rescan always bypasses the cache). Version 2.0.0 brought the playful interface, the parallel scan engine (about 4 to 6 times faster), the 14-bot test and the extra checks.
-- Tested on: anthropic.com (57), react.dev (63), excalidraw.com (50, JavaScript-only), stripe.com (86), duet121.com (45, JavaScript-only), paulgraham.com (35, little text, no JavaScript), wikipedia.org (69), nytimes.com (blocks all cloud traffic), cnn.com (refuses AI bots with HTTP 451), a fake domain, and a private address (refused). Scores match the old one-by-one engine on every site compared.
+- Live at getaisitescan.com and selling: Full report $19 and Pro $29 a month on Polar. Version 3.0.1.
+- Tested end to end on the live site on 28 Nov 2026: email code login, Google login, a $0 Full report order with a 100% discount code (webhook, credit, unlock, report email with the guide attached, My reports, the included rescan). The live Pro subscription was not bought, because Polar asks for a card even at $0.
+- Auto-deploy: each push to `main` deploys to production. Other branches get a preview URL. Previews have no account settings, so their paywall is off.
+- Version history and test results: `04-decisions-and-changelog.md`.
 
 ## Documents in this project
 
@@ -52,5 +54,4 @@ AI Site Scan is a free web app. You enter a website address. The app tells you h
 | `02-architecture.md` | How it works: components, API, logic, security |
 | `03-operations.md` | Deploy, config, testing, troubleshooting |
 | `04-decisions-and-changelog.md` | Why it is built this way, and what changed when |
-| `05-roadmap.md` | Known limits and next ideas |
-| `code/scan.py`, `code/shot.js` | Copies of the two API files. The full code, including `index.html`, `api/_checks.py` and `tests/`, is in the GitHub repo (the source of truth) |
+| `05-roadmap.md` | Known limits and next steps |

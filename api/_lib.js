@@ -1,4 +1,4 @@
-// Shared helpers for the Node API functions (config, unlock, email, polar-webhook, cron-selfcheck).
+// Shared helpers for the Node API functions (account, config, email, polar-webhook, cron-selfcheck).
 // The underscore keeps Vercel from turning this file into an endpoint.
 // Every outside service is optional: a function answers 503 when its settings are missing,
 // so the site keeps working before Polar, Resend or PostHog are set up.

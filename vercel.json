@@ -85,7 +85,7 @@
         },
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://us-assets.i.posthog.com https://eu-assets.i.posthog.com; connect-src 'self' https://rhbhkeuvftqwjjoyzseh.supabase.co wss://rhbhkeuvftqwjjoyzseh.supabase.co https://us.i.posthog.com https://eu.i.posthog.com https://*.google-analytics.com https://*.googleadservices.com https://www.google.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.googletagmanager.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://us-assets.i.posthog.com https://eu-assets.i.posthog.com; connect-src 'self' https://rhbhkeuvftqwjjoyzseh.supabase.co wss://rhbhkeuvftqwjjoyzseh.supabase.co https://us.i.posthog.com https://eu.i.posthog.com https://us-assets.i.posthog.com https://eu-assets.i.posthog.com https://*.google-analytics.com https://*.googleadservices.com https://www.google.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.googletagmanager.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'"
         }
       ]
     },

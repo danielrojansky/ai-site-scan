@@ -1,10 +1,12 @@
 // Email a scan report and a ready llms.txt: POST /api/email {email, url, reminder}
 // Sends one email now. With reminder=true it also schedules one reminder 2 days later (Resend scheduled send).
 // The content comes only from our own scan of the site, so this cannot be used to send any other text.
-// Settings: RESEND_API_KEY, EMAIL_FROM (for example "AI Site Scan <report@send.getaisitescan.com>"),
-//           SUPPORT_EMAIL (reply-to), SITE_URL.
+// Settings: RESEND_API_KEY, EMAIL_FROM (for example "AI Site Scan <support@getaisitescan.com>"),
+//           SUPPORT_EMAIL (reply-to), SITE_URL. The "full fix guide" link shows when the paywall is on
+//           (the same rule as /api/config: accounts + the Full report product).
 
 const { env, send, readJson, limited, clientIp, hostOf, originOf, siteUrl, esc, emailReady, sendEmail, fetchScan, buildLlms, topActions } = require("./_lib");
+const { dbReady, productId } = require("./_db");
 
 const EMAIL_RE = /^[^\s@"<>()[\],;:]{1,64}@[a-z0-9.-]+\.[a-z]{2,24}$/i;
 const SEV = { critical: "Critical", high: "High", medium: "Medium", low: "Low" };
@@ -88,7 +90,7 @@ module.exports = async (req, res) => {
   const scan = await fetchScan(host, { origin: originOf(req) });
   const d = scan.ok ? scan.data : null;
   const site = siteUrl();
-  const paywall = !!(env("POLAR_ORG_ID") && env("POLAR_CHECKOUT_SINGLE"));
+  const paywall = !!(dbReady() && productId("single"));
   const links = {
     site,
     report: `${site}/?url=${encodeURIComponent(host)}&utm_source=email&utm_medium=email&utm_campaign=report`,
