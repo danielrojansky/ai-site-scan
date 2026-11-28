@@ -30,7 +30,9 @@ function snapshot() {
       if (t === "submit" || t === "reset" || t === "button") return clean(e.value) || (t === "submit" ? "Submit" : t === "reset" ? "Reset" : "");
       if (t === "image") return clean(e.alt);
     } else if (tag !== "SELECT" && tag !== "TEXTAREA") {
-      const txt = clean(e.innerText); if (txt) return txt;
+      // innerText is empty for content that the browser has not laid out yet (content-visibility: auto),
+      // but the accessibility tree still has it, so fall back to the text in the element.
+      const txt = clean(e.innerText) || clean(e.textContent); if (txt) return txt;
       const img = e.querySelector && e.querySelector("img[alt]"); if (img && clean(img.alt)) return clean(img.alt);
       const st = e.querySelector && e.querySelector("svg title"); if (st && clean(st.textContent)) return clean(st.textContent);
     }
@@ -141,7 +143,13 @@ function snapshot() {
   const prod = products[0];
   const of = prod ? [].concat(prod.offers || [])[0] : null;
   const offer = of && typeof of === "object" ? { price: of.price != null ? String(of.price) : of.lowPrice != null ? String(of.lowPrice) : null, currency: of.priceCurrency || null, availability: of.availability || null } : null;
-  const text = clean(document.body ? document.body.innerText : "").slice(0, 200000);
+  let text = "";
+  if (document.body) {  // all visible-to-the-tree text, also in sections not laid out yet; no scripts or styles
+    const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(n.parentElement ? n.parentElement.tagName : "") ? 2 : 1) });
+    const parts = []; let len = 0;
+    while (tw.nextNode() && len < 200000) { const v = tw.currentNode.nodeValue; if (v && v.trim()) { parts.push(v); len += v.length; } }
+    text = clean(parts.join(" ")).slice(0, 200000);
+  }
   const priceM = text.match(/(?:[$€£₪¥]\s?\d[\d,.]*|\d[\d,.]*\s?(?:USD|EUR|GBP|ILS|NIS|₪|€|£))/);
   const cart = [...buttons, ...links].find((e) => /add to (cart|bag|basket)|buy now|order now|הוסף?\s?ל(סל|עגלה)|קנה עכשיו|לרכישה/i.test(name(e)));
   const shop = {
