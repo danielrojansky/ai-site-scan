@@ -18,7 +18,7 @@
     },
     {
       "question": "Where does the score come from?",
-      "answer": "The score comes from the open-source geo-optimizer-skill engine (MIT license). AI Site Scan adds its own extra checks, which do not change the score."
+      "answer": "AI Site Scan checks 9 areas for a total of 100 points. Its extra checks, such as the bot test and agent readiness, do not change the score."
     },
     {
       "question": "How do I get the full report after I pay?",
