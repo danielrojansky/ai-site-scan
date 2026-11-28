@@ -75,6 +75,15 @@ const call = async (h, req) => { const r = mkRes(); await h(req, r); return r; }
     assert.equal(c.body.success_url, "https://getaisitescan.com/?paid=pro&checkout_id={CHECKOUT_ID}");
     assert.equal(c.body.metadata.host, "a.com"); assert.equal(c.headers["Polar-Version"], "2026-10");
   });
+  await t("checkout: the visitor's PostHog ID and campaign tags ride along; junk is dropped", async () => {
+    await call(acct, mkReq({ method: "POST", url: "/api/account?do=checkout", body: { plan: "single", url: "a.com", ph: "0193f2a4-77aa-7c1e-9d10-3f7b9e2a1c55", utm: { utm_source: "google", utm_campaign: "llms", evil: "x" } } }));
+    let m = fetches.find((f) => f.path === "/v1/checkouts/").body.metadata;
+    assert.equal(m.reference_id, "0193f2a4-77aa-7c1e-9d10-3f7b9e2a1c55"); assert.equal(m.utm_source, "google"); assert.equal(m.utm_campaign, "llms"); assert.equal(m.evil, undefined);
+    fetches = [];
+    await call(acct, mkReq({ method: "POST", url: "/api/account?do=checkout", body: { plan: "single", url: "a.com", ph: "<script>", utm: "nope" } }));
+    m = fetches.find((f) => f.path === "/v1/checkouts/").body.metadata;
+    assert.equal(m.reference_id, undefined); assert.equal(m.utm_source, undefined);
+  });
   await t("unlock: credit used, report id back", async () => {
     rpcResult.claim_report = { data: [{ report_id: "33333333-3333-4333-8333-333333333333", kind: "full", plan: "single", status: "ok" }], error: null };
     const r = await call(acct, mkReq({ method: "POST", url: "/api/account?do=unlock", body: { url: "https://a.com", scan_key: "a.com|2026-11-28 10:00 UTC" } }));

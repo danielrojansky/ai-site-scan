@@ -1,6 +1,6 @@
 # AI Site Scan: overview
 
-Last updated: 28 Nov 2026, 14:00 (Asia/Jerusalem). App version 3.0.1
+Last updated: 28 Nov 2026, 14:00 (Asia/Jerusalem). App version 3.0.2
 Owner: Daniel Rojansky
 
 ## What it is
@@ -41,7 +41,7 @@ AI Site Scan is a web app. You enter a website address. The app tells you how we
 
 ## Status (28 Nov 2026)
 
-- Live at getaisitescan.com and selling: Full report $19 and Pro $29 a month on Polar. Version 3.0.1.
+- Live at getaisitescan.com and selling: Full report $19 and Pro $29 a month on Polar. Version 3.0.2.
 - Tested end to end on the live site on 28 Nov 2026: email code login, Google login, a $0 Full report order with a 100% discount code (webhook, credit, unlock, report email with the guide attached, My reports, the included rescan). The live Pro subscription was not bought, because Polar asks for a card even at $0.
 - Auto-deploy: each push to `main` deploys to production. Other branches get a preview URL. Previews have no account settings, so their paywall is off.
 - Version history and test results: `04-decisions-and-changelog.md`.
