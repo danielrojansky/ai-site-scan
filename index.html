@@ -433,6 +433,11 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
 .tier h3{font-size:16px;margin:0;letter-spacing:0}
 .tier .price{display:block;color:var(--accent);font-weight:700;margin:2px 0 4px}
 .tier p{font-size:14.5px;color:var(--muted)}
+.about .ctw{overflow-x:auto;margin:10px 0 8px;border:1px solid var(--line);border-radius:12px}
+.about .ctab{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+.about .ctab th,.about .ctab td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.about .ctab thead th{font-size:13px;color:var(--muted)}
+.about .ctab .us{background:#eef2ff;font-weight:600}
 .about details{border-top:1px solid var(--line);padding:10px 0}
 .about summary{cursor:pointer;font-weight:600}
 .about details p{margin-top:8px;color:var(--muted)}
@@ -535,6 +540,14 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
         <li><b>Understand.</b> Titles, headings, structured data (JSON-LD), brand signals and, for local businesses, whether the page says where you are.</li>
         <li><b>Trust and find more.</b> Contact details, dates, the sitemap, llms.txt and 23 agent-readiness standards, rated as a level from 0 to 5.</li>
       </ul>
+      <h2 id="compare">How AI Site Scan compares</h2>
+      <div class="ctw"><table class="ctab"><thead><tr><th scope="col">What you get</th><th scope="col" class="us">AI Site Scan</th><th scope="col">Typical free AI checker</th><th scope="col">AI monitoring tools</th></tr></thead><tbody>
+        <tr><th scope="row">Real requests as 14 AI bots</th><td class="us">Yes</td><td>robots.txt rules only</td><td>Not stated</td></tr>
+        <tr><th scope="row">Your page as AI reads it, next to a screenshot</th><td class="us">Yes</td><td>No side-by-side view</td><td>Not stated</td></tr>
+        <tr><th scope="row">Ready-to-paste code, filled in for your site</th><td class="us">Yes</td><td>Tips or a prompt</td><td>Not stated</td></tr>
+        <tr><th scope="row">Price</th><td class="us">Free check, $19 once for all fixes</td><td>Free, upsells other products</td><td>From about $29 a month</td></tr>
+      </tbody></table></div>
+      <p>We compare AI Site Scan with HubSpot AI Search Grader, Semrush AI Agent Readiness, Hostinger AI Visibility Checker, Cloudflare isitagentready.com and Otterly.AI, with sources. <a href="/compare">See the full comparison</a>.</p>
       <h2 id="pricing">Pricing</h2>
       <div class="tiers">
         <div class="tier"><h3>Free check</h3><span class="price">$0</span><p>A score from 0 to 100, the AI view, the bot test, every issue with what the AI saw, and the top 3 fixes in full. No login.</p></div>
@@ -714,7 +727,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
     </div>
   </div>
 
-  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.3</span></footer>
+  <footer><nav class="flinks" aria-label="Site links"><a href="/compare">Compare tools</a> · <a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.1.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div role="region" aria-label="Notifications"><div class="toast" id="toast" role="status"></div></div>
@@ -747,7 +760,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
 
 <script>
 "use strict";
-const APP_VERSION = "3.0.3"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "3.1.0"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1027,7 +1040,7 @@ async function run(raw, opts = {}){
   const t2 = setInterval(() => { q = (q + 1) % QUIPS.length; quip.textContent = QUIPS[q]; }, 1600);
   try{
     const r = await fetch("/api/scan?url=" + encodeURIComponent(url) + (fresh ? "&fresh=1" : ""));
-    let d; try { d = await r.json(); } catch { throw new Error(r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners. Please try again." : "Something went wrong on our side (error " + r.status + "). Please try again."); }
+    let d; try { d = await r.json(); } catch { throw new Error(r.status === 429 ? "Too many checks from your network. Wait a minute and try again." : r.status === 504 ? "The scan took too long. The site may be slow or blocking scanners. Please try again." : "Something went wrong on our side (error " + r.status + "). Please try again."); }
     if(!r.ok) throw new Error(d.error || ("Error " + r.status));
     clearInterval(t1); setProg(100);
     quip.textContent = "Done!"; await sleep(REDUCED ? 0 : 320);

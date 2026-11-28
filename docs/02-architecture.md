@@ -47,7 +47,7 @@ Hosting is on Vercel. Accounts, credits and saved reports are in Supabase (Postg
 | `api/_agentready.py` | The 23 agent readiness checks and the level rules as pure functions (no network) |
 | `api/webmcp.js` | WebMCP API (Node): opens the page in headless Chrome and lists the tools it registers |
 | `api/shot.js` | Screenshot API (Node 24), CommonJS handler with dynamic `import()` |
-| `api/account.js` | Accounts API: me, report, checkout, unlock, save, sync, portal (one function for all, to stay under the Hobby function limit) |
+| `api/account.js` | Accounts API: me, report, checkout, unlock, save, sync, portal (one function for all; started under the Hobby function limit, kept as one on Pro) |
 | `api/polar-webhook.js` | Polar webhook: checks the signature, gives or removes credits, sends the sale email and the PostHog purchase once per order |
 | `api/config.js` | Public settings for the page. Each feature turns on when its settings exist |
 | `api/email.js` | Free report email and the 2-day reminder (Resend) |

@@ -124,6 +124,44 @@ Full report: email support@getaisitescan.com within 7 days of your purchase for 
 
 **Which payment methods can I use?** Cards, and the other methods that Polar's checkout shows for your country.
 
+## AI Site Scan vs other AI visibility checkers
+
+URL: https://getaisitescan.com/compare
+
+Updated 2026-11-28. Facts come from each tool's own public page on that date. "Not stated" means the page does not say.
+
+| Feature | AI Site Scan | HubSpot AI Search Grader | Semrush / Backlinko | Hostinger | Cloudflare isitagentready | Otterly.AI |
+|---|---|---|---|---|---|---|
+| Free check | Yes, no login, no card | Yes, one-time | Yes, 3 checks a day | Yes | No price shown | Free trial, then paid |
+| Login or form for the free result | None | Form for the full report | No account | No sign-in | Not stated | Not stated |
+| Tests AI bots with real server requests | 14 AI bots, real answers from your server | No | Checks robots.txt for GPTBot, ClaudeBot, PerplexityBot | Checks robots.txt for 4 bots, plus 1 AI-agent request | Bot access category, details not stated | Not stated |
+| Shows your page as AI reads it (no JavaScript), next to a screenshot | Yes, side by side | No | Checks raw-HTML content, no side-by-side view stated | No, checks readability only | Content accessibility category, view not stated | Not stated |
+| Technical checks (robots.txt, llms.txt, sitemap, JSON-LD) | 23 agent-readiness checks plus the AI score | No site technical checks | Yes | 25+ checks in 7 categories | Yes, 5 categories | GEO Audit, depth not stated |
+| Local business address and contact check | Yes | Not stated | Not stated | Not stated | Not stated | Not stated |
+| Fix steps, ranked by impact | Yes, every fix | No site fixes | Fixes and tips | Fix steps | Instructions for a coding agent | Not stated |
+| Ready-to-paste code filled in for your site | JSON-LD, llms.txt, robots.txt, head tags | No | Not stated | A prompt to copy, code not stated | A prompt for a coding agent | Not stated |
+| Rescan to confirm your fixes | 1 rescan included, rescans included on Pro | Not stated | You can run it again (3 checks a day) | Not stated | Not stated | Ongoing monitoring |
+| Report emailed and saved in an account | Yes, Markdown file and My reports | Not stated | Not stated | Not stated | Not stated | Not stated |
+| Tracks how AI answers mention your brand over time | No | One snapshot of brand sentiment and share of voice | Runs 15 ChatGPT prompts once | Not stated | Not stated | Yes, its main product |
+| Paid price | $19 once for 1 site, or $29 a month for 10 reports | HubSpot AEO $50 a month | Semrush One, price not listed | Upsells Hostinger products | No price shown | From €29 a month (Lite, 16 prompts) |
+
+Why sites pick AI Site Scan:
+
+- It tests, not guesses: requests as 14 AI bots show what your server and firewall really answer.
+- You see what AI sees: the page without JavaScript next to a browser screenshot.
+- Code, not homework: ready-to-paste JSON-LD, llms.txt, robots.txt and head tags, filled in for your site.
+- Pay once: $19 for one site with 1 rescan, or $29 a month for 10 reports.
+
+When another tool is a better fit: Otterly.AI for ongoing tracking of brand mentions in AI answers; HubSpot AI Search Grader for a free one-time view of brand sentiment in AI answers.
+
+Sources:
+
+- HubSpot AI Search Grader: https://www.hubspot.com/aeo-grader
+- Semrush / Backlinko AI Agent Readiness: https://backlinko.com/tools/ai-agent-readiness
+- Hostinger AI Visibility Checker: https://www.hostinger.com/ai-visibility-checker
+- Cloudflare isitagentready.com: https://isitagentready.com/
+- Otterly.AI: https://otterly.ai/pricing
+
 ## About AI Site Scan
 
 URL: https://getaisitescan.com/about

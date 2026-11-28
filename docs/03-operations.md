@@ -76,7 +76,7 @@ Notes for local tests:
 
 ## Monitoring
 
-- Vercel dashboard: Project `ai-site-scan` > Logs. Python errors are printed with a traceback to stderr. The Hobby plan keeps 1 hour of logs.
+- Vercel dashboard: Project `ai-site-scan` > Logs. Python errors are printed with a traceback to stderr. The Pro plan keeps 1 day of runtime logs.
 - Each scan logs one access line. Payments log `order.paid id=... product=... credits=...` (a $0 order ends with `test`).
 - Daily self-check at 05:00 UTC (`/api/cron-selfcheck`): a fresh scan of our own site, `/api/config` and the database. It emails `OWNER_EMAIL` when the score is under 90, something does not answer, or the paywall, Pro or email is off.
 - PostHog (US): page views, scans, paywall views, logins, checkouts and purchases. A $0 order sends no purchase event.
@@ -108,4 +108,4 @@ Notes for local tests:
 
 ## Costs
 
-- Vercel Hobby plan. Vercel's terms allow Hobby only for personal or non-commercial use (https://vercel.com/legal/terms, section 4), and the site now sells: move to Pro ($20 per developer seat a month, https://vercel.com/docs/plans/hobby). Supabase, Resend, PostHog and Google Cloud run on free tiers. Polar takes its fee per sale. The screenshot function is the heaviest part (Chrome, 2 GB, a few seconds per image). Edge caching limits repeat cost.
+- Vercel Pro plan (since 28 Nov 2026), so commercial use is allowed. A Vercel Firewall rule limits each IP to 60 requests a minute on `/api/*` (the Polar webhook is excluded). Supabase, Resend, PostHog and Google Cloud run on free tiers. Polar takes its fee per sale. The screenshot function is the heaviest part (Chrome, 2 GB, a few seconds per image). Edge caching limits repeat cost.

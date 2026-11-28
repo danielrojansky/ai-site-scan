@@ -23,12 +23,12 @@ Last updated: 28 Nov 2026 (version 3.0.3).
 
 | # | Step | Who | Effort |
 |---|---|---|---|
-| 1 | Move Vercel to Pro: the Hobby plan is for personal or non-commercial use only, and the site now sells | Daniel | 5 minutes, $20 a month |
+| 1 | Done 28 Nov 2026: Vercel is on Pro | Daniel | Done |
 | 2 | Set `CRON_SECRET` (a long random string) in Vercel, Production | Daniel | 2 minutes |
 | 3 | Polar: archive the two old 2.5 products; limit the 100% code `F53KRI8C` (a few uses or an end date) or delete it after testing | Daniel | 5 minutes |
 | 4 | Delete the unused `POLAR_ORG_ID` setting in Vercel | Claude, with a yes | 1 minute |
 | 5 | Turn the report-only Content-Security-Policy into an enforced one after about a week without new violations | Claude | Low |
-| 6 | Shared rate limits (Vercel Firewall rule) for `/api/scan`, `/api/agent` and `/api/account`; the in-memory limits reset per instance | Claude | Low |
+| 6 | Done 28 Nov 2026: Vercel Firewall rate limit, 60 requests a minute per IP on `/api/*` except the Polar webhook | Claude | Done |
 | 7 | List an unlocked report whose guide did not save, with a button to finish it | Claude | Low |
 | 8 | Supabase custom domain for login (Google then shows getaisitescan.com) | Daniel decides, paid | Low |
 | 9 | Move the Resend domain to a US region (now Tokyo); a little faster | Daniel | Low |
