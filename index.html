@@ -714,7 +714,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
     </div>
   </div>
 
-  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.1</span></footer>
+  <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.2</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
 <div role="region" aria-label="Notifications"><div class="toast" id="toast" role="status"></div></div>
@@ -747,7 +747,7 @@ dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
 
 <script>
 "use strict";
-const APP_VERSION = "3.0.1"; /* keep in step with APP_VERSION in api/scan.py */
+const APP_VERSION = "3.0.2"; /* keep in step with APP_VERSION in api/scan.py */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1741,6 +1741,17 @@ function track(ev, props){
   if(PH.on){ try { window.posthog.capture(ev, p); } catch {} }
   else if(!PH.off && PH.q.length < 50) PH.q.push([ev, p]);
 }
+/* Campaign tags of the first visit, sent with the checkout: the sale email and the PostHog purchase
+   then name the source. Kept in this tab (sessionStorage) only after the visitor accepts cookies. */
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"], TKEY = "aiSiteScan.utm.v1";
+const UTM_NOW = (() => { const q = new URLSearchParams(location.search), u = {}; for(const k of UTM_KEYS){ const v = q.get(k); if(v) u[k] = v.slice(0, 200); } return u; })();
+function utmTags(){
+  if(Object.keys(UTM_NOW).length) return UTM_NOW;
+  try { return JSON.parse(sessionStorage.getItem(TKEY) || "{}"); } catch { return {}; }
+}
+function keepUtm(){ if(consentChoice() === "yes" && Object.keys(UTM_NOW).length){ try { sessionStorage.setItem(TKEY, JSON.stringify(UTM_NOW)); } catch {} } }
+keepUtm();
+function phId(){ try { return (PH.on && window.posthog.get_distinct_id && window.posthog.get_distinct_id()) || ""; } catch { return ""; } }
 function loadPostHog(c){
   /* the official PostHog snippet (posthog.com/docs/libraries/js), unchanged */
   !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}p||((p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",p.onerror=function(){p=null},(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r));var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
@@ -1762,7 +1773,7 @@ function adConv(kind, value){
 function setConsent(v){
   try { localStorage.setItem(CKEY, v); } catch {}
   $("#consent").classList.add("hide");
-  if(v === "yes"){ if(PH.on){ try { window.posthog.set_config({persistence: "localStorage+cookie"}); } catch {} } loadAds(); }
+  if(v === "yes"){ if(PH.on){ try { window.posthog.set_config({persistence: "localStorage+cookie"}); } catch {} } loadAds(); keepUtm(); }
   track("consent", {choice: v});
 }
 $("#consent").addEventListener("click", e => { const b = e.target.closest("[data-consent]"); if(b) setConsent(b.dataset.consent); });
@@ -1923,7 +1934,7 @@ async function buy(plan){
   }
   $("#payMsg").textContent = "Opening the secure checkout…";
   try{
-    const d = await api("checkout", {plan, url: DATA.url});
+    const d = await api("checkout", {plan, url: DATA.url, ph: phId(), utm: utmTags()});
     track("checkout_started", {product: plan, host: hostOf(DATA.url)}); adConv("checkout");
     location.href = d.url;
   }catch(e){ $("#payMsg").textContent = e.message; }
