@@ -162,6 +162,12 @@ All times Asia/Jerusalem.
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
 
+### 28 Nov 2026, version 3.2.1
+
+| Change |
+|---|
+| Agent checks: names of buttons, links and headings in sections the browser has not laid out yet (content-visibility: auto) were read as empty. They now fall back to the element's text, as the accessibility tree does. Found on react.dev (24 links wrongly reported without a name). Page text for price and stock is read the same way. Test page covers it |
+
 ### 28 Nov 2026, version 3.2.0
 
 | Change |
