@@ -57,6 +57,11 @@
     "api/account.js": {
       "maxDuration": 20,
       "memory": 256
+    },
+    "api/agentux.js": {
+      "maxDuration": 40,
+      "memory": 2048,
+      "includeFiles": "node_modules/@sparticuz/chromium/bin/**"
     }
   },
   "headers": [

@@ -162,6 +162,43 @@ Sources:
 - Cloudflare isitagentready.com: https://isitagentready.com/
 - Otterly.AI: https://otterly.ai/pricing
 
+## How we test
+
+URL: https://getaisitescan.com/how-we-test
+
+Three kinds of AI visit a website. Search crawlers (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot and 10 more) get the raw HTML; many do not run JavaScript, and this gives the 0 to 100 score. Agents that read the page (Claude in Chrome, Perplexity Comet, ChatGPT agent) use the accessibility tree: we open the page in headless Chrome at 1280 x 800 and read every heading, button, link and field with its name. Agents that look at the screen (ChatGPT agent, Gemini in Chrome) use screenshots: we mark every layer that covers the page at load.
+
+Agent checks (pass 1, warning half, grade A to F, not part of the score):
+
+- Find: Search has a results page at its own address. A search box in a GET form, so results open at an address like /search?q=shoes. A search that only opens a pop-up fails.
+- Find: Every page has its own address. No #/ addresses that load the same page.
+- Read: Every button and link has a name. The accessible name: visible text, aria-label, a label, or the alt text of an image inside. 1 to 2 missing is a warning, 3 or more fail.
+- Read: Names are clear and unique. 3 or more buttons with the same name, or 3 or more links that only say Read more, give a warning.
+- Read: One main heading names the page. Exactly one h1.
+- Act: Clickable things are real buttons and links. Boxes with a pointer cursor that are not buttons, links or form parts. 3 or more warn, 10 or more fail.
+- Forms: Form fields have labels. A label, aria-label or aria-labelledby. Placeholder text alone does not count.
+- Forms: Fields say what they want. Email, phone and name fields need the right type and an autocomplete value.
+- Pop-ups: Nothing covers the page when it loads. Fixed layers over the screen at 1280 x 800. A layer over the middle, or over 30% of the screen, fails. A smaller one, or one with an unnamed close button, warns. A sticky menu bar and a small chat button are fine.
+- Understand: Content does not change by itself. We read sliders twice, 2.5 seconds apart. A slider that changed by itself warns.
+- Shop: Prices are text with a currency. Only when the page sells something (Product data or an Add to cart button).
+- Shop: Product data has price, currency and stock. Product JSON-LD with an Offer.
+- Shop: Stock is stated in words. In stock, Only 2 left, Sold out.
+- Shop: Add to cart is a named button. A button or link named Add to cart, Buy now or similar.
+
+Not tested: we read one page once without logging in and never fill forms, order or pay, so guest checkout, totals before payment, payment fields and confirmation pages are listed in the report as manual checks.
+
+Sources:
+
+- OpenAI: Publishers and Developers FAQ (ARIA and ChatGPT agent, OAI-SearchBot): https://help.openai.com/en/articles/12627856-publisher-faq
+- OpenAI: Computer-Using Agent (the model behind ChatGPT agent works from screenshots): https://openai.com/index/computer-using-agent/
+- OpenAI: Atlas is moving into ChatGPT (Atlas stopped on August 9, 2026): https://help.openai.com/en/articles/20001371
+- Anthropic: Claude in Chrome: https://support.claude.com/en/articles/12012173-claude-in-chrome
+- Google: Gemini in Chrome auto browse: https://support.google.com/chrome/answer/16821166
+- Google DeepMind: Project Mariner: https://deepmind.google/technologies/project-mariner/
+- Search Engine Journal: How AI agents see your website (April 2026): https://www.searchenginejournal.com/how-ai-agents-see-your-website-and-how-to-build-for-them/570443/
+- Cloudflare: isitagentready.com (the agent readiness standards): https://isitagentready.com/
+- Instinct: "Making Your Website Work for AI Agents" (checklist shared with us, November 2026)
+
 ## About AI Site Scan
 
 URL: https://getaisitescan.com/about

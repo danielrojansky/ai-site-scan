@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How we test | AI Site Scan</title>
+<meta name="description" content="How AI Site Scan tests a website: search crawlers get raw HTML, agents that read the page get the accessibility tree, agents that look at the screen get a screenshot. Every check, its limits and our sources.">
+<meta name="author" content="Daniel Rojansky">
+<link rel="canonical" href="https://getaisitescan.com/how-we-test">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:site_name" content="AI Site Scan">
+<meta property="og:title" content="How we test | AI Site Scan">
+<meta property="og:description" content="How AI Site Scan tests a website: search crawlers get raw HTML, agents that read the page get the accessibility tree, agents that look at the screen get a screenshot. Every check, its limits and our sources.">
+<meta property="og:image" content="https://getaisitescan.com/og-image.png">
+<meta property="og:url" content="https://getaisitescan.com/how-we-test">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"How we test","url":"https://getaisitescan.com/how-we-test","description":"How AI Site Scan tests a website: search crawlers get raw HTML, agents that read the page get the accessibility tree, agents that look at the screen get a screenshot. Every check, its limits and our sources.","inLanguage":"en","datePublished":"2026-11-28","dateModified":"2026-11-28","author":{"@type":"Person","name":"Daniel Rojansky"},"isPartOf":{"@type":"WebSite","name":"AI Site Scan","url":"https://getaisitescan.com/"},"publisher":{"@type":"Organization","@id":"https://getaisitescan.com/#org","name":"AI Site Scan","url":"https://getaisitescan.com/"},"citation":[{"@type":"CreativeWork","name":"OpenAI: Publishers and Developers FAQ (ARIA and ChatGPT agent, OAI-SearchBot)","url":"https://help.openai.com/en/articles/12627856-publisher-faq"},{"@type":"CreativeWork","name":"OpenAI: Computer-Using Agent (the model behind ChatGPT agent works from screenshots)","url":"https://openai.com/index/computer-using-agent/"},{"@type":"CreativeWork","name":"OpenAI: Atlas is moving into ChatGPT (Atlas stopped on August 9, 2026)","url":"https://help.openai.com/en/articles/20001371"},{"@type":"CreativeWork","name":"Anthropic: Claude in Chrome","url":"https://support.claude.com/en/articles/12012173-claude-in-chrome"},{"@type":"CreativeWork","name":"Google: Gemini in Chrome auto browse","url":"https://support.google.com/chrome/answer/16821166"},{"@type":"CreativeWork","name":"Google DeepMind: Project Mariner","url":"https://deepmind.google/technologies/project-mariner/"},{"@type":"CreativeWork","name":"Search Engine Journal: How AI agents see your website (April 2026)","url":"https://www.searchenginejournal.com/how-ai-agents-see-your-website-and-how-to-build-for-them/570443/"},{"@type":"CreativeWork","name":"Cloudflare: isitagentready.com (the agent readiness standards)","url":"https://isitagentready.com/"}]}</script>
+<style>:root{--bg:#f5f6f8;--card:#fff;--ink:#14171c;--muted:#5d6673;--line:#e3e6eb;--accent:#3b5bdb;--soft:#eef2ff}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}
+.top{background:#fff;border-bottom:1px solid var(--line)}
+.top .in,.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+.top .in{display:flex;align-items:center;gap:10px;min-height:56px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink);text-decoration:none;margin-right:auto}
+.brand img{width:26px;height:26px}
+.tnav{display:flex;gap:16px;font-size:15px}
+.tnav a{color:var(--muted);text-decoration:none}
+.tnav a:hover,.tnav a[aria-current]{color:var(--ink)}
+main.wrap{padding-top:28px;padding-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+h1{font-size:30px;line-height:1.2;letter-spacing:-.02em;margin:0 0 6px}
+h2{font-size:19px;margin:26px 0 6px}
+h3{font-size:17px;margin:0 0 4px}
+.meta{color:var(--muted);font-size:14px;margin:0 0 18px}
+.lead{font-size:17px}
+ul,ol{padding-left:22px}li{margin:4px 0}
+.box{background:var(--soft);border:1px solid #c9d3fb;border-radius:12px;padding:12px 16px;margin:14px 0}
+.box ul{margin:0;padding-left:18px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0 6px}
+.plan{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fbfcfd}
+.plan.hl{border-color:#b9c4f7;background:linear-gradient(135deg,#eef2ff,#f3e8ff)}
+.plan h2{margin:0 0 2px}
+.plan .price{font-size:26px;font-weight:700;color:var(--accent);margin:2px 0 6px}
+.plan .price span{display:block;font-size:14px;font-weight:600;color:var(--muted)}
+.plan ul{padding-left:18px;margin:6px 0 0;font-size:15px}
+.small{font-size:14px;color:var(--muted)}
+dl.biz{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:10px 0}
+dl.biz dt{font-weight:600}dl.biz dd{margin:0}
+details{border-top:1px solid var(--line);padding:10px 0}
+summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0 0;color:var(--muted)}
+.cta{display:inline-block;margin-top:18px;background:linear-gradient(135deg,#3b5bdb,#7048e8);color:#fff;text-decoration:none;font-weight:600;padding:10px 18px;border-radius:10px}
+footer{color:var(--muted);font-size:13.5px;text-align:center;padding:26px 20px 40px}
+footer p{margin:6px 0}
+footer a{color:var(--muted)}
+@media (max-width:560px){.tnav{width:100%;gap:14px;padding-bottom:10px}h1{font-size:26px}.card{padding:18px}}
+.cmp{width:100%;border-collapse:collapse;font-size:15px;margin:12px 0}
+.cmp th,.cmp td{border-top:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+.cmp tbody th{white-space:nowrap;color:var(--muted);font-weight:600;width:90px}
+.kinds{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.kinds section{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fbfcfd}
+.kinds h3{margin:0 0 2px}.kinds .who{color:var(--accent);font-size:14px;margin:0 0 6px}.kinds p{margin:4px 0;font-size:15px}
+</style>
+</head>
+<body>
+<header class="top"><div class="in"><a class="brand" href="/"><img src="/logo.png" alt="" width="26" height="26">AI Site Scan</a><nav class="tnav" aria-label="Main"><a href="/compare">Compare</a><a href="/pricing">Pricing</a><a href="/about">About</a><a href="/contact">Contact</a></nav></div></header>
+<main class="wrap">
+<article class="card">
+<h1>How we test</h1>
+<p class="meta">Updated <time datetime="2026-11-28">November 28, 2026</time> · by Daniel Rojansky</p>
+<p class="lead">Three kinds of AI visit a website, and each one sees a different page. A free scan tests all three. This page says exactly what we check, what we do not check, and where our rules come from.</p>
+<div class="kinds">
+<section><h3>Search crawlers</h3><p class="who">GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot and 10 more</p><p>We request your page as each bot and record what your server answers. Then we read the raw HTML with no JavaScript, because many crawlers do not run it.</p><p>This gives the 0 to 100 score: 9 areas such as robots.txt, structured data, content and brand signals.</p></section>
+<section><h3>Agents that read the page</h3><p class="who">Claude in Chrome, Perplexity Comet, ChatGPT agent</p><p>We open the page in headless Chrome at 1280 x 800 and read its accessibility tree: every heading, button, link and field with its name. That is the list these agents work from.</p></section>
+<section><h3>Agents that look at the screen</h3><p class="who">ChatGPT agent, Gemini in Chrome</p><p>In the same browser we take a screenshot when the page loads and mark every layer that covers it: cookie banners, newsletter pop-ups, chat windows and gates.</p></section>
+</div>
+<h2>The agent checks</h2>
+<p>Pass counts 1, a warning counts half, a check that does not apply is left out. The share gives a grade from A (90% or more) to F (under 40%). The agent grade does not change the 0 to 100 score.</p>
+<div style="overflow-x:auto"><table class="cmp"><thead><tr><th scope="col">Step</th><th scope="col">Check and rule</th></tr></thead><tbody><tr><th scope="row">Find</th><td><b>Search has a results page at its own address</b><br><span class="small">A search box in a GET form, so results open at an address like /search?q=shoes. A search that only opens a pop-up fails.</span></td></tr><tr><th scope="row">Find</th><td><b>Every page has its own address</b><br><span class="small">No #/ addresses that load the same page.</span></td></tr><tr><th scope="row">Read</th><td><b>Every button and link has a name</b><br><span class="small">The accessible name: visible text, aria-label, a label, or the alt text of an image inside. 1 to 2 missing is a warning, 3 or more fail.</span></td></tr><tr><th scope="row">Read</th><td><b>Names are clear and unique</b><br><span class="small">3 or more buttons with the same name, or 3 or more links that only say Read more, give a warning.</span></td></tr><tr><th scope="row">Read</th><td><b>One main heading names the page</b><br><span class="small">Exactly one h1.</span></td></tr><tr><th scope="row">Act</th><td><b>Clickable things are real buttons and links</b><br><span class="small">Boxes with a pointer cursor that are not buttons, links or form parts. 3 or more warn, 10 or more fail.</span></td></tr><tr><th scope="row">Forms</th><td><b>Form fields have labels</b><br><span class="small">A label, aria-label or aria-labelledby. Placeholder text alone does not count.</span></td></tr><tr><th scope="row">Forms</th><td><b>Fields say what they want</b><br><span class="small">Email, phone and name fields need the right type and an autocomplete value.</span></td></tr><tr><th scope="row">Pop-ups</th><td><b>Nothing covers the page when it loads</b><br><span class="small">Fixed layers over the screen at 1280 x 800. A layer over the middle, or over 30% of the screen, fails. A smaller one, or one with an unnamed close button, warns. A sticky menu bar and a small chat button are fine.</span></td></tr><tr><th scope="row">Understand</th><td><b>Content does not change by itself</b><br><span class="small">We read sliders twice, 2.5 seconds apart. A slider that changed by itself warns.</span></td></tr><tr><th scope="row">Shop</th><td><b>Prices are text with a currency</b><br><span class="small">Only when the page sells something (Product data or an Add to cart button).</span></td></tr><tr><th scope="row">Shop</th><td><b>Product data has price, currency and stock</b><br><span class="small">Product JSON-LD with an Offer.</span></td></tr><tr><th scope="row">Shop</th><td><b>Stock is stated in words</b><br><span class="small">In stock, Only 2 left, Sold out.</span></td></tr><tr><th scope="row">Shop</th><td><b>Add to cart is a named button</b><br><span class="small">A button or link named Add to cart, Buy now or similar.</span></td></tr></tbody></table></div>
+<h2>What we do not test</h2>
+<ul>
+<li>We read one page, once, without logging in. We never fill in a form, place an order or pay.</li>
+<li>So we cannot see guest checkout, the full total before payment, payment fields or the order confirmation. The full report lists them as things to check by hand.</li>
+<li>Agents change often. A pass here means the page follows what the agent makers publish today, not that every agent will finish every task.</li>
+<li>Some sites block our browser. Then we say so, because they may block real agents too.</li>
+</ul>
+<h2>Agent readiness standards</h2>
+<p>Separately, we check 23 public standards for agents (robots.txt rules, Link headers, Markdown for agents, MCP and WebMCP and others) and rate them as a level from 0 to 5. These follow the rules that <a href="https://isitagentready.com/" rel="nofollow noopener">isitagentready.com</a> (Cloudflare) documents.</p>
+<h2>Sources</h2>
+<ol class="small"><li><a href="https://help.openai.com/en/articles/12627856-publisher-faq" rel="nofollow noopener">OpenAI: Publishers and Developers FAQ (ARIA and ChatGPT agent, OAI-SearchBot)</a></li><li><a href="https://openai.com/index/computer-using-agent/" rel="nofollow noopener">OpenAI: Computer-Using Agent (the model behind ChatGPT agent works from screenshots)</a></li><li><a href="https://help.openai.com/en/articles/20001371" rel="nofollow noopener">OpenAI: Atlas is moving into ChatGPT (Atlas stopped on August 9, 2026)</a></li><li><a href="https://support.claude.com/en/articles/12012173-claude-in-chrome" rel="nofollow noopener">Anthropic: Claude in Chrome</a></li><li><a href="https://support.google.com/chrome/answer/16821166" rel="nofollow noopener">Google: Gemini in Chrome auto browse</a></li><li><a href="https://deepmind.google/technologies/project-mariner/" rel="nofollow noopener">Google DeepMind: Project Mariner</a></li><li><a href="https://www.searchenginejournal.com/how-ai-agents-see-your-website-and-how-to-build-for-them/570443/" rel="nofollow noopener">Search Engine Journal: How AI agents see your website (April 2026)</a></li><li><a href="https://isitagentready.com/" rel="nofollow noopener">Cloudflare: isitagentready.com (the agent readiness standards)</a></li><li>Instinct: "Making Your Website Work for AI Agents", a checklist for agents that shop on a site (shared with us, November 2026). Our Find, Read, Act, Forms and Pop-ups steps follow its stages.</li></ol>
+<a class="cta" href="/">Check your site free</a>
+</article>
+</main>
+<footer>
+<nav aria-label="Site links"><a href="/">Scan a site</a> · <a href="/compare">Compare</a> · <a href="/how-we-test">How we test</a> · <a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a></nav>
+<p>© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a></p>
+<p>Payments are processed by Polar, our merchant of record.</p>
+</footer>
+</body>
+</html>
