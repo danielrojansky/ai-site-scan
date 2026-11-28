@@ -24,6 +24,7 @@
 | Payments (v2.5) | Polar as merchant of record. One-time products with a License Key benefit. Checkout links, no own checkout page. The key unlocks the guide; one activation per site (label = host) | Stripe (Daniel would be the seller and handle tax himself); Dodo Payments; Lemon Squeezy; own database of buyers | Polar handles tax and receipts in every country, pays out to Israel, and keeps the keys. No database to run |
 | Accounts (v3) | Supabase Auth and Postgres, one serverless function for all account actions | Own email codes and a KV store; Clerk or Auth0 | Free at this size, row security, Google login built in, and one function keeps the project under Vercel's function limit |
 | Key delivery (v2.5) | `/api/claim`: the success URL carries the checkout ID; the server reads the checkout, opens a customer session and reads the new key; the page applies it | Buyer pastes the key from Polar's email; webhook that emails the key | No copy and paste, so "instant delivery" is true. Paste stays as a fallback |
+| Comparison page (v3.1) | Static `/compare` page with named tools, dated sources and "Not stated" where unknown; rows where others win stay in | No comparison; unnamed "other tools"; claims without sources | AI crawlers read static HTML and quote sourced, fair tables. Honest rows build trust and keep the claims safe |
 | Merchant review pages (v2.5) | Pricing, contact, refunds and delivery, terms, privacy, built from one template with the same footer on every page | Policy generator text; one long legal page | Polar, Dodo and card networks check that prices, delivery, refund and cancellation terms, a contact route and the seller's identity are on the live site and match the account form |
 
 ## Changelog
@@ -159,6 +160,16 @@ All times Asia/Jerusalem.
 |---|
 | The checkout sends the visitor's PostHog ID (as `reference_id`) and first-visit campaign tags (`utm_*`) to Polar. The webhook's purchase event then joins the visitor's funnel, and the sale email names the source. Campaign tags are kept across pages only after the visitor accepts cookies |
 | Tests: 19 account tests |
+
+### 28 Nov 2026, version 3.1.0
+
+| Change |
+|---|
+| Vercel moved to Pro. Docs updated: commercial use allowed, 1 day of logs |
+| New page `/compare`: AI Site Scan vs HubSpot AI Search Grader, Semrush/Backlinko AI Agent Readiness, Hostinger AI Visibility Checker, Cloudflare isitagentready.com and Otterly.AI. Static HTML, JSON-LD, dated sources, "Not stated" where a tool's page does not say, and a "When another tool is a better fit" section |
+| Home page: short "How AI Site Scan compares" table with a link to `/compare`. Compare link in the nav and footer of every page |
+| `/compare` added to llms.txt, llms-full.txt (full table in Markdown), sitemap.xml and ai/summary.json |
+| Vercel Firewall rule: rate limit of 60 requests a minute per IP on `/api/*`, except `/api/polar-webhook` |
 
 ### 28 Nov 2026, version 3.0.3
 
