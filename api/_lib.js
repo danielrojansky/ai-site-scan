@@ -233,8 +233,7 @@ function buildLlms(d) {
 const RANK = { critical: 0, high: 1, medium: 2, low: 3 };
 function topActions(d, n = 3) {
   return ((d && d.actions) || [])
-    .slice()
-    .sort((a, b) => (RANK[a.priority] ?? 9) - (RANK[b.priority] ?? 9) || (b.gain || 0) - (a.gain || 0))
+    .toSorted((a, b) => (RANK[a.priority] ?? 9) - (RANK[b.priority] ?? 9) || (b.gain || 0) - (a.gain || 0))
     .slice(0, n);
 }
 

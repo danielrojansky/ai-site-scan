@@ -84,7 +84,7 @@ button.small{min-height:34px;padding:4px 12px;font-size:14px}
 /* ---------- top bar ---------- */
 .top{position:sticky;top:0;z-index:30;background:rgba(245,246,248,.92);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
 .top .col{display:flex;align-items:center;gap:10px;height:56px}
-.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.01em;cursor:pointer;margin-right:auto;white-space:nowrap;user-select:none}
+.brand{color:inherit;text-decoration:none;display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.01em;cursor:pointer;margin-right:auto;white-space:nowrap;user-select:none}
 .brand .dot{width:26px;height:26px;border-radius:9px;background:var(--grad);display:grid;place-items:center;position:relative;transition:transform .3s var(--spring)}
 .brand .dot::before{content:"";width:9px;height:9px;border:2.5px solid #fff;border-radius:50%}
 .brand .dot::after{content:"";position:absolute;inset:0;border-radius:9px;box-shadow:0 0 0 0 rgba(59,91,219,.45);animation:ping 2.8s ease-out infinite}
@@ -92,7 +92,7 @@ button.small{min-height:34px;padding:4px 12px;font-size:14px}
 .nav{display:flex;gap:4px;background:#e9ecf1;padding:3px;border-radius:11px;position:relative}
 .nav .ind{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--card);border-radius:8px;box-shadow:var(--shadow);transition:transform .35s var(--ease),width .35s var(--ease)}
 .nav button{border:0;background:transparent;min-height:34px;padding:4px 12px;font-size:15px;color:var(--muted);border-radius:8px;position:relative;z-index:1;box-shadow:none}
-.nav button[aria-selected=true]{color:var(--ink);font-weight:600}
+.nav button[aria-current]{color:var(--ink);font-weight:600}
 .count{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;margin-left:4px}
 @media(max-width:480px){.brand span.t{display:none}}
 
@@ -295,7 +295,7 @@ form.scan.shake{animation:shake .45s}
 .pnote{font-size:14px;color:var(--muted);margin:0 0 10px}
 .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .tabs button{border-radius:99px;min-height:36px;padding:4px 16px;font-size:14px}
-.tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .views{display:grid;grid-template-columns:1fr;gap:12px}
 .pane{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
 .pane .bar2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted);background:#fafbfc}
@@ -396,6 +396,7 @@ form.scan.shake{animation:shake .45s}
 @media(max-width:520px){.hitem{grid-template-columns:auto 1fr auto}.hitem .hs{display:none}}
 .hscore{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff}
 .hitem .host{font-weight:700;overflow-wrap:anywhere}
+.hopen{all:unset;cursor:pointer;border-radius:6px}.hopen:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .hitem .sub2{font-size:13.5px;color:var(--muted);word-break:break-word}
 .hitem .acts{display:flex;gap:2px}
 .hs svg{display:block}.hs polyline{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.hs circle{fill:var(--accent)}
@@ -469,6 +470,8 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
 .rrow .rbtns{display:flex;gap:6px;flex-wrap:wrap}
 .guidedlg{border:none;border-radius:18px;padding:18px;max-width:760px;width:calc(100% - 24px);box-shadow:var(--shadow-lg)}
 .guidedlg pre{max-height:60vh;overflow:auto;white-space:pre-wrap;font-size:13px;background:#f6f7f9;border-radius:10px;padding:12px}
+dialog:modal{overscroll-behavior:contain}
+dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
 .paydlg::backdrop{background:rgba(20,23,28,.45)}
 .paydlg .ptitle2{font-size:22px;font-weight:700;letter-spacing:-.015em;margin:0 34px 4px 0}
 .paydlg .pclose{position:absolute;top:10px;right:10px;margin:0}
@@ -484,17 +487,18 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
 .consent{position:fixed;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-lg);padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;z-index:60}
 .consent p{font-size:14px;color:var(--muted)}
 .consent div{display:flex;gap:8px}
+.lform{margin:0 0 8px}.llabel{display:block;font-size:13px;font-weight:600}.lhint{display:block;font-weight:400;color:var(--muted);margin:2px 0 4px}.lform input{font-size:16px}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="col">
-    <div class="brand" id="brand" role="link" tabindex="0" aria-label="AI Site Scan home"><span class="dot"></span><span class="t">AI Site Scan</span></div>
-    <nav class="nav" id="nav" role="tablist" aria-label="Views">
+    <a class="brand" id="brand" href="/" aria-label="AI Site Scan home"><span class="dot"></span><span class="t">AI Site Scan</span></a>
+    <nav class="nav" id="nav" aria-label="Views">
       <span class="ind" id="navInd"></span>
-      <button role="tab" id="tabScan" aria-selected="true">Scan</button>
-      <button role="tab" id="tabHistory" aria-selected="false">History<span class="count hide" id="hcount">0</span></button>
-      <button role="tab" id="tabAcct" aria-selected="false" class="hide">Log in</button>
+      <button type="button" id="tabScan" aria-current="page">Scan</button>
+      <button type="button" id="tabHistory">History<span class="count hide" id="hcount">0</span></button>
+      <button type="button" id="tabAcct" class="hide">Log in</button>
     </nav>
   </div>
 </header>
@@ -632,10 +636,10 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
           <button class="ph" type="button" data-acc aria-expanded="false"><span class="ic">👀</span><span class="t"><b>How AI sees your page</b><span id="tView"></span></span><span class="chev">›</span></button>
           <div class="fold"><div class="foldin" inert><div class="pb">
             <p class="pnote">The visitor view is a real browser. The AI view is what most AI tools get: the page with no JavaScript.</p>
-            <div class="tabs" role="tablist">
-              <button role="tab" data-v="both" aria-selected="true">Compare</button>
-              <button role="tab" data-v="human" aria-selected="false">Visitor view</button>
-              <button role="tab" data-v="ai" aria-selected="false">AI view</button>
+            <div class="tabs" role="group" aria-label="Layout">
+              <button type="button" data-v="both" aria-pressed="true">Compare</button>
+              <button type="button" data-v="human" aria-pressed="false">Visitor view</button>
+              <button type="button" data-v="ai" aria-pressed="false">AI view</button>
             </div>
             <div class="views" id="views">
               <div class="pane human" id="paneHuman">
@@ -713,8 +717,8 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
   <footer><nav class="flinks" aria-label="Site links"><a href="/pricing">Pricing</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds and delivery</a> · <a href="/llms-txt">llms.txt checker</a> · <a href="/ai-robots-txt">AI robots.txt checker</a></nav><p class="fbiz">© 2026 Daniel Rojansky (Daniel Consulting), Israel · <a href="mailto:support@getaisitescan.com">support@getaisitescan.com</a> · Payments by Polar, our merchant of record</p>Scores come from the open-source <a href="https://github.com/auriti-labs/geo-optimizer-skill" target="_blank" rel="noopener">geo-optimizer-skill</a> engine (MIT). A higher score means AI finds your site easier to read. It does not promise citations.<span class="ver" id="appv">v3.0.0</span></footer>
 </div>
 <button class="totop" id="toTop" type="button" aria-label="Back to top">↑</button>
-<div class="toast" id="toast" role="status"></div>
-<dialog class="paydlg" id="payDlg" aria-labelledby="payTitle">
+<div role="region" aria-label="Notifications"><div class="toast" id="toast" role="status"></div></div>
+<dialog class="paydlg" id="payDlg" aria-labelledby="payTitle" closedby="any">
   <form method="dialog" class="pclose"><button type="submit" aria-label="Close">×</button></form>
   <p class="ptitle2" id="payTitle">Get the full report</p>
   <p class="psub">Every fix for <b id="payHost"></b>, with steps and ready-to-paste code.</p>
@@ -735,7 +739,7 @@ footer .ver{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99p
   <p class="pnote2" id="payNote">Log in with your email first, so we can send and save your report. Secure checkout by Polar, our merchant of record. Tax may be added. <a href="/pricing" target="_blank" rel="noopener">Pricing</a> · <a href="/refund" target="_blank" rel="noopener">Refunds</a> · <a href="/terms" target="_blank" rel="noopener">Terms</a></p>
   <p class="kmsg" id="payMsg" aria-live="polite"></p>
 </dialog>
-<dialog class="guidedlg" id="guideDlg"><form method="dialog" class="pclose"><button type="submit" aria-label="Close">×</button></form><p class="ptitle2" id="guideTitle"></p><div class="row2" style="display:flex;gap:8px;margin:6px 0 10px"><button type="button" class="small primary" id="guideDl">⬇ Download</button><button type="button" class="small" id="guideCopy">Copy</button></div><pre id="guideText"></pre></dialog>
+<dialog class="guidedlg" id="guideDlg" aria-labelledby="guideTitle" closedby="any"><form method="dialog" class="pclose"><button type="submit" aria-label="Close">×</button></form><p class="ptitle2" id="guideTitle"></p><div class="row2" style="display:flex;gap:8px;margin:6px 0 10px"><button type="button" class="small primary" id="guideDl">⬇ Download</button><button type="button" class="small" id="guideCopy">Copy</button></div><pre id="guideText"></pre></dialog>
 <div class="consent hide" id="consent" role="region" aria-label="Cookie choice">
   <p>We use cookies to measure visits and ads, so we can improve the site. <a href="/privacy">Privacy</a></p>
   <div><button type="button" class="small" data-consent="no">Decline</button><button type="button" class="primary small" data-consent="yes">Accept</button></div>
@@ -894,9 +898,9 @@ function renderHistory(){
     const dl = prev && prev.score != null && h.score != null ? h.score - prev.score : null;
     const dTag = dl ? `<span class="delta ${dl>0?"up":"down"}">${dl>0?"+":""}${dl}</span>` : "";
     const tr = sparkSvg(list.slice(i).filter(x => x.host === h.host).slice(0, 8).reverse().map(x => x.score).filter(v => v != null));
-    return `<div class="hitem" style="--i:${Math.min(i, 8)}" data-id="${h.id}" tabindex="0" role="button" aria-label="Open scan of ${esc(h.host)}">
+    return `<div class="hitem" style="--i:${Math.min(i, 8)}" data-id="${h.id}">
       <div class="hscore" style="background:${solidColor(h.score||0)}">${h.score ?? "–"}</div>
-      <div><div class="host">${esc(h.host)}${dTag}</div><div class="sub2">${fmtTime(h.ts)}</div></div>
+      <div><button type="button" class="hopen" aria-label="Open scan of ${esc(h.host)}"><span class="host">${esc(h.host)}</span></button>${dTag}<div class="sub2">${fmtTime(h.ts)}</div></div>
       <div class="hs">${tr}</div>
       <div class="acts"><button class="small" data-act="rescan" title="Scan again" aria-label="Scan again">↻</button><button class="small ghost" data-act="del" title="Delete" aria-label="Delete">🗑</button></div>
     </div>`;
@@ -910,7 +914,6 @@ $("#hlist").addEventListener("click", e => {
   if(act === "rescan"){ showView("scan"); $("#u").value = h.url; toggleClear(); run(h.url, {fresh: true}); return; }
   openSaved(h);
 });
-$("#hlist").addEventListener("keydown", e => { if(e.key === "Enter" && e.target.classList.contains("hitem")) e.target.click(); });
 $("#clearHistory").addEventListener("click", () => {
   const b = $("#clearHistory");
   if(!b.dataset.armed){ b.dataset.armed = 1; b.textContent = "Tap again to clear"; setTimeout(()=>{ delete b.dataset.armed; b.textContent = "Clear all"; }, 3000); return; }
@@ -926,7 +929,7 @@ function openSaved(h){
 
 /* ---------- views and the address bar ---------- */
 function moveInd(){
-  const sel = $("#nav button[aria-selected=true]"), ind = $("#navInd"); if(!sel) return;
+  const sel = $("#nav button[aria-current]"), ind = $("#navInd"); if(!sel) return;
   ind.style.width = sel.offsetWidth + "px"; ind.style.transform = `translateX(${sel.offsetLeft}px)`;
 }
 addEventListener("resize", moveInd);
@@ -934,9 +937,9 @@ function showView(v){
   $("#viewScan").classList.toggle("hide", v !== "scan");
   $("#viewHistory").classList.toggle("hide", v !== "history");
   $("#viewAcct").classList.toggle("hide", v !== "acct");
-  $("#tabScan").setAttribute("aria-selected", v === "scan");
-  $("#tabHistory").setAttribute("aria-selected", v === "history");
-  $("#tabAcct").setAttribute("aria-selected", v === "acct");
+  for(const [id, name] of [["#tabScan", "scan"], ["#tabHistory", "history"], ["#tabAcct", "acct"]]){
+    if(v === name) $(id).setAttribute("aria-current", "page"); else $(id).removeAttribute("aria-current");
+  }
   moveInd(); requestAnimationFrame(moveInd);
   if(v === "history") renderHistory();
   if(v === "acct"){ sbClient().then(renderAcct); }
@@ -979,12 +982,12 @@ function newScan(){
 $("#tabScan").onclick = () => { if($("#viewScan").classList.contains("hide")) showView("scan"); else focusBar(); };
 $("#tabHistory").onclick = () => showView("history");
 let brandClicks = 0, brandT = 0;
-$("#brand").onclick = () => {
+$("#brand").onclick = e => {
+  e.preventDefault();
   brandClicks++; clearTimeout(brandT); brandT = setTimeout(() => brandClicks = 0, 1800);
   if(brandClicks >= 5){ brandClicks = 0; burstAt($("#brand .dot"), 60); toast("Beep boop! You found the robot party.", "🤖"); mood($("#heroBot"), "happy"); setTimeout(() => mood($("#heroBot"), "idle"), 1200); return; }
   newScan();
 };
-$("#brand").onkeydown = e => { if(e.key === "Enter") newScan(); };
 function toggleClear(){ $("#clearInput").classList.toggle("hide", !$("#u").value); }
 $("#u").addEventListener("input", () => { toggleClear(); updateGo(); });
 $("#clearInput").onclick = () => { $("#u").value = ""; toggleClear(); updateGo(); $("#u").focus(); };
@@ -1331,7 +1334,7 @@ function drawTerm(){
 }
 $("#rawToggle").onclick = () => { RAW = !RAW; $("#rawToggle").textContent = RAW ? "Show formatted" : "Show raw"; drawTerm(); };
 function setViewTab(v){
-  $$(".tabs button").forEach(x => x.setAttribute("aria-selected", x.dataset.v === v));
+  $$(".tabs button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === v));
   $("#paneHuman").classList.toggle("hide", v === "ai"); $("#paneAi").classList.toggle("hide", v === "human");
 }
 $$(".tabs button").forEach(b => b.onclick = () => setViewTab(b.dataset.v));
@@ -1793,7 +1796,15 @@ const scanKey = d => d ? hostOf(d.url) + "|" + (d.scanned_at || "") : "";
 const loggedIn = () => !!(SESSION && SESSION.access_token);
 async function sbClient(){
   if(SB || !CFG.supabase) return SB;
-  const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+  if(!window.supabase){
+    await new Promise((ok, fail) => {
+      const sc = document.createElement("script");
+      sc.src = "/vendor/supabase-js-2.119.2.js"; sc.integrity = "sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ"; sc.crossOrigin = "anonymous";
+      sc.onload = ok; sc.onerror = () => fail(new Error("Could not load the login library."));
+      document.head.append(sc);
+    });
+  }
+  const { createClient } = window.supabase;
   SB = createClient(CFG.supabase.url, CFG.supabase.key, {auth: {persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce"}});
   const { data } = await SB.auth.getSession(); SESSION = data.session;
   SB.auth.onAuthStateChange((ev, s) => { SESSION = s; if(ev === "SIGNED_OUT"){ ACCT = null; CUR = null; } refreshAcctUi(); });
@@ -1818,8 +1829,12 @@ function locked(it){ return !!DATA && payOn() && !unlockedNow() && ISSUES.indexO
 /* the login form, used in the paywall and on the account page */
 function renderLogin(box, why, after){
   box.innerHTML = `<p><b>${esc(why)}</b></p>
-    <div class="mrow"><input type="email" class="lmail" autocomplete="email" inputmode="email" placeholder="you@company.com" maxlength="254"><button type="button" class="small primary lsend">Send code</button></div>
-    <div class="mrow lcodeRow hide"><input type="text" class="lcode" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code" maxlength="10"><button type="button" class="small primary lverify">Log in</button></div>
+    <form class="lform lmailForm" novalidate>
+      <label class="llabel">Email<span class="mrow"><input type="email" name="email" class="lmail" autocomplete="username" required placeholder="you@company.com" maxlength="254"><button type="submit" class="small primary lsend">Send code</button></span></label>
+    </form>
+    <form class="lform lcodeRow hide" novalidate>
+      <label class="llabel">Code from the email<span class="lhint">6 to 10 digits</span><span class="mrow"><input type="text" name="code" class="lcode" inputmode="numeric" autocomplete="one-time-code" pattern="\\d{6,10}" required maxlength="10"><button type="submit" class="small primary lverify">Log in</button></span></label>
+    </form>
     ${CFG.supabase && CFG.supabase.google ? '<button type="button" class="gbtn lgoogle"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continue with Google</button>' : ""}
     <p class="kmsg lmsg" aria-live="polite"></p>`;
   const mail = box.querySelector(".lmail"), msg = box.querySelector(".lmsg");
@@ -1847,10 +1862,9 @@ function renderLogin(box, why, after){
       await loadMe(); after && after();
     }catch(e){ msg.textContent = "That code did not work. Check it, or send a new one."; }
   };
-  box.querySelector(".lsend").onclick = sendCode;
-  mail.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); sendCode(); } });
-  box.querySelector(".lverify").onclick = verify;
-  box.querySelector(".lcode").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); verify(); } });
+  /* native form submit: Enter works, and IME composition is handled by the browser */
+  box.querySelector(".lmailForm").addEventListener("submit", e => { e.preventDefault(); sendCode(); });
+  box.querySelector(".lcodeRow").addEventListener("submit", e => { e.preventDefault(); verify(); });
   const g = box.querySelector(".lgoogle");
   if(g) g.onclick = async () => {
     await sbClient();
@@ -1891,10 +1905,10 @@ function openPay(from){
     $("#payCreditNote").textContent = canRescan ? (site.unlimited ? "Rescans of this site are included this month." : "Your $19 report includes 1 rescan within 30 days.") : "The report is emailed to " + (ACCT ? ACCT.email : "you") + " and saved in your account.";
   }
   $("#payNote").classList.toggle("hide", useIt);
-  if(typeof dlg.showModal === "function"){ if(!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
+  if(!dlg.open) dlg.showModal();
   track("paywall_seen", {host, from, issues: ISSUES.length, logged_in: loggedIn(), credits: left});
 }
-function closePay(){ const dlg = $("#payDlg"); if(typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open"); }
+function closePay(){ $("#payDlg").close(); }
 async function buy(plan){
   if(!DATA) return;
   try { localStorage.setItem(BKEY, DATA.url); } catch {}
@@ -1931,10 +1945,17 @@ $("#useCredit").onclick = async () => {
   catch(e){ $("#payMsg").textContent = e.message; }
   finally{ $("#useCredit").disabled = false; }
 };
-$("#payDlg").addEventListener("click", e => {
-  const b = e.target.closest("[data-buy]"); if(b){ buy(b.dataset.buy); return; }
-  if(e.target === $("#payDlg")) closePay();
-});
+$("#payDlg").addEventListener("click", e => { const b = e.target.closest("[data-buy]"); if(b) buy(b.dataset.buy); });
+/* closedby="any" closes on a click outside; where it is missing, test the pointer position
+   (not event.target: the dialog is also the target for its own padding) */
+if(!("closedBy" in HTMLDialogElement.prototype)){
+  const outside = (e, d) => { const r = d.getBoundingClientRect(); return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom; };
+  for(const d of document.querySelectorAll('dialog[closedby="any"]')){
+    let down = false;
+    d.addEventListener("pointerdown", e => { down = outside(e, d); });
+    d.addEventListener("pointerup", e => { if(down && outside(e, d)) d.close(); });
+  }
+}
 
 /* ---------- back from Polar: wait for the credit, then unlock the scan ---------- */
 async function handleReturn(){
@@ -2006,7 +2027,7 @@ async function openReport(id){
     $("#guideText").textContent = r.guide_md || "";
     $("#guideDl").onclick = () => download(r.guide_md || "", "ai-fix-guide-" + r.host + ".md", "text/markdown");
     $("#guideCopy").onclick = async () => { try { await navigator.clipboard.writeText(r.guide_md || ""); toast("Guide copied", "📋"); } catch { toast("Copy failed"); } };
-    const g = $("#guideDlg"); if(typeof g.showModal === "function") g.showModal(); else g.setAttribute("open", "");
+    $("#guideDlg").showModal();
   }catch(e){ toast(e.message); }
 }
 $("#acctReports").addEventListener("click", e => {
